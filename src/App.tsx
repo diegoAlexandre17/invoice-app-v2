@@ -1,12 +1,15 @@
-import { Button } from "./components/ui/button";
+import { BrowserRouter } from "react-router";
+import Router from "./router/Router";
 
 function App() {
+
   return (
     <>
-    <Button variant="default">Hello World</Button>
-      <h1>Hello World!</h1>
+      <BrowserRouter>
+        <Router />
+      </BrowserRouter>
     </>
-  );
+  )
 }
 
 export default App;
