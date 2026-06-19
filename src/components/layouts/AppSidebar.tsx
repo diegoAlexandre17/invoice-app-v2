@@ -9,6 +9,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Link } from "react-router";
+import { PATHS } from "@/router/paths";
 import { routes } from "./sidebarRoutes";
 
 const AppSidebar = () => {
@@ -18,7 +19,7 @@ const AppSidebar = () => {
     <Sidebar collapsible="icon">
       <SidebarContent className="bg-primary text-primary-foreground">
         <SidebarHeader>
-          <Link to="/admin/dashboard" className="flex flex-row items-center">
+          <Link to={PATHS.dashboard} className="flex flex-row items-center">
             INVOICE LOGO
           </Link>
         </SidebarHeader>

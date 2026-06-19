@@ -1,9 +1,15 @@
-import { LayoutDashboard } from "lucide-react";
+import { Building2, LayoutDashboard } from "lucide-react";
+import { PATHS } from "@/router/paths";
 
 export const routes = [
   {
     title: "Dashboard",
-    url: "/admin/dashboard",
+    url: PATHS.dashboard,
     icon: LayoutDashboard,
+  },
+  {
+    title: "Customers",
+    url: PATHS.customers,
+    icon: Building2,
   },
 ];
