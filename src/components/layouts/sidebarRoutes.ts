@@ -3,13 +3,13 @@ import { PATHS } from "@/router/paths";
 
 export const routes = [
   {
-    title: "Dashboard",
+    titleKey: "navigation.dashboard",
     url: PATHS.dashboard,
     icon: LayoutDashboard,
   },
   {
-    title: "Customers",
+    titleKey: "navigation.customers",
     url: PATHS.customers,
     icon: Building2,
   },
-];
+] as const;

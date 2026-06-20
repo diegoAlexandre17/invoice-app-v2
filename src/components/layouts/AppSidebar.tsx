@@ -11,9 +11,12 @@ import {
 import { Link } from "react-router";
 import { PATHS } from "@/router/paths";
 import { routes } from "./sidebarRoutes";
+import { useTranslation } from "react-i18next";
 
 const AppSidebar = () => {
   const { state } = useSidebar();
+
+  const {t} = useTranslation();
 
   return (
     <Sidebar collapsible="icon">
@@ -31,7 +34,7 @@ const AppSidebar = () => {
                 <SidebarMenuButton asChild>
                   <Link to={item.url} className="p-5">
                     <div>{item.icon && <item.icon size={20} />}</div>
-                    {state === "expanded" && <span>{item.title}</span>}
+                    {state === "expanded" && <span>{t(item.titleKey)}</span>}
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

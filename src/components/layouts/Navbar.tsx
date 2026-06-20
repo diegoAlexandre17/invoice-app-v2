@@ -1,5 +1,5 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import UserDropDown from "./UserDropDown";
 
 const Navbar = () => {
   return (
@@ -7,14 +7,7 @@ const Navbar = () => {
       <SidebarTrigger />
       <div className="flex gap-x-2 items-center ml-auto">
         <p>Toogle theme</p>
-        <Avatar size="lg">
-          <AvatarImage
-            src="https://github.com/shadcn.png"
-            alt="@shadcn"
-            className="grayscale"
-          />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
+        <UserDropDown />
       </div>
     </div>
   );

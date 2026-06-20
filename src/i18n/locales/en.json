@@ -1,0 +1,10 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "customers": "Customers",
+    "invoices": "Invoices",
+    "clients": "Clients",
+    "settings": "Settings",
+    "company": "Company"
+  }
+}
