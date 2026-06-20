@@ -1,4 +1,10 @@
 {
+  "common": {
+    "language": "Idioma",
+    "english": "Inglés",
+    "spanish": "Español",
+    "loading": "Cargando"
+  },
   "navigation": {
     "dashboard": "Dashboard",
     "customers": "Clientes",
