@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 
 const Dashboard = () => {
@@ -5,8 +6,13 @@ const Dashboard = () => {
   return (
     <div>
       {t("navigation.dashboard")}
-    </div>
-  )
-}
 
-export default Dashboard
+      <div>
+        <Button variant="secondary">Secondary</Button>
+        <Button variant="default">Default</Button>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;

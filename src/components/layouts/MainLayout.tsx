@@ -14,7 +14,7 @@ const MainLayout = () => {
 
       <div className="w-full">
         <Navbar />
-        <div className="flex-1 p-6 bg-background">
+        <div className="flex-1 p-6">
           <Suspense fallback={<div>{t("common.loading")}</div>}>
             <Outlet />
           </Suspense>
