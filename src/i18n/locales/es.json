@@ -3,7 +3,8 @@
     "language": "Idioma",
     "english": "Inglés",
     "spanish": "Español",
-    "loading": "Cargando"
+    "loading": "Cargando",
+    "search": "Buscar"
   },
   "navigation": {
     "dashboard": "Dashboard",

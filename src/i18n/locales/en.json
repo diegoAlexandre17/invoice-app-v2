@@ -3,7 +3,8 @@
     "language": "Language",
     "english": "English",
     "spanish": "Spanish",
-    "loading": "Loading"
+    "loading": "Loading",
+    "search": "Search"
   },
   "navigation": {
     "dashboard": "Dashboard",

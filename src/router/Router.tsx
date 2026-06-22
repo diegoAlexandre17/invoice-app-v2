@@ -6,7 +6,7 @@ import { createBrowserRouter, Navigate } from "react-router";
 
 const Login = lazy(() => import("@/views/Login/Login"));
 const Dashboard = lazy(() => import("@/views/Dashboard"));
-const Customers = lazy(() => import("@/views/Customers"));
+const Customers = lazy(() => import("@/views/Customers/Customers"));
 
 const Router = () => {
   const routes = createBrowserRouter([
