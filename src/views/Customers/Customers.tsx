@@ -3,6 +3,7 @@ import type { ICustomers } from "./types";
 import customers from "./customers.data";
 import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
+import { CardsSectionGraphs } from "./CardsSectionGraphs";
 
 /* async function getCustomers(): Promise<Customers[]> {
   return customers;
@@ -36,6 +37,7 @@ const Customers = () => {
 
   return (
     <div>
+      <CardsSectionGraphs />
       <DataTable
         columns={columns}
         data={customers}
