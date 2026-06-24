@@ -12,7 +12,7 @@ const MainLayout = () => {
     <SidebarProvider>
       <AppSidebar />
 
-      <div className="w-full">
+      <div className="flex w-full flex-col">
         <Navbar />
         <div className="flex-1 p-6">
           <Suspense fallback={<div>{t("common.loading")}</div>}>
