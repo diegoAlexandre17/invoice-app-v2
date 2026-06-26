@@ -5,10 +5,6 @@ import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
 import { CardsSectionGraphs } from "./CardsSectionGraphs";
 
-/* async function getCustomers(): Promise<Customers[]> {
-  return customers;
-} */
-
 const Customers = () => {
   // const data = await getCustomers();
 
@@ -36,14 +32,14 @@ const Customers = () => {
   ];
 
   return (
-    <div>
+    <>
       <CardsSectionGraphs />
       <DataTable
         columns={columns}
         data={customers}
         actions={<Button>Add Customer</Button>}
       />
-    </div>
+    </>
   );
 };
 

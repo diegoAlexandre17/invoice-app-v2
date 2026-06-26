@@ -15,10 +15,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Card, CardContent, CardHeader } from "../ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import { Search } from "lucide-react";
 import { Input } from "../ui/input";
 import { useTranslation } from "react-i18next";
+import { Button } from "../ui/button";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -52,8 +53,8 @@ export function DataTable<TData, TValue>({
   };
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="p-0 gap-0">
+      <CardHeader className="p-(--card-spacing)">
         <div className="flex items-center justify-between flex-wrap gap-2">
           {search && (
             <div className="relative w-full md:max-w-sm">
@@ -71,8 +72,8 @@ export function DataTable<TData, TValue>({
         </div>
       </CardHeader>
 
-      <CardContent>
-        <div className="overflow-hidden rounded-md border">
+      <CardContent className="px-0">
+        <div className="overflow-hidden">
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
