@@ -4,7 +4,9 @@
     "english": "Inglés",
     "spanish": "Español",
     "loading": "Cargando",
-    "search": "Buscar"
+    "search": "Buscar",
+    "save": "Guardar",
+    "cancel": "Cancelar"
   },
   "navigation": {
     "dashboard": "Dashboard",

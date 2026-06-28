@@ -5,14 +5,17 @@ import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
 import { CardsSectionGraphs } from "./CardsSectionGraphs";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
+import CustomerModal from "./CustomerModal";
 
 const Customers = () => {
   const { t } = useTranslation();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const columns: ColumnDef<ICustomers>[] = [
     {
       accessorKey: "name",
-      header: t('customers.customerName'),
+      header: t("customers.customerName"),
     },
     {
       accessorKey: "email",
@@ -28,17 +31,30 @@ const Customers = () => {
     },
     {
       accessorKey: "address",
-      header:t("customers.address"),
+      header: t("customers.address"),
     },
   ];
 
+  const handleOpenModal = (): void => {
+    setIsOpen(true);
+  };
+
+   const handleCloseModal = (): void => {
+    setIsOpen(false);
+  };
+
   return (
     <>
+      <CustomerModal isOpen={isOpen} onClose={handleCloseModal} />
       <CardsSectionGraphs />
       <DataTable
         columns={columns}
         data={customers}
-        actions={<Button>{t('customers.addCustomer')}</Button>}
+        actions={
+          <Button onClick={handleOpenModal}>
+            {t("customers.addCustomer")}
+          </Button>
+        }
       />
     </>
   );
