@@ -13,5 +13,21 @@
     "clients": "Clients",
     "settings": "Settings",
     "company": "Company"
+  },
+  "customers": {
+    "addCustomer": "Add new customer",
+    "customersTitle": "Customer Management",
+    "addCustomerTxt": "Complete the information for the new customer here",
+    "editCustomer": "Edit customer",
+    "editCustomerTxt": "Complete the information for the customer here",
+    "customerName": "Customer",
+    "registerDate": "Registration Date",
+    "phone": "Phone",
+    "address": "Address",
+    "identification": "Identification",
+    "createCustomerSuccess": "Customer created successfully",
+    "updateCustomerSuccess": "Customer updated successfully",
+    "deleteCustomerConfirm": "Are you sure you want to delete this customer?",
+    "deleteCustomerSuccess": "Customer deleted successfully"
   }
 }

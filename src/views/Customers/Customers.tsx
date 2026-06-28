@@ -4,14 +4,15 @@ import customers from "./customers.data";
 import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
 import { CardsSectionGraphs } from "./CardsSectionGraphs";
+import { useTranslation } from "react-i18next";
 
 const Customers = () => {
-  // const data = await getCustomers();
+  const { t } = useTranslation();
 
   const columns: ColumnDef<ICustomers>[] = [
     {
       accessorKey: "name",
-      header: "Name",
+      header: t('customers.customerName'),
     },
     {
       accessorKey: "email",
@@ -19,15 +20,15 @@ const Customers = () => {
     },
     {
       accessorKey: "phone",
-      header: "Phone",
+      header: t("customers.phone"),
     },
     {
       accessorKey: "identification",
-      header: "Identification",
+      header: t("customers.identification"),
     },
     {
       accessorKey: "address",
-      header: "Address",
+      header:t("customers.address"),
     },
   ];
 
@@ -37,7 +38,7 @@ const Customers = () => {
       <DataTable
         columns={columns}
         data={customers}
-        actions={<Button>Add Customer</Button>}
+        actions={<Button>{t('customers.addCustomer')}</Button>}
       />
     </>
   );
