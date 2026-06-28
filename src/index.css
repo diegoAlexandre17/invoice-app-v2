@@ -25,6 +25,7 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-success: var(--success);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -49,8 +50,7 @@
 }
 
 :root {
-  /* Brand palette: #16423C #6A9C89 #C4DAD2 #E9EFEC */
-  --background: /* oklch(1 0 0) */ oklch(97.61% 0.023 266.93) /* oklch(99.27% 0.003 247.84) */;
+  --background:  oklch(97.61% 0.023 266.93);
   --foreground: oklch(0.347 0.049 183);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.347 0.049 183);
@@ -64,6 +64,7 @@
   --muted-foreground: oklch(0.5 0.04 175);
   --accent: oklch(0.87 0.026 172);
   --accent-foreground: oklch(0.347 0.049 183);
+  --success: oklch(72.3% 0.192 149.6);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.91 0.015 170);
   --input: oklch(0.91 0.015 170);
