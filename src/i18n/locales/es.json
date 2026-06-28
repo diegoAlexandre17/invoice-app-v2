@@ -7,7 +7,7 @@
     "search": "Buscar",
     "save": "Guardar",
     "cancel": "Cancelar",
-    "name":"Nombre"
+    "name": "Nombre"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -30,5 +30,20 @@
     "updateCustomerSuccess": "Cliente actualizado exitosamente",
     "deleteCustomerConfirm": "¿Estás seguro de que deseas eliminar este cliente?",
     "deleteCustomerSuccess": "Cliente eliminado exitosamente"
+  },
+  "errorsForm": {
+    "maxLength15": "El campo debe tener un máximo de 15 caracteres",
+    "maxLength60": "El campo debe tener un máximo de 60 caracteres",
+    "maxLength120": "El campo debe tener un máximo de 120 caracteres",
+    "maxLength500": "El campo debe tener un máximo de 500 caracteres",
+    "emailRequired": "Introduzca una dirección de correo electrónico válida",
+    "nameRequired": "El nombre es requerido",
+    "addressRequired": "La dirección es requerida",
+    "identificationRequired": "La identificación es requerida",
+    "phoneRequired": "El teléfono es requerido",
+    "emailHasBeenUsed": "El correo electrónico ya ha sido utilizado",
+    "quantityRequired": "La cantidad debe ser al menos 1",
+    "priceRequired": "El precio debe ser mayor o igual a 0",
+    "itemsRequired": "Se requiere al menos un item"
   }
 }
