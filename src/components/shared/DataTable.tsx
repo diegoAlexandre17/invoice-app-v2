@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 
-import { 
+import {
   type ColumnDef,
   flexRender,
   getCoreRowModel,
@@ -15,11 +15,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import { Search } from "lucide-react";
 import { Input } from "../ui/input";
 import { useTranslation } from "react-i18next";
-import { Button } from "../ui/button";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -36,7 +49,7 @@ export function DataTable<TData, TValue>({
   search = true,
   searchValue,
   onSearchChange,
-  actions
+  actions,
 }: DataTableProps<TData, TValue>) {
   const { t } = useTranslation();
 
@@ -124,6 +137,31 @@ export function DataTable<TData, TValue>({
           </Table>
         </div>
       </CardContent>
+
+      <CardFooter className="flex justify-end">
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious href="#" />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationLink href="#">1</PaginationLink>
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationLink href="#" isActive>
+                2
+              </PaginationLink>
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationLink href="#">3</PaginationLink>
+            </PaginationItem>
+
+            <PaginationItem>
+              <PaginationNext href="#" />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </CardFooter>
     </Card>
   );
 }
