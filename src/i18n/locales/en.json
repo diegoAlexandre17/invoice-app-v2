@@ -6,7 +6,8 @@
     "loading": "Loading",
     "search": "Search",
     "save": "Save",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "name":"Name"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -17,11 +18,9 @@
     "company": "Company"
   },
   "customers": {
-    "addCustomer": "Add new customer",
-    "customersTitle": "Customer Management",
-    "addCustomerTxt": "Complete the information for the new customer here",
+    "addCustomer": "Add customer",
+    "customerDescriptionModal": "Complete the information for the customer here",
     "editCustomer": "Edit customer",
-    "editCustomerTxt": "Complete the information for the customer here",
     "customerName": "Customer",
     "registerDate": "Registration Date",
     "phone": "Phone",

@@ -6,7 +6,8 @@
     "loading": "Cargando",
     "search": "Buscar",
     "save": "Guardar",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "name":"Nombre"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -17,11 +18,9 @@
     "company": "Empresa"
   },
   "customers": {
-    "addCustomer": "Agregar nuevo cliente",
-    "customersTitle": "Gestión de Clientes",
-    "addCustomerTxt": "Completa la información del nuevo cliente aquí",
+    "addCustomer": "Agregar cliente",
+    "customerDescriptionModal": "Completa la información cliente aquí",
     "editCustomer": "Editar cliente",
-    "editCustomerTxt": "Completa la información del cliente aquí",
     "customerName": "Cliente",
     "registerDate": "Fecha de Registro",
     "phone": "Teléfono",

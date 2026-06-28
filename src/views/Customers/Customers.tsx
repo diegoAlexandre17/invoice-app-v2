@@ -11,6 +11,7 @@ import CustomerModal from "./CustomerModal";
 const Customers = () => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isEdit, setIsEdit] = useState<boolean>(false);
 
   const columns: ColumnDef<ICustomers>[] = [
     {
@@ -45,7 +46,7 @@ const Customers = () => {
 
   return (
     <>
-      <CustomerModal isOpen={isOpen} onClose={handleCloseModal} />
+      <CustomerModal isEdit={isEdit} isOpen={isOpen} onClose={handleCloseModal} />
       <CardsSectionGraphs />
       <DataTable
         columns={columns}
