@@ -32,6 +32,7 @@ import {
 import { Search } from "lucide-react";
 import { Input } from "../ui/input";
 import { useTranslation } from "react-i18next";
+import { cn } from "@/lib/utils";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -40,6 +41,7 @@ interface DataTableProps<TData, TValue> {
   searchValue?: string;
   onSearchChange?: (value: string) => void;
   actions?: JSX.Element;
+  className?: string;
 }
 
 export function DataTable<TData, TValue>({
@@ -49,6 +51,7 @@ export function DataTable<TData, TValue>({
   searchValue,
   onSearchChange,
   actions,
+  className,
 }: DataTableProps<TData, TValue>) {
   const { t } = useTranslation();
 
@@ -65,7 +68,7 @@ export function DataTable<TData, TValue>({
   };
 
   return (
-    <Card className="p-0 gap-0">
+    <Card className={cn("flex-1", className)}>
       <CardHeader className="p-(--card-spacing)">
         <div className="flex items-center justify-between flex-wrap gap-2">
           {search && (
@@ -84,7 +87,7 @@ export function DataTable<TData, TValue>({
         </div>
       </CardHeader>
 
-      <CardContent className="px-0">
+      <CardContent className="flex-1 px-0">
         <div className="overflow-hidden">
           <Table>
             <TableHeader>

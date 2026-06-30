@@ -68,7 +68,7 @@ const Customers = () => {
   };
 
   return (
-    <>
+    <div className="flex flex-1 flex-col">
       <CustomerModal
         isEdit={editingCustomer}
         isOpen={isOpen}
@@ -76,6 +76,7 @@ const Customers = () => {
       />
       <CardsSectionGraphs />
       <DataTable
+        
         columns={columns}
         data={customers}
         actions={
@@ -84,7 +85,7 @@ const Customers = () => {
           </Button>
         }
       />
-    </>
+    </div>
   );
 };
 
