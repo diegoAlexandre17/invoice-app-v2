@@ -1,4 +1,4 @@
-import type { JSX } from "react";
+import { useEffect, type JSX } from "react";
 import {
   Dialog,
   DialogContent,
@@ -21,6 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import en from "@/i18n/locales/en.json";
+import type { ICustomers } from "./types";
 
 const customerSchema = z.object({
   name: z.string().min(1, "nameRequired").max(60, "maxLength60"),
@@ -36,41 +37,45 @@ type ErrorFormKey = keyof typeof en.errorsForm;
 interface CustomerModalProps {
   isOpen: boolean;
   onClose: () => void;
-  isEdit: boolean;
+  isEdit: ICustomers | null;
 }
 
 const defaultValues = {
-      name: "",
-      email: "",
-      phone: "",
-      identification: "",
-      address: "",
-    }
+  name: "",
+  email: "",
+  phone: "",
+  identification: "",
+  address: "",
+};
 
 const CustomerModal = ({
   isOpen,
   onClose,
   isEdit,
 }: CustomerModalProps): JSX.Element => {
+  console.log(isEdit);
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (isEdit !== null) {
+      reset({
+        name: isEdit?.name,
+        email: isEdit?.email,
+        phone: isEdit?.phone || "",
+        identification: isEdit?.identification || "",
+        address: isEdit?.address || "",
+      });
+    }
+  }, [isEdit]);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-    setError,
   } = useForm<CustomerFormData>({
     resolver: zodResolver(customerSchema),
-    defaultValues: /* isEditing
-      ? {
-          name: editingCustomer?.name,
-          email: editingCustomer?.email,
-          phone: editingCustomer?.phone || "",
-          id: editingCustomer?.id_number || "",
-          address: editingCustomer?.address || "",
-        }
-      :  */ defaultValues,
+    defaultValues,
   });
 
   const handleClose = () => {
@@ -153,7 +158,9 @@ const CustomerModal = ({
           </FieldGroup>
 
           <DialogFooter>
-            <Button variant={"destructive"} onClick={handleClose}>{t("common.cancel")}</Button>
+            <Button variant={"destructive"} onClick={handleClose}>
+              {t("common.cancel")}
+            </Button>
             <Button variant={"success"} onClick={handleSubmit(onSubmit)}>
               {t("common.save")}
             </Button>

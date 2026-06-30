@@ -7,11 +7,15 @@ import { CardsSectionGraphs } from "./CardsSectionGraphs";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import CustomerModal from "./CustomerModal";
+import { ActionTable } from "@/components/shared/ActionTable";
+import { FilePlus, SquarePen, Trash } from "lucide-react";
 
 const Customers = () => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [editingCustomer, setEditingCustomer] = useState<ICustomers | null>(
+    null,
+  );
 
   const columns: ColumnDef<ICustomers>[] = [
     {
@@ -23,16 +27,29 @@ const Customers = () => {
       header: "Email",
     },
     {
-      accessorKey: "phone",
       header: t("customers.phone"),
+      cell: ({ row }) => <div>{row.getValue("phone") ?? "-"}</div>
     },
     {
-      accessorKey: "identification",
       header: t("customers.identification"),
+      cell: ({ row }) => <div>{row.getValue("identification") ?? "-"}</div>
     },
     {
-      accessorKey: "address",
       header: t("customers.address"),
+      cell: ({ row }) => <div>{row.getValue("address") ?? "-"}</div>
+    },
+    {
+      accessorKey: "actions",
+      header: t("common.actions"),
+      cell: ({ row }) => (
+        <>
+          <ActionTable
+            icon={<SquarePen />}
+            onClick={() => handleEditCustomer(row.original)}
+            tooltipText={t("common.edit")}
+          />
+        </>
+      ),
     },
   ];
 
@@ -40,13 +57,23 @@ const Customers = () => {
     setIsOpen(true);
   };
 
-   const handleCloseModal = (): void => {
+  const handleCloseModal = (): void => {
     setIsOpen(false);
+    setEditingCustomer(null);
+  };
+
+  const handleEditCustomer = (customer: ICustomers) => {
+    setEditingCustomer(customer);
+    setIsOpen(true);
   };
 
   return (
     <>
-      <CustomerModal isEdit={isEdit} isOpen={isOpen} onClose={handleCloseModal} />
+      <CustomerModal
+        isEdit={editingCustomer}
+        isOpen={isOpen}
+        onClose={handleCloseModal}
+      />
       <CardsSectionGraphs />
       <DataTable
         columns={columns}

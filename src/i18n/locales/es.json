@@ -7,7 +7,10 @@
     "search": "Buscar",
     "save": "Guardar",
     "cancel": "Cancelar",
-    "name": "Nombre"
+    "name": "Nombre",
+    "actions": "Acciones",
+    "edit": "Editar",
+    "delete": "Eliminar"
   },
   "navigation": {
     "dashboard": "Dashboard",
