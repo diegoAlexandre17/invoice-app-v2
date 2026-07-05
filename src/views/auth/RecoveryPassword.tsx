@@ -7,8 +7,8 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import en from "@/i18n/locales/en.json";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { ParseKeys } from "i18next";
 import { type JSX } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -16,11 +16,11 @@ import { Link } from "react-router";
 import { z } from "zod";
 
 const recoverySchema = z.object({
-  email: z.email("emailRequired"),
+   email: z.email("errorsForm.common.emailRequired"),
 });
 
 type RecoveryFormData = z.infer<typeof recoverySchema>;
-type ErrorFormKey = keyof typeof en.errorsForm.auth;
+type ErrorFormKey = ParseKeys;
 
 const RecoveryPassword = (): JSX.Element => {
   const { t } = useTranslation();
@@ -58,9 +58,7 @@ const RecoveryPassword = (): JSX.Element => {
                 <Input id="email" {...register("email")} />
                 {errors.email && (
                   <FieldError>
-                    {t(
-                      `errorsForm.auth.${errors.email.message as ErrorFormKey}`,
-                    )}
+                    {t(errors.email.message as ErrorFormKey)}
                   </FieldError>
                 )}
               </Field>
