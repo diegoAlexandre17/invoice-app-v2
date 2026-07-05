@@ -22,12 +22,12 @@ const LanguageSwitcher = (): JSX.Element => {
 
   return (
     <Select value={i18n.language} onValueChange={handleLanguageChange}>
-      <SelectTrigger className="w-full bg-foreground text-white">
+      <SelectTrigger >
         <SelectValue>
           {languages.find((lang) => lang.code === i18n.language)?.flag}
         </SelectValue>
       </SelectTrigger>
-      <SelectContent className="bg-foreground text-white" position="popper">
+      <SelectContent position="popper">
         {languages.map((lang) => (
           <SelectItem key={lang.code} value={lang.code}>
             <span className="flex items-center gap-2 ">
