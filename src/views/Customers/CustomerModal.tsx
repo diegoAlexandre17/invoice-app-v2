@@ -32,7 +32,7 @@ const customerSchema = z.object({
 });
 
 type CustomerFormData = z.infer<typeof customerSchema>;
-type ErrorFormKey = keyof typeof en.errorsForm;
+type ErrorFormKey = keyof typeof en.errorsForm.customers;
 
 interface CustomerModalProps {
   isOpen: boolean;
@@ -114,7 +114,7 @@ const CustomerModal = ({
                   <Input id="name" {...register("name")} />
                   {errors.name && (
                     <FieldError>
-                      {t(`errorsForm.${errors.name.message as ErrorFormKey}`)}
+                      {t(`errorsForm.customers.${errors.name.message as ErrorFormKey}`)}
                     </FieldError>
                   )}
                 </Field>
@@ -127,7 +127,7 @@ const CustomerModal = ({
                   <Input id="email" {...register("email")} />
                   {errors.email && (
                     <FieldError>
-                      {t(`errorsForm.${errors.email.message as ErrorFormKey}`)}
+                      {t(`errorsForm.customers.${errors.email.message as ErrorFormKey}`)}
                     </FieldError>
                   )}
                 </Field>

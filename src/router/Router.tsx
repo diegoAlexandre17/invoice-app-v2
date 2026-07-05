@@ -4,7 +4,7 @@ import { crumb } from "@/router/types";
 import { lazy } from "react";
 import { createBrowserRouter, Navigate } from "react-router";
 
-const Login = lazy(() => import("@/views/Login/Login"));
+const Login = lazy(() => import("@/views/auth/Login"));
 const Dashboard = lazy(() => import("@/views/Dashboard"));
 const Customers = lazy(() => import("@/views/Customers/Customers"));
 

@@ -1,5 +1,7 @@
 {
   "common": {
+    "login": "Iniciar Sesión",
+    "password": "Contraseña",
     "language": "Idioma",
     "english": "Inglés",
     "spanish": "Español",
@@ -11,6 +13,12 @@
     "actions": "Acciones",
     "edit": "Editar",
     "delete": "Eliminar"
+  },
+  "auth": {
+    "loginSubtitle": "Inicia sesión en tu cuenta",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "noAccount": "¿No tienes una cuenta?",
+    "signUp": "Regístrate"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -35,18 +43,26 @@
     "deleteCustomerSuccess": "Cliente eliminado exitosamente"
   },
   "errorsForm": {
-    "maxLength15": "El campo debe tener un máximo de 15 caracteres",
-    "maxLength60": "El campo debe tener un máximo de 60 caracteres",
-    "maxLength120": "El campo debe tener un máximo de 120 caracteres",
-    "maxLength500": "El campo debe tener un máximo de 500 caracteres",
-    "emailRequired": "Introduzca una dirección de correo electrónico válida",
-    "nameRequired": "El nombre es requerido",
-    "addressRequired": "La dirección es requerida",
-    "identificationRequired": "La identificación es requerida",
-    "phoneRequired": "El teléfono es requerido",
-    "emailHasBeenUsed": "El correo electrónico ya ha sido utilizado",
-    "quantityRequired": "La cantidad debe ser al menos 1",
-    "priceRequired": "El precio debe ser mayor o igual a 0",
-    "itemsRequired": "Se requiere al menos un item"
+    "common": {
+      "maxLength15": "El campo debe tener un máximo de 15 caracteres",
+      "maxLength60": "El campo debe tener un máximo de 60 caracteres",
+      "maxLength120": "El campo debe tener un máximo de 120 caracteres",
+      "maxLength500": "El campo debe tener un máximo de 500 caracteres"
+    },
+    "customers": {
+      "emailRequired": "Introduzca una dirección de correo electrónico válida",
+      "nameRequired": "El nombre es requerido",
+      "addressRequired": "La dirección es requerida",
+      "identificationRequired": "La identificación es requerida",
+      "phoneRequired": "El teléfono es requerido",
+      "emailHasBeenUsed": "El correo electrónico ya ha sido utilizado",
+      "quantityRequired": "La cantidad debe ser al menos 1",
+      "priceRequired": "El precio debe ser mayor o igual a 0",
+      "itemsRequired": "Se requiere al menos un item"
+    },
+    "auth": {
+      "passwordRequired": "La contraseña es requerida",
+      "emailRequired": "Introduzca una dirección de correo electrónico válida"
+    }
   }
 }
