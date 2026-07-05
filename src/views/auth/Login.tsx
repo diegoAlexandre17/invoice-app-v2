@@ -7,8 +7,8 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import en from "@/i18n/locales/en.json";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { ParseKeys } from "i18next";
 import { Eye, EyeClosed } from "lucide-react";
 import { useState, type JSX } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
@@ -17,11 +17,11 @@ import { Link } from "react-router";
 import { z } from "zod";
 
 const loginSchema = z.object({
-  email: z.email("emailRequired"),
-  password: z.string().min(1, "passwordRequired"),
+  email: z.email("errorsForm.common.emailRequired"),
+  password: z.string().min(1, "errorsForm.auth.passwordRequired"),
 });
 
-type ErrorFormKey = keyof typeof en.errorsForm.auth;
+type ErrorFormKey = ParseKeys;
 type userLogin = z.infer<typeof loginSchema>;
 
 const Login = (): JSX.Element => {
@@ -65,9 +65,7 @@ const Login = (): JSX.Element => {
                 <Input id="email" {...register("email")} />
                 {errors.email && (
                   <FieldError>
-                    {t(
-                      `errorsForm.auth.${errors.email.message as ErrorFormKey}`,
-                    )}
+                    {t(errors.email.message as ErrorFormKey)}
                   </FieldError>
                 )}
               </Field>
@@ -93,9 +91,7 @@ const Login = (): JSX.Element => {
                 </div>
                 {errors.password && (
                   <FieldError>
-                    {t(
-                      `errorsForm.auth.${errors.password.message as ErrorFormKey}`,
-                    )}
+                    {t(errors.password.message as ErrorFormKey)}
                   </FieldError>
                 )}
                 <Link
