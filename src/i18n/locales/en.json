@@ -20,9 +20,12 @@
     "loginSubtitle": "Sign in to your account",
     "forgotPassword": "Forgot password?",
     "noAccount": "Don't have an account?",
+    "createAccount": "Create account",
     "signUp": "Sign up",
+    "signIn": "Sign in",
     "recoveryTitle": "Recover password",
-    "recover": "Recover"
+    "recover": "Recover",
+    "haveAccount": "Already have an account?"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -51,11 +54,11 @@
       "maxLength15": "The field must be a maximum of 15 characters",
       "maxLength60": "The field must be a maximum of 60 characters",
       "maxLength120": "The field must be a maximum of 120 characters",
-      "maxLength500": "The field must be a maximum of 500 characters"
+      "maxLength500": "The field must be a maximum of 500 characters",
+      "nameRequired": "The name is required",
+      "emailRequired": "Please enter a valid email address"
     },
     "customers": {
-      "emailRequired": "Please enter a valid email address",
-      "nameRequired": "The name is required",
       "addressRequired": "The address is required",
       "identificationRequired": "The identification is required",
       "phoneRequired": "The phone is required",
@@ -65,8 +68,9 @@
       "itemsRequired": "At least one item is required"
     },
     "auth": {
-      "emailRequired": "Please enter a valid email address",
-      "passwordRequired": "Password is required"
+      "passwordRequired": "Password is required",
+      "passwordRequired8": "The password must contain at least 8 characters",
+      "passwordRequiredPattern": "The password must have numbers and letters"
     }
   }
 }
