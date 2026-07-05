@@ -1,3 +1,4 @@
+import AuthLayout from "@/components/layouts/AuthLayout";
 import MainLayout from "@/components/layouts/MainLayout";
 import { PATHS, SEGMENTS } from "@/router/paths";
 import { crumb } from "@/router/types";
@@ -14,20 +15,27 @@ const Router = () => {
   const routes = createBrowserRouter([
     {
       path: "/",
-      element: <Navigate to="/login" />,
+      element: <Navigate to="/auth/login" />,
     },
     {
-      path: "/login",
-      element: <Login />,
+      path: PATHS.auth,
+      element: <AuthLayout />,
+      children: [
+        {
+          path: "/auth/login",
+          element: <Login />,
+        },
+        {
+          path: "/auth/recovery-password",
+          element: <RecoveryPassword />,
+        },
+        {
+          path: "/auth/register",
+          element: <Register />,
+        },
+      ],
     },
-    {
-      path: "/recovery-password",
-      element: <RecoveryPassword />,
-    },
-    {
-      path: "/register",
-      element: <Register />,
-    },
+
     {
       path: PATHS.admin,
       element: <MainLayout />,

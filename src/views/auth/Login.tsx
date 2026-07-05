@@ -1,3 +1,4 @@
+import LanguageSwitcher from "@/components/shared/LanguageSelect";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -95,7 +96,7 @@ const Login = (): JSX.Element => {
                   </FieldError>
                 )}
                 <Link
-                  to="/recovery-password"
+                  to="/auth/recovery-password"
                   className="text-sm text-blue-600 hover:text-blue-500"
                 >
                   {t("auth.forgotPassword")}
@@ -115,7 +116,7 @@ const Login = (): JSX.Element => {
           <p className="text-sm flex justify-center items-center gap-2">
             {t("auth.noAccount")}
             <Link
-              to="/register"
+              to="/auth/register"
               className="font-medium text-blue-600 hover:text-blue-500"
             >
               {t("auth.signUp")}

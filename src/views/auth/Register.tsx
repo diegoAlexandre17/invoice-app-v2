@@ -54,7 +54,6 @@ const Register = (): JSX.Element => {
 
   return (
     <div className="h-screen grid  md:grid-cols-10">
-      <div className="hidden md:flex register-background items-center justify-center col-span-6 "></div>
       <div className="w-full p-12 md:p-24 col-span-4 flex flex-col justify-center">
         <FieldGroup>
           <FieldSet>
@@ -127,7 +126,7 @@ const Register = (): JSX.Element => {
           <p className="text-sm flex justify-center items-center gap-2">
             {t("auth.haveAccount")}
             <Link
-              to="/login"
+              to="/auth/login"
               className="font-medium text-blue-600 hover:text-blue-500"
             >
               {t("auth.signIn")}
@@ -135,6 +134,7 @@ const Register = (): JSX.Element => {
           </p>
         </div>
       </div>
+      <div className="hidden md:flex register-background items-center justify-center col-span-6 "></div>
     </div>
   );
 };

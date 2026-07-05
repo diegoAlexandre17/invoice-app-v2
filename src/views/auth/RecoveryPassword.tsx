@@ -75,7 +75,7 @@ const RecoveryPassword = (): JSX.Element => {
         <div className="mt-5">
           <p className="text-sm flex justify-center items-center gap-2">
             <Link
-              to="/login"
+              to="/auth/login"
               className="font-medium text-blue-600 hover:text-blue-500"
             >
               {t("common.goBack")}
