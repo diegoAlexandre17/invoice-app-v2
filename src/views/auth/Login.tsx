@@ -46,15 +46,17 @@ const Login = (): JSX.Element => {
   };
 
   return (
-    <div className="grid grid-cols-1 h-screen">
-      {/* <div></div> */}
-      <div className="p-12 min-h-screen">
+    <div className="h-screen grid  md:grid-cols-10">
+      <div className="hidden md:flex login-background  items-center justify-center col-span-6 ">
+        <h1 className="text-white text-6xl">{t("auth.loginTitle")}</h1>
+      </div>
+      <div className="w-full p-12 md:p-24 col-span-4 flex flex-col justify-center">
         <FieldGroup>
           <FieldSet>
             <h2 className="text-center mt-6 text-3xl">
               {t("auth.loginSubtitle")}
             </h2>
-            <FieldGroup className="grid grid-cols-1 md:grid-cols-2">
+            <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">
                   <span>Email</span>
@@ -81,7 +83,7 @@ const Login = (): JSX.Element => {
                     className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
                     onClick={() => setViewPassword((lastState) => !lastState)}
                   >
-                    {viewPassword ? <Eye /> : <EyeClosed />}
+                    {viewPassword ? <Eye size={16} /> : <EyeClosed size={16} />}
                   </div>
                   <Input
                     id="password"

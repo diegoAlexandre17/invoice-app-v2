@@ -15,6 +15,7 @@
     "delete": "Delete"
   },
   "auth": {
+    "loginTitle": "Welcome Back",
     "loginSubtitle": "Sign in to your account",
     "forgotPassword": "Forgot password?",
     "noAccount": "Don't have an account?",

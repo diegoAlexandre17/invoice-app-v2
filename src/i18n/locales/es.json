@@ -15,6 +15,7 @@
     "delete": "Eliminar"
   },
   "auth": {
+    "loginTitle": "Bienvenido de Vuelta",
     "loginSubtitle": "Inicia sesión en tu cuenta",
     "forgotPassword": "¿Olvidaste tu contraseña?",
     "noAccount": "¿No tienes una cuenta?",
