@@ -1,5 +1,6 @@
 {
   "common": {
+    "goBack": "Regresar",
     "login": "Iniciar Sesión",
     "password": "Contraseña",
     "language": "Idioma",
@@ -19,7 +20,9 @@
     "loginSubtitle": "Inicia sesión en tu cuenta",
     "forgotPassword": "¿Olvidaste tu contraseña?",
     "noAccount": "¿No tienes una cuenta?",
-    "signUp": "Regístrate"
+    "signUp": "Regístrate",
+    "recoveryTitle": "Recuperar contraseña",
+    "recover": "Recuperar"
   },
   "navigation": {
     "dashboard": "Dashboard",

@@ -7,6 +7,7 @@ import { createBrowserRouter, Navigate } from "react-router";
 const Login = lazy(() => import("@/views/auth/Login"));
 const Dashboard = lazy(() => import("@/views/Dashboard"));
 const Customers = lazy(() => import("@/views/Customers/Customers"));
+const RecoveryPassword = lazy(() => import("@/views/auth/RecoveryPassword"));
 
 const Router = () => {
   const routes = createBrowserRouter([
@@ -17,6 +18,10 @@ const Router = () => {
     {
       path: "/login",
       element: <Login />,
+    },
+     {
+      path: "/recovery-password",
+      element: <RecoveryPassword />,
     },
     {
       path: PATHS.admin,

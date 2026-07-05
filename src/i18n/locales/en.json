@@ -1,5 +1,6 @@
 {
   "common": {
+    "goBack": "Back",
     "login": "Sign in",
     "password": "Password",
     "language": "Language",
@@ -19,7 +20,9 @@
     "loginSubtitle": "Sign in to your account",
     "forgotPassword": "Forgot password?",
     "noAccount": "Don't have an account?",
-    "signUp": "Sign up"
+    "signUp": "Sign up",
+    "recoveryTitle": "Recover password",
+    "recover": "Recover"
   },
   "navigation": {
     "dashboard": "Dashboard",
