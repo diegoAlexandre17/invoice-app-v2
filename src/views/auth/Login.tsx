@@ -1,4 +1,3 @@
-import LanguageSwitcher from "@/components/shared/LanguageSelect";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -14,8 +13,10 @@ import { Eye, EyeClosed } from "lucide-react";
 import { useState, type JSX } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { z } from "zod";
+import { useLogin } from "@/features/auth/presentation/hooks/useLogin";
+import { PATHS } from "@/router/paths";
 
 const loginSchema = z.object({
   email: z.email("errorsForm.common.emailRequired"),
@@ -29,6 +30,8 @@ const Login = (): JSX.Element => {
   const [viewPassword, setViewPassword] = useState<boolean>(false);
 
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const login = useLogin();
 
   const {
     register,
@@ -43,7 +46,9 @@ const Login = (): JSX.Element => {
   });
 
   const onSubmit: SubmitHandler<userLogin> = (formData) => {
-    console.log(formData);
+    login.mutate(formData, {
+      onSuccess: () => navigate(PATHS.dashboard),
+    });
   };
 
   return (
@@ -104,8 +109,16 @@ const Login = (): JSX.Element => {
               </Field>
 
               <Field>
-                <Button onClick={handleSubmit(onSubmit)}>
-                  {t("common.login")}
+                {login.isError && (
+                  <p className="text-sm text-destructive text-center">
+                    {login.error.message}
+                  </p>
+                )}
+                <Button
+                  onClick={handleSubmit(onSubmit)}
+                  disabled={login.isPending}
+                >
+                  {login.isPending ? t("common.loading") : t("common.login")}
                 </Button>
               </Field>
             </FieldGroup>
