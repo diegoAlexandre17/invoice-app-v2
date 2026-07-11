@@ -13,8 +13,12 @@ import { useState, type JSX } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import type { ParseKeys } from "i18next";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { z } from "zod";
+import { useRegister } from "@/features/auth/presentation/hooks/useRegister";
+import { PATHS } from "@/router/paths";
+import { toast } from "sonner";
+import TextErrorSmall from "@/components/shared/TextErrorSmall";
 
 const registerSchema = z.object({
   name: z.string().min(1, "errorsForm.common.nameRequired"),
@@ -35,6 +39,9 @@ const Register = (): JSX.Element => {
   const [viewPassword, setViewPassword] = useState<boolean>(false);
 
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const registerUser = useRegister();
+
   const {
     register,
     handleSubmit,
@@ -49,7 +56,14 @@ const Register = (): JSX.Element => {
   });
 
   const onSubmit: SubmitHandler<RegisterFormData> = (formData) => {
-    console.log(formData);
+    registerUser.mutate(formData, {
+      onSuccess: () => {
+        toast.success(t("auth.registerSuccessTitle"), {
+          description: t("auth.validateEmail"),
+        });
+        navigate(PATHS.login);
+      },
+    });
   };
 
   return (
@@ -114,8 +128,19 @@ const Register = (): JSX.Element => {
               </Field>
 
               <Field>
-                <Button onClick={handleSubmit(onSubmit)}>
-                  {t("auth.signUp")}
+                {registerUser.isError && (
+                  <TextErrorSmall error={registerUser.error.message} />
+                )}
+              </Field>
+
+              <Field>
+                <Button
+                  onClick={handleSubmit(onSubmit)}
+                  disabled={registerUser.isPending}
+                >
+                  {registerUser.isPending
+                    ? t("common.loading")
+                    : t("auth.signUp")}
                 </Button>
               </Field>
             </FieldGroup>

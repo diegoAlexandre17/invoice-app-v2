@@ -9,6 +9,7 @@ const Login = lazy(() => import("@/views/auth/Login"));
 const Dashboard = lazy(() => import("@/views/Dashboard"));
 const Customers = lazy(() => import("@/views/Customers/Customers"));
 const RecoveryPassword = lazy(() => import("@/views/auth/RecoveryPassword"));
+const ResetPassword = lazy(() => import("@/views/auth/ResetPassword"));
 const Register = lazy(() => import("@/views/auth/Register"));
 
 const Router = () => {
@@ -30,7 +31,11 @@ const Router = () => {
           element: <RecoveryPassword />,
         },
         {
-          path: "/auth/register",
+          path: PATHS.resetPassword,
+          element: <ResetPassword />,
+        },
+        {
+          path: PATHS.register,
           element: <Register />,
         },
       ],

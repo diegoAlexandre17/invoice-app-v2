@@ -11,6 +11,10 @@ export const SEGMENTS = {
 export const PATHS = {
   admin: ADMIN,
   auth: AUTH,
+  login: `${AUTH}/login`,
+  resetPassword: `${AUTH}/reset-password`,
+  recoveryPassword: `${AUTH}/recovery-password`,
+  register: `${AUTH}/register`,
   dashboard: `${ADMIN}/${SEGMENTS.dashboard}`,
   customers: `${ADMIN}/${SEGMENTS.customers}`,
 } as const;

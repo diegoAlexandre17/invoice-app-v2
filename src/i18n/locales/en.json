@@ -1,5 +1,6 @@
 {
   "common": {
+    "success": "Success",
     "goBack": "Back",
     "login": "Sign in",
     "password": "Password",
@@ -25,7 +26,10 @@
     "signIn": "Sign in",
     "recoveryTitle": "Recover password",
     "recover": "Recover",
-    "haveAccount": "Already have an account?"
+    "haveAccount": "Already have an account?",
+    "registerSuccessTitle": "Successful registration",
+    "validateEmail": "Please validate your email and then you can login to the platform",
+    "recoverPasswordSuccess": "Password recovery email sent successfully"
   },
   "navigation": {
     "dashboard": "Dashboard",

@@ -10,6 +10,7 @@
  */
 export interface User {
   id: string;
+  name: string;
   email: string;
 }
 
@@ -17,6 +18,13 @@ export interface User {
  * Datos que necesita el negocio para iniciar sesión.
  */
 export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+// Register
+export interface RegisterCredentials {
+  name: string;
   email: string;
   password: string;
 }

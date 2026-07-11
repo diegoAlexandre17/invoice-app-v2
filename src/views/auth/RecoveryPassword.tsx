@@ -7,12 +7,15 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { useRecoveryPassword } from "@/features/auth/presentation/hooks/useRecoveryPassword";
+import { PATHS } from "@/router/paths";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ParseKeys } from "i18next";
 import { type JSX } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { toast } from "sonner";
 import { z } from "zod";
 
 const recoverySchema = z.object({
@@ -23,7 +26,11 @@ type RecoveryFormData = z.infer<typeof recoverySchema>;
 type ErrorFormKey = ParseKeys;
 
 const RecoveryPassword = (): JSX.Element => {
+
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const recoveryPassword = useRecoveryPassword();
 
   const {
     register,
@@ -37,7 +44,14 @@ const RecoveryPassword = (): JSX.Element => {
   });
 
   const onSubmit: SubmitHandler<RecoveryFormData> = (formData) => {
-    console.log(formData);
+    recoveryPassword.mutate(formData.email, {
+      onSuccess: () => {
+        toast.success(t("common.success"), {
+          description: t("auth.recoverPasswordSuccess"),
+        });
+        navigate(PATHS.login);
+      },
+    });
   };
 
   return (

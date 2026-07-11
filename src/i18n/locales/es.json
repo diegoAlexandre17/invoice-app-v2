@@ -1,5 +1,6 @@
 {
   "common": {
+    "success": "Éxito",
     "goBack": "Regresar",
     "login": "Iniciar Sesión",
     "password": "Contraseña",
@@ -25,7 +26,10 @@
     "signIn": "Ingresar",
     "recoveryTitle": "Recuperar contraseña",
     "recover": "Recuperar",
-    "haveAccount": "¿Ya tienes una cuenta?"
+    "haveAccount": "¿Ya tienes una cuenta?",
+    "registerSuccessTitle":"Registro exitoso",
+    "validateEmail": "Por favor valide su email y luego puede iniciar sesión en la plataforma",
+    "recoverPasswordSuccess": "Correo de restauración de contraseña enviado exitosamente"
   },
   "navigation": {
     "dashboard": "Dashboard",
