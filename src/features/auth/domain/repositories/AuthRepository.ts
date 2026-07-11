@@ -16,4 +16,5 @@ export interface AuthRepository {
   getCurrentUser(): Promise<User | null>;
   register(credentials: RegisterCredentials): Promise<User>;
   recoverPassword(email: string): Promise<void>;
+  updatePassword(newPassword: string): Promise<void>;
 }

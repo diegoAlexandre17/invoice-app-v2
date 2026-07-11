@@ -29,7 +29,10 @@
     "haveAccount": "Already have an account?",
     "registerSuccessTitle": "Successful registration",
     "validateEmail": "Please validate your email and then you can login to the platform",
-    "recoverPasswordSuccess": "Password recovery email sent successfully"
+    "updatePassword": "Update Password",
+    "recoverPasswordSuccess": "Password recovery email sent successfully",
+    "updatePasswordSuccess": "Password updated successfully",
+    "invalidRecoveryLink": "The link is invalid or has expired. Please request a new one."
   },
   "navigation": {
     "dashboard": "Dashboard",

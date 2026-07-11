@@ -29,7 +29,10 @@
     "haveAccount": "¿Ya tienes una cuenta?",
     "registerSuccessTitle":"Registro exitoso",
     "validateEmail": "Por favor valide su email y luego puede iniciar sesión en la plataforma",
-    "recoverPasswordSuccess": "Correo de restauración de contraseña enviado exitosamente"
+    "updatePassword": "Actualizar contraseña",
+    "recoverPasswordSuccess": "Correo de restauración de contraseña enviado exitosamente",
+    "updatePasswordSuccess": "Contraseña actualizada exitosamente",
+    "invalidRecoveryLink": "El enlace no es válido o expiró. Solicitá uno nuevo."
   },
   "navigation": {
     "dashboard": "Dashboard",

@@ -90,4 +90,12 @@ export class SupabaseAuthRepository implements AuthRepository {
       throw new Error(error?.message ?? "No se realizar la accion");
     }
   }
+
+  async updatePassword(newPassword: string): Promise<void> {
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+
+    if (error) {
+      throw new Error(error?.message ?? "No se realizar la accion");
+    }
+  }
 }
