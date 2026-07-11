@@ -1,8 +1,6 @@
 import { getCurrentUserUseCase } from "@/features/auth/application/useCases/getCurrentUserUseCase";
-import { SupabaseAuthRepository } from "@/features/auth/infrastructure/SupabaseAuthRepository";
+import { authRepository } from "@/features/auth/infrastructure/authRepository";
 import { useQuery } from "@tanstack/react-query";
-
-const authRepository = new SupabaseAuthRepository();
 
 /**
  * HOOK de presentación: verifica si existe una sesión válida en la pantalla

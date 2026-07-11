@@ -14,7 +14,9 @@
     "name": "Name",
     "actions": "Actions",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "logout":"Logout",
+    "commonError":"An error occurred, please try again"
   },
   "auth": {
     "loginTitle": "Welcome Back",

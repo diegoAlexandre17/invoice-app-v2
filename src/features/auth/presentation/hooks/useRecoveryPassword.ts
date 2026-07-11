@@ -1,9 +1,6 @@
 import { recoveryPasswordUseCase } from "@/features/auth/application/useCases/recoveryPasswordUseCase";
-import { SupabaseAuthRepository } from "@/features/auth/infrastructure/SupabaseAuthRepository";
+import { authRepository } from "@/features/auth/infrastructure/authRepository";
 import { useMutation } from "@tanstack/react-query";
-
-const authRepository = new SupabaseAuthRepository();
-
 
 export const useRecoveryPassword = () => {
   return useMutation({

@@ -12,7 +12,7 @@ import type { AuthRepository } from "@/features/auth/domain/repositories/AuthRep
  * pero este es el lugar donde pondrías cosas como "no permitir login si la
  * cuenta está bloqueada", registrar auditoría, etc.
  */
-export const loginUseCase = async (
+export const loginUseCase = (
   authRepository: AuthRepository,
   credentials: LoginCredentials
 ): Promise<User> => {

@@ -1,15 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import type { LoginCredentials } from "../../domain/entities/User";
 import { loginUseCase } from "../../application/useCases/loginUseCase";
-import { SupabaseAuthRepository } from "../../infrastructure/SupabaseAuthRepository";
-
-/**
- * Instanciamos el repositorio UNA vez, fuera del hook.
- *
- * 👉 ESTA ES LA ÚNICA LÍNEA QUE CAMBIÁS AL MIGRAR DE BACKEND.
- * Reemplazás SupabaseAuthRepository por tu HttpAuthRepository y listo.
- */
-const authRepository = new SupabaseAuthRepository();
+import { authRepository } from "../../infrastructure/authRepository";
 
 /**
  * HOOK de presentación: conecta React con el caso de uso de login.

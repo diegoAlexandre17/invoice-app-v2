@@ -1,6 +1,6 @@
 import type { AuthRepository } from "@/features/auth/domain/repositories/AuthRepository";
 
-export const updatePasswordUseCase = async (
+export const updatePasswordUseCase = (
   authRepository: AuthRepository,
   newPassword: string
 ): Promise<void> => {

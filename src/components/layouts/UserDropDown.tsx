@@ -3,18 +3,43 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
+  DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import i18next from "i18next";
 import { useTranslation } from "react-i18next";
+import { LogOutIcon } from "lucide-react";
+import { useLogout } from "@/features/auth/presentation/hooks/useLogout";
+import { useNavigate } from "react-router";
+import { PATHS } from "@/router/paths";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const UserDropDown = () => {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+  const logout = useLogout();
+  const queryClient = useQueryClient();
 
   const handleLanguageChange = (value: string) => {
     i18next.changeLanguage(value);
+  };
+
+  const handleLogout = () => {
+    logout.mutate(undefined, {
+      onSuccess: () => {
+        queryClient.clear();
+        navigate(PATHS.login);
+      },
+      onError: () => {
+        toast.error("Error", {
+          description: t("common.commonError"),
+        });
+      },
+    });
   };
 
   return (
@@ -44,6 +69,13 @@ const UserDropDown = () => {
           >
             {t("common.english")}
           </DropdownMenuCheckboxItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem variant="destructive" onClick={handleLogout}>
+            <LogOutIcon />
+            {t("common.logout")}
+          </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -1,8 +1,6 @@
 import { updatePasswordUseCase } from "@/features/auth/application/useCases/updatePasswordUseCase";
-import { SupabaseAuthRepository } from "@/features/auth/infrastructure/SupabaseAuthRepository";
+import { authRepository } from "@/features/auth/infrastructure/authRepository";
 import { useMutation } from "@tanstack/react-query";
-
-const authRepository = new SupabaseAuthRepository();
 
 export const useUpdatePassword = () => {
   return useMutation({

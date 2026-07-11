@@ -14,7 +14,9 @@
     "name": "Nombre",
     "actions": "Acciones",
     "edit": "Editar",
-    "delete": "Eliminar"
+    "delete": "Eliminar",
+    "logout":"Cerrar sesión",
+    "commonError":"Ocurrió un error, por favor intente nuevamente"
   },
   "auth": {
     "loginTitle": "Bienvenido de Vuelta",
