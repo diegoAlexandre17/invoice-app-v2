@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import type { LoginCredentials } from "../../domain/entities/User";
 import { loginUseCase } from "../../application/useCases/loginUseCase";
-import { authRepository } from "../../infrastructure/authRepository";
+import { authRepositoryInstance } from "../../infrastructure/authRepository";
 
 /**
  * HOOK de presentación: conecta React con el caso de uso de login.
@@ -13,6 +13,6 @@ import { authRepository } from "../../infrastructure/authRepository";
 export const useLogin = () => {
   return useMutation({
     mutationFn: (credentials: LoginCredentials) =>
-      loginUseCase(authRepository, credentials),
+      loginUseCase(authRepositoryInstance, credentials),
   });
 };

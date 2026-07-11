@@ -1,5 +1,5 @@
 import { getCurrentUserUseCase } from "@/features/auth/application/useCases/getCurrentUserUseCase";
-import { authRepository } from "@/features/auth/infrastructure/authRepository";
+import { authRepositoryInstance } from "@/features/auth/infrastructure/authRepository";
 import { useQuery } from "@tanstack/react-query";
 
 /**
@@ -14,7 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 export const useRecoverySession = () => {
   return useQuery({
     queryKey: ["recovery-session"],
-    queryFn: () => getCurrentUserUseCase(authRepository),
+    queryFn: () => getCurrentUserUseCase(authRepositoryInstance),
     retry: false, // si no hay sesión, no tiene sentido reintentar
   });
 };

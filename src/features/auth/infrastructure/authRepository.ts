@@ -6,9 +6,9 @@ import { SupabaseAuthRepository } from "./SupabaseAuthRepository";
  * 👉 ESTE ES EL ÚNICO LUGAR DE TODA LA APP QUE DECIDE QUÉ BACKEND SE USA.
  * El día que migres a tu backend propio, cambiás SOLO esta línea:
  *
- *   const authRepository = new HttpAuthRepository();
+ *   export const authRepositoryInstance = new HttpAuthRepository();
  *
  * Todos los hooks de presentación importan esta instancia, así que no hay
  * que tocar 5 archivos: se cambia acá y toda la app queda migrada.
  */
-export const authRepository = new SupabaseAuthRepository();
+export const authRepositoryInstance = new SupabaseAuthRepository();
