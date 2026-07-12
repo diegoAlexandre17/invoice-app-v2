@@ -9,7 +9,7 @@ import { createBrowserRouter, Navigate } from "react-router";
 
 const Login = lazy(() => import("@/views/auth/Login"));
 const Dashboard = lazy(() => import("@/views/Dashboard"));
-const Customers = lazy(() => import("@/views/Customers/Customers"));
+const Customers = lazy(() => import("@/views/customers/Customers"));
 const RecoveryPassword = lazy(() => import("@/views/auth/RecoveryPassword"));
 const ResetPassword = lazy(() => import("@/views/auth/ResetPassword"));
 const Register = lazy(() => import("@/views/auth/Register"));

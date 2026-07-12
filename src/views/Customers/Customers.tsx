@@ -1,23 +1,24 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import type { ICustomers } from "./types";
-import customers from "./customers.data";
 import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
-import { CardsSectionGraphs } from "./CardsSectionGraphs";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
-import CustomerModal from "./CustomerModal";
 import { ActionTable } from "@/components/shared/ActionTable";
 import { FilePlus, SquarePen, Trash } from "lucide-react";
+import type { Customer } from "@/features/customers/domain/entities/Customer";
+import { useGetAllCustomers } from "@/features/customers/presentation/hooks/useGetAllCustomer";
+import { CardsSectionGraphs } from "@/views/customers/CardsSectionGraphs";
 
 const Customers = () => {
   const { t } = useTranslation();
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [editingCustomer, setEditingCustomer] = useState<ICustomers | null>(
+  /* const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [editingCustomer, setEditingCustomer] = useState<Customer | null>(
     null,
-  );
+  ); */
 
-  const columns: ColumnDef<ICustomers>[] = [
+  const { data: customers = [], isLoading } = useGetAllCustomers();
+
+  const columns: ColumnDef<Customer>[] = [
     {
       accessorKey: "name",
       header: t("customers.customerName"),
@@ -27,18 +28,23 @@ const Customers = () => {
       header: "Email",
     },
     {
+      accessorKey: "phone",
       header: t("customers.phone"),
-      cell: ({ row }) => <div>{row.getValue("phone") ?? "-"}</div>
+      cell: ({ row }) => {
+        return <div>{row.getValue("phone") ?? "-"}</div>
+      }
     },
     {
+      accessorKey: "identification",
       header: t("customers.identification"),
       cell: ({ row }) => <div>{row.getValue("identification") ?? "-"}</div>
     },
     {
+      accessorKey: "address",
       header: t("customers.address"),
       cell: ({ row }) => <div>{row.getValue("address") ?? "-"}</div>
     },
-    {
+    /* {
       accessorKey: "actions",
       header: t("common.actions"),
       cell: ({ row }) => (
@@ -50,10 +56,10 @@ const Customers = () => {
           />
         </>
       ),
-    },
+    }, */
   ];
 
-  const handleOpenModal = (): void => {
+  /* const handleOpenModal = (): void => {
     setIsOpen(true);
   };
 
@@ -62,28 +68,28 @@ const Customers = () => {
     setEditingCustomer(null);
   };
 
-  const handleEditCustomer = (customer: ICustomers) => {
+  const handleEditCustomer = (customer: Customer) => {
     setEditingCustomer(customer);
     setIsOpen(true);
-  };
+  }; */
 
   return (
     <div className="flex flex-1 flex-col">
-      <CustomerModal
+      {/* <CustomerModal
         isEdit={editingCustomer}
         isOpen={isOpen}
         onClose={handleCloseModal}
-      />
+      /> */}
       <CardsSectionGraphs />
-      <DataTable
-        
+      <DataTable     
         columns={columns}
         data={customers}
-        actions={
+        // isLoading={isLoading}
+        /* actions={
           <Button onClick={handleOpenModal}>
             {t("customers.addCustomer")}
           </Button>
-        }
+        } */
       />
     </div>
   );

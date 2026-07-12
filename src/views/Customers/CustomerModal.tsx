@@ -21,7 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import en from "@/i18n/locales/en.json";
-import type { ICustomers } from "./types";
+import type { Customer } from "@/features/customers/domain/entities/Customer";
 
 const customerSchema = z.object({
   name: z.string().min(1, "nameRequired").max(60, "maxLength60"),
@@ -37,7 +37,7 @@ type ErrorFormKey = keyof typeof en.errorsForm.customers;
 interface CustomerModalProps {
   isOpen: boolean;
   onClose: () => void;
-  isEdit: ICustomers | null;
+  isEdit: Customer | null;
 }
 
 const defaultValues = {

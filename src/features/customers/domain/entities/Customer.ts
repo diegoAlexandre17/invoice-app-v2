@@ -1,6 +1,6 @@
-export interface ICustomers {
+export interface Customer {
   id: number;
-  created_at: string;
+  createdAt: string;
   name: string;
   email: string;
   phone?: string | null;
