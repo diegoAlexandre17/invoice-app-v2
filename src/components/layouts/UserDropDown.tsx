@@ -17,12 +17,15 @@ import { useNavigate } from "react-router";
 import { PATHS } from "@/router/paths";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useSession } from "@/features/auth/presentation/hooks/useSession";
 
 const UserDropDown = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const logout = useLogout();
   const queryClient = useQueryClient();
+
+  const { data: user } = useSession();
 
   const handleLanguageChange = (value: string) => {
     i18next.changeLanguage(value);
@@ -44,14 +47,15 @@ const UserDropDown = () => {
 
   return (
     <DropdownMenu>
+      <div className="flex flex-col items-center">
+        <p>{user?.name}</p>
+        <small>{user?.email}</small>
+      </div>
       <DropdownMenuTrigger asChild className="cursor-pointer">
         <Avatar size="lg">
-          <AvatarImage
-            src="https://github.com/shadcn.png"
-            alt="@shadcn"
-            className="grayscale"
-          />
-          <AvatarFallback>CN</AvatarFallback>
+          <AvatarFallback>
+            {user?.name?.charAt(0).toUpperCase() ?? "?"}
+          </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">

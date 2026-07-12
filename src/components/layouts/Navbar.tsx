@@ -10,7 +10,6 @@ const Navbar = () => {
         <Breadcrumbs />
       </div>
       <div className="flex gap-x-2 items-center ml-auto">
-        <p>Toogle theme</p>
         <UserDropDown />
       </div>
     </div>
