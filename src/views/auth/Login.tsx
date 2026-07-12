@@ -7,17 +7,20 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { useLogin } from "@/features/auth/presentation/hooks/useLogin";
+import { PATHS } from "@/router/paths";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import type { ParseKeys } from "i18next";
 import { Eye, EyeClosed } from "lucide-react";
-import { useState, type JSX } from "react";
+import { useRef, useState, type JSX } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router";
 import { z } from "zod";
-import { useLogin } from "@/features/auth/presentation/hooks/useLogin";
-import { PATHS } from "@/router/paths";
-import { useQueryClient } from "@tanstack/react-query";
+
+const captchaKey = import.meta.env.VITE_HCAPTCHA_SITEKEY;
 
 const loginSchema = z.object({
   email: z.email("errorsForm.common.emailRequired"),
@@ -29,6 +32,9 @@ type userLogin = z.infer<typeof loginSchema>;
 
 const Login = (): JSX.Element => {
   const [viewPassword, setViewPassword] = useState<boolean>(false);
+  const [captchaToken, setCaptchaToken] = useState<string | undefined>();
+
+  const captcha = useRef<HCaptcha>(null);
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -48,12 +54,21 @@ const Login = (): JSX.Element => {
   });
 
   const onSubmit: SubmitHandler<userLogin> = (formData) => {
-    login.mutate(formData, {
-      onSuccess: (user) => {
-        queryClient.setQueryData(["session"], user);
-        navigate(PATHS.dashboard);
-      },
-    });
+    login.mutate(
+      { ...formData, captchaToken },
+      {
+        onSuccess: (user) => {
+          queryClient.setQueryData(["session"], user);
+          navigate(PATHS.dashboard);
+        },
+        onSettled: () => {
+          // El token de hCaptcha es de un solo uso: reseteamos tras cada
+          // intento (éxito o error) para que un nuevo submit tenga token válido.
+          captcha.current?.resetCaptcha();
+          setCaptchaToken(undefined);
+        },
+      }
+    );
   };
 
   return (
@@ -113,6 +128,16 @@ const Login = (): JSX.Element => {
                 </Link>
               </Field>
 
+              <div className="flex justify-center">
+                <HCaptcha
+                  ref={captcha}
+                  sitekey={captchaKey}
+                  onVerify={(token) => {
+                    setCaptchaToken(token);
+                  }}
+                />
+              </div>
+
               <Field>
                 {login.isError && (
                   <p className="text-sm text-destructive text-center">
@@ -121,7 +146,7 @@ const Login = (): JSX.Element => {
                 )}
                 <Button
                   onClick={handleSubmit(onSubmit)}
-                  disabled={login.isPending}
+                  disabled={login.isPending || !captchaToken}
                 >
                   {login.isPending ? t("common.loading") : t("common.login")}
                 </Button>

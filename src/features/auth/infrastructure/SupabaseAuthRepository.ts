@@ -17,10 +17,11 @@ import { PATHS } from "@/router/paths";
  * Su trabajo: hablar con Supabase y TRADUCIR su respuesta a tu entidad User.
  */
 export class SupabaseAuthRepository implements AuthRepository {
-  async login({ email, password }: LoginCredentials): Promise<User> {
+  async login({ email, password, captchaToken }: LoginCredentials): Promise<User> {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
+      options: { captchaToken },
     });
 
     if (error || !data.user) {
