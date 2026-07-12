@@ -1,8 +1,9 @@
+import type { RecoverPasswordCredentials } from "@/features/auth/domain/entities/User";
 import type { AuthRepository } from "@/features/auth/domain/repositories/AuthRepository";
 
 export const recoveryPasswordUseCase = (
   authRepository: AuthRepository,
-  email: string
+  credentials: RecoverPasswordCredentials
 ): Promise<void> => {
-  return authRepository.recoverPassword(email);
+  return authRepository.recoverPassword(credentials);
 };

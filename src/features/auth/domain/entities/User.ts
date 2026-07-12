@@ -29,3 +29,11 @@ export interface RegisterCredentials {
   email: string;
   password: string;
 }
+
+/**
+ * Datos que necesita el negocio para recuperar la contraseña vía email.
+ */
+export interface RecoverPasswordCredentials {
+  email: string;
+  captchaToken: string;
+}

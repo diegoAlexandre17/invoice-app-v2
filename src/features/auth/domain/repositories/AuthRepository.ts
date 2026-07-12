@@ -1,4 +1,9 @@
-import type { LoginCredentials, RegisterCredentials, User } from "../entities/User";
+import type {
+  LoginCredentials,
+  RecoverPasswordCredentials,
+  RegisterCredentials,
+  User,
+} from "../entities/User";
 
 /**
  * CONTRATO (el "enchufe") del repositorio de autenticación.
@@ -15,6 +20,6 @@ export interface AuthRepository {
   logout(): Promise<void>;
   getCurrentUser(): Promise<User | null>;
   register(credentials: RegisterCredentials): Promise<User>;
-  recoverPassword(email: string): Promise<void>;
+  recoverPassword(credentials: RecoverPasswordCredentials): Promise<void>;
   updatePassword(newPassword: string): Promise<void>;
 }

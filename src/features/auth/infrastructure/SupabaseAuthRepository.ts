@@ -1,6 +1,7 @@
 import { supabase } from "@/shared/infrastructure/supabase/supabaseClient";
 import type {
   LoginCredentials,
+  RecoverPasswordCredentials,
   RegisterCredentials,
   User,
 } from "../domain/entities/User";
@@ -17,7 +18,11 @@ import { PATHS } from "@/router/paths";
  * Su trabajo: hablar con Supabase y TRADUCIR su respuesta a tu entidad User.
  */
 export class SupabaseAuthRepository implements AuthRepository {
-  async login({ email, password, captchaToken }: LoginCredentials): Promise<User> {
+  async login({
+    email,
+    password,
+    captchaToken,
+  }: LoginCredentials): Promise<User> {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -80,12 +85,14 @@ export class SupabaseAuthRepository implements AuthRepository {
     };
   }
 
-  async recoverPassword(email: string): Promise<void> {
-    const { error } = await supabase.auth.resetPasswordForEmail(email,
-       {
-          redirectTo: `${window.location.origin}${PATHS.resetPassword}`,
-        }
-    )
+  async recoverPassword({
+    email,
+    captchaToken,
+  }: RecoverPasswordCredentials): Promise<void> {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      captchaToken,
+      redirectTo: `${window.location.origin}${PATHS.resetPassword}`,
+    });
 
     if (error) {
       throw new Error(error?.message ?? "No se realizar la accion");

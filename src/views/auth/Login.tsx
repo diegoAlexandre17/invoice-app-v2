@@ -54,6 +54,10 @@ const Login = (): JSX.Element => {
   });
 
   const onSubmit: SubmitHandler<userLogin> = (formData) => {
+    if(!captchaToken) {
+      return;
+    }
+    
     login.mutate(
       { ...formData, captchaToken },
       {

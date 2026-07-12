@@ -9,24 +9,28 @@ import {
 import { Input } from "@/components/ui/input";
 import { useRecoveryPassword } from "@/features/auth/presentation/hooks/useRecoveryPassword";
 import { PATHS } from "@/router/paths";
+import { HCaptcha } from "@hcaptcha/react-hcaptcha";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ParseKeys } from "i18next";
-import { type JSX } from "react";
+import { useRef, useState, type JSX } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { z } from "zod";
+const captchaKey = import.meta.env.VITE_HCAPTCHA_SITEKEY;
 
 const recoverySchema = z.object({
-   email: z.email("errorsForm.common.emailRequired"),
+  email: z.email("errorsForm.common.emailRequired"),
 });
 
 type RecoveryFormData = z.infer<typeof recoverySchema>;
 type ErrorFormKey = ParseKeys;
 
 const RecoveryPassword = (): JSX.Element => {
+  const [captchaToken, setCaptchaToken] = useState<string | undefined>();
 
+  const captcha = useRef<HCaptcha>(null);
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -44,14 +48,25 @@ const RecoveryPassword = (): JSX.Element => {
   });
 
   const onSubmit: SubmitHandler<RecoveryFormData> = (formData) => {
-    recoveryPassword.mutate(formData.email, {
-      onSuccess: () => {
-        toast.success(t("common.success"), {
-          description: t("auth.recoverPasswordSuccess"),
-        });
-        navigate(PATHS.login);
+    if (!captchaToken) return;
+    
+    recoveryPassword.mutate(
+      { email: formData.email, captchaToken: captchaToken },
+      {
+        onSuccess: () => {
+          toast.success(t("common.success"), {
+            description: t("auth.recoverPasswordSuccess"),
+          });
+          navigate(PATHS.login);
+        },
+        onSettled: () => {
+          // El token de hCaptcha es de un solo uso: reseteamos tras cada
+          // intento (éxito o error) para que un nuevo submit tenga token válido.
+          captcha.current?.resetCaptcha();
+          setCaptchaToken(undefined);
+        },
       },
-    });
+    );
   };
 
   return (
@@ -77,8 +92,26 @@ const RecoveryPassword = (): JSX.Element => {
                 )}
               </Field>
 
+              <div className="flex justify-center">
+                <HCaptcha
+                  ref={captcha}
+                  sitekey={captchaKey}
+                  onVerify={(token) => {
+                    setCaptchaToken(token);
+                  }}
+                />
+              </div>
+
               <Field>
-                <Button onClick={handleSubmit(onSubmit)}>
+                {recoveryPassword.isError && (
+                  <p className="text-sm text-destructive text-center">
+                    {recoveryPassword.error.message}
+                  </p>
+                )}
+                <Button
+                  onClick={handleSubmit(onSubmit)}
+                  disabled={!captchaToken}
+                >
                   {t("auth.recover")}
                 </Button>
               </Field>
