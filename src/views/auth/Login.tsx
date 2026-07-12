@@ -17,6 +17,7 @@ import { Link, useNavigate } from "react-router";
 import { z } from "zod";
 import { useLogin } from "@/features/auth/presentation/hooks/useLogin";
 import { PATHS } from "@/router/paths";
+import { useQueryClient } from "@tanstack/react-query";
 
 const loginSchema = z.object({
   email: z.email("errorsForm.common.emailRequired"),
@@ -32,6 +33,7 @@ const Login = (): JSX.Element => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const login = useLogin();
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -47,7 +49,10 @@ const Login = (): JSX.Element => {
 
   const onSubmit: SubmitHandler<userLogin> = (formData) => {
     login.mutate(formData, {
-      onSuccess: () => navigate(PATHS.dashboard),
+      onSuccess: (user) => {
+        queryClient.setQueryData(["session"], user);
+        navigate(PATHS.dashboard);
+      },
     });
   };
 
