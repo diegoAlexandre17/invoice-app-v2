@@ -1,3 +1,4 @@
+import TextErrorSmall from "@/components/shared/TextErrorSmall";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -7,18 +8,19 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeClosed } from "lucide-react";
-import { useState, type JSX } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import type { ParseKeys } from "i18next";
-import { Link, useNavigate } from "react-router";
-import { z } from "zod";
 import { useRegister } from "@/features/auth/presentation/hooks/useRegister";
 import { PATHS } from "@/router/paths";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
+import { zodResolver } from "@hookform/resolvers/zod";
+import type { ParseKeys } from "i18next";
+import { Eye, EyeClosed } from "lucide-react";
+import { useRef, useState, type JSX } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
-import TextErrorSmall from "@/components/shared/TextErrorSmall";
+import { z } from "zod";
+const captchaKey = import.meta.env.VITE_HCAPTCHA_SITEKEY;
 
 const registerSchema = z.object({
   name: z.string().min(1, "errorsForm.common.nameRequired"),
@@ -37,6 +39,9 @@ type ErrorFormKey = ParseKeys;
 
 const Register = (): JSX.Element => {
   const [viewPassword, setViewPassword] = useState<boolean>(false);
+  const [captchaToken, setCaptchaToken] = useState<string | undefined>();
+
+  const captcha = useRef<HCaptcha>(null);
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -56,14 +61,23 @@ const Register = (): JSX.Element => {
   });
 
   const onSubmit: SubmitHandler<RegisterFormData> = (formData) => {
-    registerUser.mutate(formData, {
-      onSuccess: () => {
-        toast.success(t("auth.registerSuccessTitle"), {
-          description: t("auth.validateEmail"),
-        });
-        navigate(PATHS.login);
+    if (!captchaToken) return;
+
+    registerUser.mutate(
+      { ...formData, captchaToken },
+      {
+        onSuccess: () => {
+          toast.success(t("auth.registerSuccessTitle"), {
+            description: t("auth.validateEmail"),
+          });
+          navigate(PATHS.login);
+        },
+        onSettled: () => {
+          captcha.current?.resetCaptcha();
+          setCaptchaToken(undefined);
+        },
       },
-    });
+    );
   };
 
   return (
@@ -133,10 +147,20 @@ const Register = (): JSX.Element => {
                 )}
               </Field>
 
+              <div className="flex justify-center">
+                <HCaptcha
+                  ref={captcha}
+                  sitekey={captchaKey}
+                  onVerify={(token) => {
+                    setCaptchaToken(token);
+                  }}
+                />
+              </div>
+
               <Field>
                 <Button
                   onClick={handleSubmit(onSubmit)}
-                  disabled={registerUser.isPending}
+                  disabled={registerUser.isPending || !captchaToken}
                 >
                   {registerUser.isPending
                     ? t("common.loading")

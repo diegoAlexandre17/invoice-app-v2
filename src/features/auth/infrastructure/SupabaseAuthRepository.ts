@@ -63,11 +63,13 @@ export class SupabaseAuthRepository implements AuthRepository {
     email,
     password,
     name,
+    captchaToken,
   }: RegisterCredentials): Promise<User> {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
+        captchaToken,
         data: {
           first_name: name,
         },
