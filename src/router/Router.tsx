@@ -1,5 +1,7 @@
 import AuthLayout from "@/components/layouts/AuthLayout";
 import MainLayout from "@/components/layouts/MainLayout";
+import { ProtectedRoute } from "@/router/guards/ProtectedRoute";
+import { PublicOnlyRoute } from "@/router/guards/PublicOnlyRoute";
 import { PATHS, SEGMENTS } from "@/router/paths";
 import { crumb } from "@/router/types";
 import { lazy } from "react";
@@ -19,41 +21,50 @@ const Router = () => {
       element: <Navigate to="/auth/login" />,
     },
     {
-      path: PATHS.auth,
       element: <AuthLayout />,
+      children: [{ path: PATHS.resetPassword, element: <ResetPassword /> }],
+    },
+    {
+      path: PATHS.auth,
+      element: <PublicOnlyRoute />,
       children: [
         {
-          path: "/auth/login",
-          element: <Login />,
-        },
-        {
-          path: "/auth/recovery-password",
-          element: <RecoveryPassword />,
-        },
-        {
-          path: PATHS.resetPassword,
-          element: <ResetPassword />,
-        },
-        {
-          path: PATHS.register,
-          element: <Register />,
+          element: <AuthLayout />,
+          children: [
+            {
+              path: "/auth/login",
+              element: <Login />,
+            },
+            {
+              path: PATHS.recoveryPassword,
+              element: <RecoveryPassword />,
+            },
+            {
+              path: PATHS.register,
+              element: <Register />,
+            },
+          ],
         },
       ],
     },
-
     {
       path: PATHS.admin,
-      element: <MainLayout />,
+      element: <ProtectedRoute />,
       children: [
         {
-          path: SEGMENTS.dashboard,
-          element: <Dashboard />,
-          handle: crumb("navigation.dashboard"),
-        },
-        {
-          path: SEGMENTS.customers,
-          element: <Customers />,
-          handle: crumb("navigation.customers"),
+          element: <MainLayout />,
+          children: [
+            {
+              path: SEGMENTS.dashboard,
+              element: <Dashboard />,
+              handle: crumb("navigation.dashboard"),
+            },
+            {
+              path: SEGMENTS.customers,
+              element: <Customers />,
+              handle: crumb("navigation.customers"),
+            },
+          ],
         },
       ],
     },

@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useUpdatePassword } from "@/features/auth/presentation/hooks/useUpdatePassword";
-import { useRecoverySession } from "@/features/auth/presentation/hooks/useRecoverySession";
 import { PATHS } from "@/router/paths";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ParseKeys } from "i18next";
@@ -18,6 +17,7 @@ import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { z } from "zod";
 import Loader from "@/components/shared/Loader";
+import { useSession } from "@/features/auth/presentation/hooks/useSession";
 
 const recoveryPasswordSchema = z.object({
   password: z
@@ -36,7 +36,7 @@ const ResetPassword = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const updatePassword = useUpdatePassword();
-  const { data: user, isLoading } = useRecoverySession();
+  const { data: user, isLoading } = useSession();
 
   const {
     register,
