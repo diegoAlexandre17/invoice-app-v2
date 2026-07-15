@@ -1,10 +1,26 @@
-import type { Customer } from "@/features/customers/domain/entities/Customer";
+import type {
+  Customer,
+  GetCustomersParams,
+} from "@/features/customers/domain/entities/Customer";
 import type { CustomerRepository } from "@/features/customers/domain/repositories/CustomerRepository";
 import { supabase } from "@/shared/infrastructure/supabase/supabaseClient";
 
 export class SupabaseCustomerRepository implements CustomerRepository {
-  async getAll(): Promise<Customer[]> {
-    const { data, error } = await supabase.from("customers").select("*");
+  async getAll(params?: GetCustomersParams): Promise<Customer[]> {
+    let query = supabase.from("customers").select("*");
+
+    const search = params?.search?.trim();
+    if (search) {
+      // Búsqueda server-side, case-insensitive, en varias columnas.
+      // %term% = "contiene". Supabase escapa el valor, pero evitamos
+      // comas en el patrón porque `or` las usa como separador de filtros.
+      const term = search.replace(/,/g, "");
+      query = query.or(
+        `name.ilike.%${term}%,email.ilike.%${term}%,id_number.ilike.%${term}%`
+      );
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       throw new Error(error?.message ?? "No se pudo traer los clientes");

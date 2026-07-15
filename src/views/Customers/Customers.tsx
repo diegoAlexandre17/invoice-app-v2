@@ -8,6 +8,7 @@ import { FilePlus, SquarePen, Trash } from "lucide-react";
 import type { Customer } from "@/features/customers/domain/entities/Customer";
 import { useGetAllCustomers } from "@/features/customers/presentation/hooks/useGetAllCustomer";
 import { CardsSectionGraphs } from "@/views/customers/CardsSectionGraphs";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const Customers = () => {
   const { t } = useTranslation();
@@ -16,7 +17,14 @@ const Customers = () => {
     null,
   ); */
 
-  const { data: customers = [], isLoading } = useGetAllCustomers();
+  // Valor inmediato del input (lo que ve el usuario mientras escribe).
+  const [search, setSearch] = useState<string>("");
+  // Valor retrasado: solo dispara la búsqueda cuando el usuario deja de tipear.
+  const debouncedSearch = useDebounce(search, 400);
+
+  const { data: customers = [], isLoading } = useGetAllCustomers({
+    search: debouncedSearch,
+  });
 
   const columns: ColumnDef<Customer>[] = [
     {
@@ -81,9 +89,11 @@ const Customers = () => {
         onClose={handleCloseModal}
       /> */}
       <CardsSectionGraphs />
-      <DataTable     
+      <DataTable
         columns={columns}
         data={customers}
+        searchValue={search}
+        onSearchChange={setSearch}
         // isLoading={isLoading}
         /* actions={
           <Button onClick={handleOpenModal}>

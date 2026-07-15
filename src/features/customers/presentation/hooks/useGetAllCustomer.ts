@@ -1,11 +1,17 @@
 import { getAllCustomersUseCase } from "@/features/customers/application/useCases/getAllCustomers";
-import type { Customer } from "@/features/customers/domain/entities/Customer";
+import type {
+  Customer,
+  GetCustomersParams,
+} from "@/features/customers/domain/entities/Customer";
 import { customerRepositoryInstance } from "@/features/customers/infrastructure/customerRepositoryInstance";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
-export const useGetAllCustomers = () => {
+export const useGetAllCustomers = (params?: GetCustomersParams) => {
+  const search = params?.search?.trim() ?? "";
+
   return useQuery<Customer[]>({
-    queryKey: ["customers"],
-    queryFn: () => getAllCustomersUseCase(customerRepositoryInstance),
+    queryKey: ["customers", { search }],
+    queryFn: () => getAllCustomersUseCase(customerRepositoryInstance, { search }),
+    placeholderData: keepPreviousData,
   });
 };
