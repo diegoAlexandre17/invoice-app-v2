@@ -16,7 +16,8 @@
     "edit": "Edit",
     "delete": "Delete",
     "logout":"Logout",
-    "commonError":"An error occurred, please try again"
+    "commonError":"An error occurred, please try again",
+    "noData": "No data"
   },
   "auth": {
     "loginTitle": "Welcome Back",

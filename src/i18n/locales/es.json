@@ -16,7 +16,8 @@
     "edit": "Editar",
     "delete": "Eliminar",
     "logout":"Cerrar sesión",
-    "commonError":"Ocurrió un error, por favor intente nuevamente"
+    "commonError":"Ocurrió un error, por favor intente nuevamente",
+    "noData": "Sin datos"
   },
   "auth": {
     "loginTitle": "Bienvenido de Vuelta",
