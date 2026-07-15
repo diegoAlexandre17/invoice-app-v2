@@ -94,7 +94,7 @@ const Customers = () => {
         data={customers}
         searchValue={search}
         onSearchChange={setSearch}
-        // isLoading={isLoading}
+        isLoading={isLoading}
         /* actions={
           <Button onClick={handleOpenModal}>
             {t("customers.addCustomer")}

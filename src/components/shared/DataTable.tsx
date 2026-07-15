@@ -33,6 +33,7 @@ import { Search } from "lucide-react";
 import { Input } from "../ui/input";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -42,6 +43,7 @@ interface DataTableProps<TData, TValue> {
   onSearchChange?: (value: string) => void;
   actions?: JSX.Element;
   className?: string;
+  isLoading?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -52,6 +54,7 @@ export function DataTable<TData, TValue>({
   onSearchChange,
   actions,
   className,
+  isLoading = false,
 }: DataTableProps<TData, TValue>) {
   const { t } = useTranslation();
 
@@ -73,7 +76,7 @@ export function DataTable<TData, TValue>({
         <div className="flex items-center justify-between flex-wrap gap-2">
           {search && (
             <div className="relative w-full md:max-w-sm">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-primary" />
+              <Search className="absolute left-2 top-2 h-4 w-4 text-primary" />
               <Input
                 placeholder={t("common.search")}
                 value={searchValue}
@@ -109,7 +112,19 @@ export function DataTable<TData, TValue>({
               ))}
             </TableHeader>
             <TableBody>
-              {table.getRowModel().rows?.length ? (
+              {isLoading ? (
+                // Skeleton rows: mantienen el layout estable mientras carga,
+                // en vez de un vacío o un spinner que hace saltar la tabla.
+                Array.from({ length: 8 }).map((_, rowIndex) => (
+                  <TableRow key={`skeleton-${rowIndex}`}>
+                    {columns.map((_, cellIndex) => (
+                      <TableCell key={`skeleton-cell-${cellIndex}`}>
+                        <Skeleton className="h-4 w-full" />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}
