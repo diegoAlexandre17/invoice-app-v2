@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import type { Customer } from "@/features/customers/domain/entities/Customer";
 import { useCreateCustomer } from "@/features/customers/presentation/hooks/useCreateCustomer";
+import { useEditCustomer } from "@/features/customers/presentation/hooks/useEditCustomer";
 import en from "@/i18n/locales/en.json";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
@@ -40,7 +41,7 @@ type ErrorFormKey = keyof typeof en.errorsForm.customers;
 interface CustomerModalProps {
   isOpen: boolean;
   onClose: () => void;
-  isEdit: Customer | null;
+  isEditData: Customer | null;
 }
 
 const defaultValues = {
@@ -54,24 +55,27 @@ const defaultValues = {
 const CustomerModal = ({
   isOpen,
   onClose,
-  isEdit,
+  isEditData,
 }: CustomerModalProps): JSX.Element => {
   const { t } = useTranslation();
 
   const createCustomer = useCreateCustomer();
+  const editCustomer = useEditCustomer();
   const queryClient = useQueryClient();
 
+  const isSubmitting = createCustomer.isPending || editCustomer.isPending;
+
   useEffect(() => {
-    if (isEdit !== null) {
+    if (isEditData !== null) {
       reset({
-        name: isEdit?.name,
-        email: isEdit?.email,
-        phone: isEdit?.phone || "",
-        identification: isEdit?.identification || "",
-        address: isEdit?.address || "",
+        name: isEditData?.name,
+        email: isEditData?.email,
+        phone: isEditData?.phone || "",
+        identification: isEditData?.identification || "",
+        address: isEditData?.address || "",
       });
     }
-  }, [isEdit]);
+  }, [isEditData]);
 
   const {
     register,
@@ -88,6 +92,11 @@ const CustomerModal = ({
     onClose();
   };
 
+  const handleSuccess = () => {
+    handleClose();
+    queryClient.invalidateQueries({ queryKey: ["customers"] });
+  };
+
   const onSubmit: SubmitHandler<CustomerFormData> = (formData) => {
     const dataToSend = {
       name: formData.name,
@@ -97,10 +106,23 @@ const CustomerModal = ({
       address: formData.address || undefined,
     };
 
+    if (isEditData) {
+      return editCustomer.mutate(
+        { ...dataToSend, id: isEditData.id },
+        {
+          onSuccess: () => {
+            handleSuccess();
+            toast.success(t("common.success"), {
+              description: t("customers.updateCustomerSuccess"),
+            });
+          },
+        },
+      );
+    }
+
     createCustomer.mutate(dataToSend, {
       onSuccess: () => {
-        handleClose();
-        queryClient.invalidateQueries({ queryKey: ["customers"] });
+        handleSuccess();
         toast.success(t("common.success"), {
           description: t("customers.createCustomerSuccess"),
         });
@@ -114,7 +136,7 @@ const CustomerModal = ({
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle>
-              {isEdit
+              {isEditData
                 ? t("customers.editCustomer")
                 : t("customers.addCustomer")}
             </DialogTitle>
@@ -185,14 +207,14 @@ const CustomerModal = ({
             <Button
               variant={"destructive"}
               onClick={handleClose}
-              disabled={createCustomer.isPending}
+              disabled={isSubmitting}
             >
               {t("common.cancel")}
             </Button>
             <Button
               variant={"success"}
               onClick={handleSubmit(onSubmit)}
-              disabled={createCustomer.isPending}
+              disabled={isSubmitting}
             >
               {t("common.save")}
             </Button>

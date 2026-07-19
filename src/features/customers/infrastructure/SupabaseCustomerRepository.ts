@@ -52,4 +52,25 @@ export class SupabaseCustomerRepository implements CustomerRepository {
       throw new Error(error?.message ?? "No se pudo crear el cliente");
     }
   }
+
+  async edit(customerData: Omit<Customer, "createdAt">): Promise<void> {
+    const { data, error } = await supabase
+      .from("customers")
+      .update({
+        name: customerData.name,
+        email: customerData.email,
+        phone: customerData.phone,
+        id_number: customerData.identification,
+        address: customerData.address,
+      })
+      .eq("id", customerData.id)
+      .select();
+
+    if (error) {
+      throw new Error(error?.message ?? "No se pudo editar el cliente");
+    }
+
+    if (!data || data.length === 0)
+      throw new Error("Cliente no encontrado o sin permisos");
+  }
 }

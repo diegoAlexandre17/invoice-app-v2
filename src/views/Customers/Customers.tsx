@@ -1,3 +1,4 @@
+import { ActionTable } from "@/components/shared/ActionTable";
 import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
 import type { Customer } from "@/features/customers/domain/entities/Customer";
@@ -6,6 +7,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { CardsSectionGraphs } from "@/views/customers/CardsSectionGraphs";
 import CustomerModal from "@/views/customers/CustomerModal";
 import type { ColumnDef } from "@tanstack/react-table";
+import { SquarePen } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -50,7 +52,7 @@ const Customers = () => {
       header: t("customers.address"),
       cell: ({ row }) => <div>{row.getValue("address") ?? "-"}</div>
     },
-    /* {
+    {
       accessorKey: "actions",
       header: t("common.actions"),
       cell: ({ row }) => (
@@ -62,7 +64,7 @@ const Customers = () => {
           />
         </>
       ),
-    }, */
+    },
   ];
 
   const handleOpenModal = (): void => {
@@ -82,7 +84,7 @@ const Customers = () => {
   return (
     <div className="flex flex-1 flex-col">
       <CustomerModal
-        isEdit={editingCustomer}
+        isEditData={editingCustomer}
         isOpen={isOpen}
         onClose={handleCloseModal}
       />

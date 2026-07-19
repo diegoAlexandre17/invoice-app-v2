@@ -1,0 +1,9 @@
+import type { Customer } from "@/features/customers/domain/entities/Customer";
+import type { CustomerRepository } from "@/features/customers/domain/repositories/CustomerRepository";
+
+export const editCustomerUseCase = (
+    customerRepository: CustomerRepository,
+    customerData: Omit<Customer, "createdAt">
+) : Promise<void> => {
+    return customerRepository.edit(customerData)
+}
