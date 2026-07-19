@@ -1,4 +1,4 @@
-import { getAllCustomersUseCase } from "@/features/customers/application/useCases/getAllCustomers";
+import { getAllCustomersUseCase } from "@/features/customers/application/useCases/getAllCustomersUseCase";
 import type {
   Customer,
   GetCustomersParams,

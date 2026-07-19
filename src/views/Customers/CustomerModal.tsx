@@ -1,4 +1,4 @@
-import { useEffect, type JSX } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -6,8 +6,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { useTranslation } from "react-i18next";
 import {
   Field,
   FieldError,
@@ -17,11 +15,16 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import en from "@/i18n/locales/en.json";
 import type { Customer } from "@/features/customers/domain/entities/Customer";
+import { useCreateCustomer } from "@/features/customers/presentation/hooks/useCreateCustomer";
+import en from "@/i18n/locales/en.json";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, type JSX } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
+import { z } from "zod";
 
 const customerSchema = z.object({
   name: z.string().min(1, "nameRequired").max(60, "maxLength60"),
@@ -53,8 +56,10 @@ const CustomerModal = ({
   onClose,
   isEdit,
 }: CustomerModalProps): JSX.Element => {
-  console.log(isEdit);
   const { t } = useTranslation();
+
+  const createCustomer = useCreateCustomer();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (isEdit !== null) {
@@ -84,7 +89,23 @@ const CustomerModal = ({
   };
 
   const onSubmit: SubmitHandler<CustomerFormData> = (formData) => {
-    console.log(formData);
+    const dataToSend = {
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone || undefined,
+      identification: formData.identification || undefined,
+      address: formData.address || undefined,
+    };
+
+    createCustomer.mutate(dataToSend, {
+      onSuccess: () => {
+        handleClose();
+        queryClient.invalidateQueries({ queryKey: ["customers"] });
+        toast.success(t("common.success"), {
+          description: t("customers.createCustomerSuccess"),
+        });
+      },
+    });
   };
 
   return (
@@ -114,7 +135,9 @@ const CustomerModal = ({
                   <Input id="name" {...register("name")} />
                   {errors.name && (
                     <FieldError>
-                      {t(`errorsForm.customers.${errors.name.message as ErrorFormKey}`)}
+                      {t(
+                        `errorsForm.customers.${errors.name.message as ErrorFormKey}`,
+                      )}
                     </FieldError>
                   )}
                 </Field>
@@ -127,7 +150,9 @@ const CustomerModal = ({
                   <Input id="email" {...register("email")} />
                   {errors.email && (
                     <FieldError>
-                      {t(`errorsForm.customers.${errors.email.message as ErrorFormKey}`)}
+                      {t(
+                        `errorsForm.customers.${errors.email.message as ErrorFormKey}`,
+                      )}
                     </FieldError>
                   )}
                 </Field>
@@ -142,7 +167,6 @@ const CustomerModal = ({
                 <Field>
                   <FieldLabel htmlFor="identification">
                     <span>{t("customers.identification")}</span>
-                    <span className="text-destructive">*</span>
                   </FieldLabel>
                   <Input id="identification" {...register("identification")} />
                 </Field>
@@ -158,10 +182,18 @@ const CustomerModal = ({
           </FieldGroup>
 
           <DialogFooter>
-            <Button variant={"destructive"} onClick={handleClose}>
+            <Button
+              variant={"destructive"}
+              onClick={handleClose}
+              disabled={createCustomer.isPending}
+            >
               {t("common.cancel")}
             </Button>
-            <Button variant={"success"} onClick={handleSubmit(onSubmit)}>
+            <Button
+              variant={"success"}
+              onClick={handleSubmit(onSubmit)}
+              disabled={createCustomer.isPending}
+            >
               {t("common.save")}
             </Button>
           </DialogFooter>

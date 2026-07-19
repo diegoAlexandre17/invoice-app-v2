@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback } from "../ui/avatar";
 import i18next from "i18next";
 import { useTranslation } from "react-i18next";
 import { LogOutIcon } from "lucide-react";

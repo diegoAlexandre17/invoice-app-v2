@@ -16,7 +16,7 @@ export class SupabaseCustomerRepository implements CustomerRepository {
       // comas en el patrón porque `or` las usa como separador de filtros.
       const term = search.replace(/,/g, "");
       query = query.or(
-        `name.ilike.%${term}%,email.ilike.%${term}%,id_number.ilike.%${term}%`
+        `name.ilike.%${term}%,email.ilike.%${term}%,id_number.ilike.%${term}%`,
       );
     }
 
@@ -32,8 +32,24 @@ export class SupabaseCustomerRepository implements CustomerRepository {
       name: customer.name,
       email: customer.email,
       phone: customer.phone,
-      identification: customer.identification,
+      identification: customer.id_number,
       address: customer.address,
     }));
+  }
+
+  async create(
+    customerData: Omit<Customer, "id" | "createdAt">,
+  ): Promise<void> {
+    const { error } = await supabase.from("customers").insert({
+      name: customerData.name,
+      email: customerData.email,
+      phone: customerData.phone,
+      id_number: customerData.identification,
+      address: customerData.address,
+    });
+
+    if (error) {
+      throw new Error(error?.message ?? "No se pudo crear el cliente");
+    }
   }
 }

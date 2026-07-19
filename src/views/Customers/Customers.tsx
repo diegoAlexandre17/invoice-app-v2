@@ -1,25 +1,23 @@
-import type { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
-import { useTranslation } from "react-i18next";
-import { useState } from "react";
-import { ActionTable } from "@/components/shared/ActionTable";
-import { FilePlus, SquarePen, Trash } from "lucide-react";
 import type { Customer } from "@/features/customers/domain/entities/Customer";
 import { useGetAllCustomers } from "@/features/customers/presentation/hooks/useGetAllCustomer";
-import { CardsSectionGraphs } from "@/views/customers/CardsSectionGraphs";
 import { useDebounce } from "@/hooks/useDebounce";
+import { CardsSectionGraphs } from "@/views/customers/CardsSectionGraphs";
+import CustomerModal from "@/views/customers/CustomerModal";
+import type { ColumnDef } from "@tanstack/react-table";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const Customers = () => {
-  const { t } = useTranslation();
-  /* const [isOpen, setIsOpen] = useState<boolean>(false);
+  
+  const [search, setSearch] = useState<string>("");
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(
     null,
-  ); */
-
-  // Valor inmediato del input (lo que ve el usuario mientras escribe).
-  const [search, setSearch] = useState<string>("");
-  // Valor retrasado: solo dispara la búsqueda cuando el usuario deja de tipear.
+  );
+  
+  const { t } = useTranslation();
   const debouncedSearch = useDebounce(search, 400);
 
   const { data: customers = [], isLoading } = useGetAllCustomers({
@@ -67,7 +65,7 @@ const Customers = () => {
     }, */
   ];
 
-  /* const handleOpenModal = (): void => {
+  const handleOpenModal = (): void => {
     setIsOpen(true);
   };
 
@@ -79,15 +77,15 @@ const Customers = () => {
   const handleEditCustomer = (customer: Customer) => {
     setEditingCustomer(customer);
     setIsOpen(true);
-  }; */
+  };
 
   return (
     <div className="flex flex-1 flex-col">
-      {/* <CustomerModal
+      <CustomerModal
         isEdit={editingCustomer}
         isOpen={isOpen}
         onClose={handleCloseModal}
-      /> */}
+      />
       <CardsSectionGraphs />
       <DataTable
         columns={columns}
@@ -95,11 +93,11 @@ const Customers = () => {
         searchValue={search}
         onSearchChange={setSearch}
         isLoading={isLoading}
-        /* actions={
+        actions={
           <Button onClick={handleOpenModal}>
             {t("customers.addCustomer")}
           </Button>
-        } */
+        }
       />
     </div>
   );
