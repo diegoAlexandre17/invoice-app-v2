@@ -7,5 +7,5 @@ export interface CustomerRepository {
     getAll(params?: GetCustomersParams): Promise<Customer[]>;
     create(customerData: Omit<Customer, "id" | "createdAt">): Promise<void>;
     edit(customerData: Omit<Customer, "createdAt">): Promise<void>;
-    // deleteCustomer(customerId: number): Promise<void>;
+    delete(customerId: number): Promise<void>;
 }

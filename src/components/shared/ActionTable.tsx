@@ -32,6 +32,7 @@ export function ActionTable({
           className={className}
           id={id}
           variant="link"
+          size={"icon"}
           disabled={disabled || loading}
           onClick={onClick}
         >

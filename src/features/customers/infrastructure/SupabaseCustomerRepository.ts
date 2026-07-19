@@ -73,4 +73,19 @@ export class SupabaseCustomerRepository implements CustomerRepository {
     if (!data || data.length === 0)
       throw new Error("Cliente no encontrado o sin permisos");
   }
+
+  async delete(customerId: number): Promise<void> {
+    const { data, error } = await supabase
+      .from("customers")
+      .delete()
+      .eq("id", customerId)
+      .select();
+
+    if (error) {
+      throw new Error(error?.message ?? "No se pudo eliminar el cliente");
+    }
+
+    if (!data || data.length === 0)
+      throw new Error("Cliente no encontrado o sin permisos");
+  }
 }

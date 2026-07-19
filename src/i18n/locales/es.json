@@ -1,6 +1,7 @@
 {
   "common": {
     "success": "Éxito",
+    "warning": "Advertencia",
     "goBack": "Regresar",
     "login": "Iniciar Sesión",
     "password": "Contraseña",

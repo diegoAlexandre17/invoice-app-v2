@@ -1,30 +1,34 @@
 import { ActionTable } from "@/components/shared/ActionTable";
 import { DataTable } from "@/components/shared/DataTable";
+import SweetModal from "@/components/shared/SweetAlert";
 import { Button } from "@/components/ui/button";
 import type { Customer } from "@/features/customers/domain/entities/Customer";
+import { useDeleteCustomer } from "@/features/customers/presentation/hooks/useDeleteCustomer";
 import { useGetAllCustomers } from "@/features/customers/presentation/hooks/useGetAllCustomer";
 import { useDebounce } from "@/hooks/useDebounce";
 import { CardsSectionGraphs } from "@/views/customers/CardsSectionGraphs";
 import CustomerModal from "@/views/customers/CustomerModal";
+import { useQueryClient } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
-import { SquarePen } from "lucide-react";
+import { SquarePen, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 const Customers = () => {
-  
   const [search, setSearch] = useState<string>("");
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [editingCustomer, setEditingCustomer] = useState<Customer | null>(
-    null,
-  );
-  
+  const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
+
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
   const debouncedSearch = useDebounce(search, 400);
 
   const { data: customers = [], isLoading } = useGetAllCustomers({
     search: debouncedSearch,
   });
+
+  const deleteCustomer = useDeleteCustomer();
 
   const columns: ColumnDef<Customer>[] = [
     {
@@ -39,18 +43,18 @@ const Customers = () => {
       accessorKey: "phone",
       header: t("customers.phone"),
       cell: ({ row }) => {
-        return <div>{row.getValue("phone") ?? "-"}</div>
-      }
+        return <div>{row.getValue("phone") ?? "-"}</div>;
+      },
     },
     {
       accessorKey: "identification",
       header: t("customers.identification"),
-      cell: ({ row }) => <div>{row.getValue("identification") ?? "-"}</div>
+      cell: ({ row }) => <div>{row.getValue("identification") ?? "-"}</div>,
     },
     {
       accessorKey: "address",
       header: t("customers.address"),
-      cell: ({ row }) => <div>{row.getValue("address") ?? "-"}</div>
+      cell: ({ row }) => <div>{row.getValue("address") ?? "-"}</div>,
     },
     {
       accessorKey: "actions",
@@ -61,6 +65,13 @@ const Customers = () => {
             icon={<SquarePen />}
             onClick={() => handleEditCustomer(row.original)}
             tooltipText={t("common.edit")}
+          />
+
+          <ActionTable
+            icon={<Trash2 />}
+            onClick={() => handleDeleteCustomer(row.original.id)}
+            tooltipText={t("common.delete")}
+            loading={deleteCustomer.isPending}
           />
         </>
       ),
@@ -79,6 +90,28 @@ const Customers = () => {
   const handleEditCustomer = (customer: Customer) => {
     setEditingCustomer(customer);
     setIsOpen(true);
+  };
+
+  const handleDeleteCustomer = (id: number) => {
+    SweetModal(
+      "warning",
+      t("common.warning"),
+      t("customers.deleteCustomerConfirm"),
+      t("common.delete"),
+      (result) => {
+        if (result?.isConfirmed) {
+          deleteCustomer.mutate(id, {
+            onSuccess: () => {
+              queryClient.invalidateQueries({ queryKey: ["customers"] });
+              toast.success(t("common.success"), {
+                description: t("customers.deleteCustomerSuccess"),
+              });
+            },
+          });
+        }
+      },
+      { showCancelButton: true, cancelButtonText: t("common.cancel") },
+    );
   };
 
   return (
