@@ -3,11 +3,17 @@ import type {
   GetCustomersParams,
 } from "@/features/customers/domain/entities/Customer";
 import type { CustomerRepository } from "@/features/customers/domain/repositories/CustomerRepository";
+import type { PaginatedResult } from "@/shared/domain/pagination";
 import { supabase } from "@/shared/infrastructure/supabase/supabaseClient";
 
 export class SupabaseCustomerRepository implements CustomerRepository {
-  async getAll(params?: GetCustomersParams): Promise<Customer[]> {
-    let query = supabase.from("customers").select("*");
+  async getAll(
+    params?: GetCustomersParams,
+  ): Promise<PaginatedResult<Customer>> {
+    // count: "exact" → Supabase devuelve el total de filas que matchean el
+    // filtro, aparte de los datos de la página. Es lo que nos deja saber
+    // cuántas páginas dibujar sin traer todos los registros.
+    let query = supabase.from("customers").select("*", { count: "exact" });
 
     const search = params?.search?.trim();
     if (search) {
@@ -20,13 +26,21 @@ export class SupabaseCustomerRepository implements CustomerRepository {
       );
     }
 
-    const { data, error } = await query;
+    // Paginación: .range(from, to) es 0-based e inclusivo.
+    // Página 1, pageSize 10 → range(0, 9); página 2 → range(10, 19).
+    const page = params?.page ?? 1;
+    const pageSize = params?.pageSize ?? 10;
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+    query = query.range(from, to);
+
+    const { data, error, count } = await query;
 
     if (error) {
       throw new Error(error?.message ?? "No se pudo traer los clientes");
     }
 
-    return (data ?? []).map((customer) => ({
+    const customers: Customer[] = (data ?? []).map((customer) => ({
       id: customer.id,
       createdAt: customer.created_at,
       name: customer.name,
@@ -35,6 +49,11 @@ export class SupabaseCustomerRepository implements CustomerRepository {
       identification: customer.id_number,
       address: customer.address,
     }));
+
+    return {
+      data: customers,
+      total: count ?? 0,
+    };
   }
 
   async create(
@@ -49,6 +68,7 @@ export class SupabaseCustomerRepository implements CustomerRepository {
     });
 
     if (error) {
+      console.log(error);
       throw new Error(error?.message ?? "No se pudo crear el cliente");
     }
   }

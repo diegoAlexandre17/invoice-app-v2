@@ -18,6 +18,7 @@ import {
 import {
   Pagination,
   PaginationContent,
+  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
@@ -44,6 +45,12 @@ interface DataTableProps<TData, TValue> {
   actions?: JSX.Element;
   className?: string;
   isLoading?: boolean;
+  /** Página actual (1-based). */
+  page?: number;
+  /** Cantidad total de páginas. */
+  pageCount?: number;
+  /** Se dispara al pedir otra página. */
+  onPageChange?: (page: number) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -55,6 +62,9 @@ export function DataTable<TData, TValue>({
   actions,
   className,
   isLoading = false,
+  page = 1,
+  pageCount = 1,
+  onPageChange,
 }: DataTableProps<TData, TValue>) {
   const { t } = useTranslation();
 
@@ -62,7 +72,25 @@ export function DataTable<TData, TValue>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    // Paginación manual: los datos ya vienen paginados desde el server,
+    // la tabla solo dibuja la página actual.
+    manualPagination: true,
+    pageCount,
   });
+
+  const canPrev = page > 1;
+  const canNext = page < pageCount;
+
+  const handlePageChange = (nextPage: number) => {  //nextPage pagina donde se quiere ir
+    if (nextPage < 1 || nextPage > pageCount || nextPage === page) return; //si es la primera, si es la ultima, o si es la page en la que estamos
+    onPageChange?.(nextPage);
+  };
+
+  // Ventana de páginas a mostrar: la actual y una vecina de cada lado.
+  // Evita renderizar 500 botones cuando hay muchas páginas.
+  const pageNumbers = Array.from({ length: pageCount }, (_, i) => i + 1).filter(
+    (p) => p === 1 || p === pageCount || Math.abs(p - page) <= 1,
+  );
 
   const handleSearchChange = (value: string) => {
     if (onSearchChange) {
@@ -155,30 +183,59 @@ export function DataTable<TData, TValue>({
         </div>
       </CardContent>
 
-      <CardFooter className="flex justify-end">
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious href="#" />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#" isActive>
-                2
-              </PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">3</PaginationLink>
-            </PaginationItem>
+      {pageCount >= 1 && (
+        <CardFooter className="flex justify-end">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => handlePageChange(page - 1)}
+                  className={cn(
+                    "cursor-pointer",
+                    !canPrev && "pointer-events-none opacity-50",
+                  )}
+                />
+              </PaginationItem>
 
-            <PaginationItem>
-              <PaginationNext href="#" />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </CardFooter>
+              {pageNumbers.map((pageNumber, index) => {
+                const prevPageNumber = pageNumbers[index - 1];
+                const needsEllipsis =
+                  prevPageNumber !== undefined &&
+                  pageNumber - prevPageNumber > 1;
+
+                return (
+                  <div key={pageNumber} className="flex items-center">
+                    {needsEllipsis && (
+                      <PaginationItem>
+                        <PaginationEllipsis />
+                      </PaginationItem>
+                    )}
+                    <PaginationItem>
+                      <PaginationLink
+                        onClick={() => handlePageChange(pageNumber)}
+                        isActive={pageNumber === page}
+                        className="cursor-pointer"
+                      >
+                        {pageNumber}
+                      </PaginationLink>
+                    </PaginationItem>
+                  </div>
+                );
+              })}
+
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => handlePageChange(page + 1)}
+                  className={cn(
+                    "cursor-pointer",
+                    !canNext && "pointer-events-none opacity-50",
+                  )}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </CardFooter>
+      )}
     </Card>
   );
 }

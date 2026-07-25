@@ -15,8 +15,11 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
+const PAGE_SIZE = 10;
+
 const Customers = () => {
   const [search, setSearch] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
 
@@ -24,11 +27,22 @@ const Customers = () => {
   const queryClient = useQueryClient();
   const debouncedSearch = useDebounce(search, 400);
 
-  const { data: customers = [], isLoading } = useGetAllCustomers({
+  const deleteCustomer = useDeleteCustomer();
+
+  const { data, isLoading } = useGetAllCustomers({
     search: debouncedSearch,
+    page,
+    pageSize: PAGE_SIZE,
   });
 
-  const deleteCustomer = useDeleteCustomer();
+  const customers = data?.data ?? [];
+  const total = data?.total ?? 0;
+  const pageCount = Math.ceil(total / PAGE_SIZE);
+
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+    setPage(1);
+  };
 
   const columns: ColumnDef<Customer>[] = [
     {
@@ -126,8 +140,11 @@ const Customers = () => {
         columns={columns}
         data={customers}
         searchValue={search}
-        onSearchChange={setSearch}
+        onSearchChange={handleSearchChange}
         isLoading={isLoading}
+        page={page}
+        pageCount={pageCount}
+        onPageChange={setPage}
         actions={
           <Button onClick={handleOpenModal}>
             {t("customers.addCustomer")}

@@ -10,11 +10,10 @@ export interface Customer {
 
 /**
  * Parámetros de consulta para listar clientes.
- * Objeto (no argumentos sueltos) para extenderlo sin romper la firma:
- * cuando se agregue paginación entran aquí `page` y `pageSize`.
+ * Objeto (no argumentos sueltos) para extenderlo sin romper la firma.
  */
 export interface GetCustomersParams {
   search?: string;
-  // page?: number;
-  // pageSize?: number;
+  page?: number;
+  pageSize?: number;
 }
