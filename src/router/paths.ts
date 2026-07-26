@@ -5,6 +5,7 @@ const AUTH = "/auth";
 export const SEGMENTS = {
   dashboard: "dashboard",
   customers: "customers",
+  company: "company",
 } as const;
 
 /** Paths absolutos completos (para Link, navigate y el sidebar). */
@@ -17,4 +18,5 @@ export const PATHS = {
   register: `${AUTH}/register`,
   dashboard: `${ADMIN}/${SEGMENTS.dashboard}`,
   customers: `${ADMIN}/${SEGMENTS.customers}`,
+  company: `${ADMIN}/${SEGMENTS.company}`,
 } as const;

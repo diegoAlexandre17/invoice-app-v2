@@ -8,11 +8,12 @@ import { lazy } from "react";
 import { createBrowserRouter, Navigate } from "react-router";
 
 const Login = lazy(() => import("@/views/auth/Login"));
-const Dashboard = lazy(() => import("@/views/Dashboard"));
-const Customers = lazy(() => import("@/views/customers/Customers"));
 const RecoveryPassword = lazy(() => import("@/views/auth/RecoveryPassword"));
 const ResetPassword = lazy(() => import("@/views/auth/ResetPassword"));
 const Register = lazy(() => import("@/views/auth/Register"));
+const Dashboard = lazy(() => import("@/views/Dashboard"));
+const Customers = lazy(() => import("@/views/customers/Customers"));
+const CompanyData = lazy(() => import("@/views/company/CompanyData"));
 
 const Router = () => {
   const routes = createBrowserRouter([
@@ -63,6 +64,11 @@ const Router = () => {
               path: SEGMENTS.customers,
               element: <Customers />,
               handle: crumb("navigation.customers"),
+            },
+             {
+              path: SEGMENTS.company,
+              element: <CompanyData />,
+              handle: crumb("navigation.company"),
             },
           ],
         },
