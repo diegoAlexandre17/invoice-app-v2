@@ -19,6 +19,7 @@ import type { Customer } from "@/features/customers/domain/entities/Customer";
 import { useCreateCustomer } from "@/features/customers/presentation/hooks/useCreateCustomer";
 import { useEditCustomer } from "@/features/customers/presentation/hooks/useEditCustomer";
 import en from "@/i18n/locales/en.json";
+import type { ParseKeys } from "i18next";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, type JSX } from "react";
@@ -65,6 +66,16 @@ const CustomerModal = ({
 
   const isSubmitting = createCustomer.isPending || editCustomer.isPending;
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<CustomerFormData>({
+    resolver: zodResolver(customerSchema),
+    defaultValues,
+  });
+
   useEffect(() => {
     if (isEditData !== null) {
       reset({
@@ -75,17 +86,7 @@ const CustomerModal = ({
         address: isEditData?.address || "",
       });
     }
-  }, [isEditData]);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<CustomerFormData>({
-    resolver: zodResolver(customerSchema),
-    defaultValues,
-  });
+  }, [isEditData, reset]);
 
   const handleClose = () => {
     reset(defaultValues);
@@ -116,6 +117,11 @@ const CustomerModal = ({
               description: t("customers.updateCustomerSuccess"),
             });
           },
+          onError: (error) => {
+            toast.error(t("common.warning"), {
+              description: t(error.message as ParseKeys),
+            });
+          },
         },
       );
     }
@@ -125,6 +131,11 @@ const CustomerModal = ({
         handleSuccess();
         toast.success(t("common.success"), {
           description: t("customers.createCustomerSuccess"),
+        });
+      },
+      onError: (error) => {
+        toast.error(t("common.warning"), {
+          description: t(error.message as ParseKeys),
         });
       },
     });

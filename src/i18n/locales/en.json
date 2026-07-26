@@ -67,13 +67,15 @@
       "maxLength120": "The field must be a maximum of 120 characters",
       "maxLength500": "The field must be a maximum of 500 characters",
       "nameRequired": "The name is required",
-      "emailRequired": "Please enter a valid email address"
+      "emailRequired": "Please enter a valid email address",
+      "duplicatedRecord": "This record already exists"
     },
     "customers": {
       "addressRequired": "The address is required",
       "identificationRequired": "The identification is required",
       "phoneRequired": "The phone is required",
       "emailHasBeenUsed": "The email has already been used",
+      "customerNotFound": "Customer not found or you don't have permission",
       "quantityRequired": "Quantity must be at least 1",
       "priceRequired": "Price must be greater than or equal to 0",
       "itemsRequired": "At least one item is required"

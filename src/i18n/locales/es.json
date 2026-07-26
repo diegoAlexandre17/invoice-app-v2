@@ -67,13 +67,15 @@
       "maxLength120": "El campo debe tener un máximo de 120 caracteres",
       "maxLength500": "El campo debe tener un máximo de 500 caracteres",
       "nameRequired": "El nombre es requerido",
-      "emailRequired": "Introduzca una dirección de correo electrónico válida"
+      "emailRequired": "Introduzca una dirección de correo electrónico válida",
+      "duplicatedRecord": "Este registro ya existe"
     },
     "customers": {
       "addressRequired": "La dirección es requerida",
       "identificationRequired": "La identificación es requerida",
       "phoneRequired": "El teléfono es requerido",
       "emailHasBeenUsed": "El correo electrónico ya ha sido utilizado",
+      "customerNotFound": "Cliente no encontrado o sin permisos",
       "quantityRequired": "La cantidad debe ser al menos 1",
       "priceRequired": "El precio debe ser mayor o igual a 0",
       "itemsRequired": "Se requiere al menos un item"

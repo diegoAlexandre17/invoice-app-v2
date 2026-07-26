@@ -4,6 +4,7 @@ import type {
 } from "@/features/customers/domain/entities/Customer";
 import type { CustomerRepository } from "@/features/customers/domain/repositories/CustomerRepository";
 import type { PaginatedResult } from "@/shared/domain/pagination";
+import { mapSupabaseError } from "@/shared/infrastructure/supabase/mapSupabaseError";
 import { supabase } from "@/shared/infrastructure/supabase/supabaseClient";
 
 export class SupabaseCustomerRepository implements CustomerRepository {
@@ -37,7 +38,7 @@ export class SupabaseCustomerRepository implements CustomerRepository {
     const { data, error, count } = await query;
 
     if (error) {
-      throw new Error(error?.message ?? "No se pudo traer los clientes");
+      throw mapSupabaseError(error);
     }
 
     const customers: Customer[] = (data ?? []).map((customer) => ({
@@ -68,8 +69,7 @@ export class SupabaseCustomerRepository implements CustomerRepository {
     });
 
     if (error) {
-      console.log(error);
-      throw new Error(error?.message ?? "No se pudo crear el cliente");
+      throw mapSupabaseError(error);
     }
   }
 
@@ -87,11 +87,11 @@ export class SupabaseCustomerRepository implements CustomerRepository {
       .select();
 
     if (error) {
-      throw new Error(error?.message ?? "No se pudo editar el cliente");
+      throw mapSupabaseError(error);
     }
 
     if (!data || data.length === 0)
-      throw new Error("Cliente no encontrado o sin permisos");
+      throw new Error("errorsForm.customers.customerNotFound");
   }
 
   async delete(customerId: number): Promise<void> {
@@ -102,10 +102,10 @@ export class SupabaseCustomerRepository implements CustomerRepository {
       .select();
 
     if (error) {
-      throw new Error(error?.message ?? "No se pudo eliminar el cliente");
+      throw mapSupabaseError(error);
     }
 
     if (!data || data.length === 0)
-      throw new Error("Cliente no encontrado o sin permisos");
+      throw new Error("errorsForm.customers.customerNotFound");
   }
 }
