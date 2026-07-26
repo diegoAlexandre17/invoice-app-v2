@@ -99,8 +99,8 @@ export function DataTable<TData, TValue>({
   };
 
   return (
-    <Card className={cn("flex-1", className)}>
-      <CardHeader className="p-(--card-spacing)">
+    <Card className={cn("flex-1 gap-0 pt-0", className)}>
+      <CardHeader className="px-4 py-3">
         <div className="flex items-center justify-between flex-wrap gap-2">
           {search && (
             <div className="relative w-full md:max-w-sm">
