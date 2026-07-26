@@ -1,4 +1,3 @@
-import TextErrorSmall from "@/components/shared/TextErrorSmall";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -72,6 +71,11 @@ const Register = (): JSX.Element => {
           });
           navigate(PATHS.login);
         },
+        onError: (error) => {
+          toast.error(t("common.warning"), {
+            description: t(error.message as ParseKeys),
+          });
+        },
         onSettled: () => {
           captcha.current?.resetCaptcha();
           setCaptchaToken(undefined);
@@ -138,12 +142,6 @@ const Register = (): JSX.Element => {
                   <FieldError>
                     {t(errors.password.message as ErrorFormKey)}
                   </FieldError>
-                )}
-              </Field>
-
-              <Field>
-                {registerUser.isError && (
-                  <TextErrorSmall error={registerUser.error.message} />
                 )}
               </Field>
 

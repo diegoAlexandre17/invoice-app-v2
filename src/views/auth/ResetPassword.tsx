@@ -57,6 +57,11 @@ const ResetPassword = () => {
         });
         navigate(PATHS.login);
       },
+      onError: (error) => {
+        toast.error(t("common.warning"), {
+          description: t(error.message as ParseKeys),
+        });
+      },
     });
   };
 

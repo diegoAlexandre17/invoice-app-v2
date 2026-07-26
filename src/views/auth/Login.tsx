@@ -18,6 +18,7 @@ import { useRef, useState, type JSX } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router";
+import { toast } from "sonner";
 import { z } from "zod";
 
 const captchaKey = import.meta.env.VITE_HCAPTCHA_SITEKEY;
@@ -54,10 +55,10 @@ const Login = (): JSX.Element => {
   });
 
   const onSubmit: SubmitHandler<userLogin> = (formData) => {
-    if(!captchaToken) {
+    if (!captchaToken) {
       return;
     }
-    
+
     login.mutate(
       { ...formData, captchaToken },
       {
@@ -65,13 +66,18 @@ const Login = (): JSX.Element => {
           queryClient.setQueryData(["session"], user);
           navigate(PATHS.dashboard);
         },
+        onError: (error) => {
+          toast.error(t("common.warning"), {
+            description: t(error.message as ParseKeys),
+          });
+        },
         onSettled: () => {
           // El token de hCaptcha es de un solo uso: reseteamos tras cada
           // intento (éxito o error) para que un nuevo submit tenga token válido.
           captcha.current?.resetCaptcha();
           setCaptchaToken(undefined);
         },
-      }
+      },
     );
   };
 
@@ -143,11 +149,6 @@ const Login = (): JSX.Element => {
               </div>
 
               <Field>
-                {login.isError && (
-                  <p className="text-sm text-destructive text-center">
-                    {login.error.message}
-                  </p>
-                )}
                 <Button
                   onClick={handleSubmit(onSubmit)}
                   disabled={login.isPending || !captchaToken}

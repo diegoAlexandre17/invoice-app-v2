@@ -16,8 +16,8 @@
     "actions": "Acciones",
     "edit": "Editar",
     "delete": "Eliminar",
-    "logout":"Cerrar sesión",
-    "commonError":"Ocurrió un error, por favor intente nuevamente",
+    "logout": "Cerrar sesión",
+    "commonError": "Ocurrió un error, por favor intente nuevamente",
     "noData": "Sin datos"
   },
   "auth": {
@@ -31,7 +31,7 @@
     "recoveryTitle": "Recuperar contraseña",
     "recover": "Recuperar",
     "haveAccount": "¿Ya tienes una cuenta?",
-    "registerSuccessTitle":"Registro exitoso",
+    "registerSuccessTitle": "Registro exitoso",
     "validateEmail": "Por favor valide su email y luego puede iniciar sesión en la plataforma",
     "updatePassword": "Actualizar contraseña",
     "recoverPasswordSuccess": "Correo de restauración de contraseña enviado exitosamente",
@@ -67,15 +67,14 @@
       "maxLength120": "El campo debe tener un máximo de 120 caracteres",
       "maxLength500": "El campo debe tener un máximo de 500 caracteres",
       "nameRequired": "El nombre es requerido",
-      "emailRequired": "Introduzca una dirección de correo electrónico válida",
-      "duplicatedRecord": "Este registro ya existe"
+      "emailRequired": "Introduzca una dirección de correo electrónico válida"
     },
     "customers": {
       "addressRequired": "La dirección es requerida",
       "identificationRequired": "La identificación es requerida",
       "phoneRequired": "El teléfono es requerido",
-      "emailHasBeenUsed": "El correo electrónico ya ha sido utilizado",
-      "customerNotFound": "Cliente no encontrado o sin permisos",
+
+      
       "quantityRequired": "La cantidad debe ser al menos 1",
       "priceRequired": "El precio debe ser mayor o igual a 0",
       "itemsRequired": "Se requiere al menos un item"
@@ -84,6 +83,17 @@
       "passwordRequired": "La contraseña es requerida",
       "passwordRequired8": "La contraseña debe contener mínimo 8 caracteres",
       "passwordRequiredPattern": "La contraseña debe tener números y letras"
+    }
+  },
+  "errors": {
+    "customers": {
+      "customerNotFound": "Cliente no encontrado o sin permisos",
+      "emailHasBeenUsed": "El correo electrónico ya ha sido utilizado"
+    },
+    "auth": {
+      "invalidCredentials": "Credenciales invalidas",
+      "userAlreadyExists":"El usuario ya existe",
+      "overRequestRateLimit":"Demasiados intentos, por favor espere unos minutos"
     }
   }
 }

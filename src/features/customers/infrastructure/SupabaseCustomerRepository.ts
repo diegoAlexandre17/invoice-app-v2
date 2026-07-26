@@ -91,7 +91,7 @@ export class SupabaseCustomerRepository implements CustomerRepository {
     }
 
     if (!data || data.length === 0)
-      throw new Error("errorsForm.customers.customerNotFound");
+      throw new Error("errors.customers.customerNotFound");
   }
 
   async delete(customerId: number): Promise<void> {
@@ -106,6 +106,6 @@ export class SupabaseCustomerRepository implements CustomerRepository {
     }
 
     if (!data || data.length === 0)
-      throw new Error("errorsForm.customers.customerNotFound");
+      throw new Error("errors.customers.customerNotFound");
   }
 }

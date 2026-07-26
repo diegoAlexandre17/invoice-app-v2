@@ -49,7 +49,7 @@ const RecoveryPassword = (): JSX.Element => {
 
   const onSubmit: SubmitHandler<RecoveryFormData> = (formData) => {
     if (!captchaToken) return;
-    
+
     recoveryPassword.mutate(
       { email: formData.email, captchaToken: captchaToken },
       {
@@ -58,6 +58,11 @@ const RecoveryPassword = (): JSX.Element => {
             description: t("auth.recoverPasswordSuccess"),
           });
           navigate(PATHS.login);
+        },
+        onError: (error) => {
+          toast.error(t("common.warning"), {
+            description: t(error.message as ParseKeys),
+          });
         },
         onSettled: () => {
           // El token de hCaptcha es de un solo uso: reseteamos tras cada
@@ -103,11 +108,6 @@ const RecoveryPassword = (): JSX.Element => {
               </div>
 
               <Field>
-                {recoveryPassword.isError && (
-                  <p className="text-sm text-destructive text-center">
-                    {recoveryPassword.error.message}
-                  </p>
-                )}
                 <Button
                   onClick={handleSubmit(onSubmit)}
                   disabled={!captchaToken}

@@ -7,6 +7,7 @@ import type {
 } from "../domain/entities/User";
 import type { AuthRepository } from "../domain/repositories/AuthRepository";
 import { PATHS } from "@/router/paths";
+import { mapSupabaseError } from "@/shared/infrastructure/supabase/mapSupabaseError";
 
 /**
  * IMPLEMENTACIÓN del contrato AuthRepository usando Supabase.
@@ -30,7 +31,7 @@ export class SupabaseAuthRepository implements AuthRepository {
     });
 
     if (error || !data.user) {
-      throw new Error(error?.message ?? "No se pudo iniciar sesión");
+      throw mapSupabaseError(error)
     }
 
     // Traducción: de la forma de Supabase → a tu entidad de dominio.
@@ -44,7 +45,7 @@ export class SupabaseAuthRepository implements AuthRepository {
   async logout(): Promise<void> {
     const { error } = await supabase.auth.signOut();
     if (error) {
-      throw new Error(error.message);
+      throw mapSupabaseError(error);
     }
   }
 
@@ -77,7 +78,7 @@ export class SupabaseAuthRepository implements AuthRepository {
     });
 
     if (error || !data.user) {
-      throw new Error(error?.message ?? "No se pudo registrar el usuario");
+      throw mapSupabaseError(error);
     }
 
     return {
@@ -97,7 +98,7 @@ export class SupabaseAuthRepository implements AuthRepository {
     });
 
     if (error) {
-      throw new Error(error?.message ?? "No se realizar la accion");
+      throw mapSupabaseError(error)
     }
   }
 
@@ -105,7 +106,7 @@ export class SupabaseAuthRepository implements AuthRepository {
     const { error } = await supabase.auth.updateUser({ password: newPassword });
 
     if (error) {
-      throw new Error(error?.message ?? "No se realizar la accion");
+      throw mapSupabaseError(error);
     }
   }
 }
