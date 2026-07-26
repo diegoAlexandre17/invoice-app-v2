@@ -184,7 +184,7 @@ export function DataTable<TData, TValue>({
       </CardContent>
 
       {pageCount >= 1 && (
-        <CardFooter className="flex justify-end">
+        <CardFooter className="flex justify-end px-4 py-3">
           <Pagination>
             <PaginationContent>
               <PaginationItem>
