@@ -2,6 +2,8 @@
   "common": {
     "success": "Éxito",
     "warning": "Advertencia",
+     "ok":"Aceptar",
+    "error":"Error",
     "goBack": "Regresar",
     "login": "Iniciar Sesión",
     "password": "Contraseña",
@@ -60,6 +62,17 @@
     "deleteCustomerConfirm": "¿Estás seguro de que deseas eliminar este cliente?",
     "deleteCustomerSuccess": "Cliente eliminado exitosamente"
   },
+  "company":{
+    "companyInfo":"Información registrada de la empresa",
+    "name": "Nombre de la empresa",
+    "identification": "Identificación de la empresa",
+    "currency": "Moneda",
+    "logo": "Logo de la empresa",
+    "selectFiles": "Selecciona un archivo",
+    "formatSupported": "Formato soportado: PNG, JPG, JPEG",
+    "logoSizeSupportedError":"El archivo debe ser menor a 2MB",
+    "logoSizeExtensionError":"Solo se permiten archivos del tipo imagen"
+  },
   "errorsForm": {
     "common": {
       "maxLength15": "El campo debe tener un máximo de 15 caracteres",
@@ -73,8 +86,6 @@
       "addressRequired": "La dirección es requerida",
       "identificationRequired": "La identificación es requerida",
       "phoneRequired": "El teléfono es requerido",
-
-      
       "quantityRequired": "La cantidad debe ser al menos 1",
       "priceRequired": "El precio debe ser mayor o igual a 0",
       "itemsRequired": "Se requiere al menos un item"
