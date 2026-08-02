@@ -1,3 +1,4 @@
+import Loader from "@/components/shared/Loader";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -21,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useGetCompanyData } from "@/features/company/presentation/useGetCompanyData";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ParseKeys } from "i18next";
 import { CloudUpload, Trash2, Upload } from "lucide-react";
@@ -50,14 +52,8 @@ const companySchema = z.object({
     .string()
     .min(1, "errorsForm.customers.phoneRequired")
     .max(15, "maxLength15"),
-  currency: z.enum(["USD", "EURO"]),
-  logo: z.union([
-    z.union([
-      z.string(), // URL existente de Supabase (o "" inicial)
-      z.instanceof(FileList), // archivo nuevo cargado
-      z.undefined(), // sin logo
-    ]),
-  ]),
+  currency: z.enum(["USD", "EUR"]),
+  logo: z.union([z.union([z.string(), z.instanceof(FileList), z.undefined()])]),
 });
 
 type CompanyFormData = z.infer<typeof companySchema>;
@@ -77,6 +73,9 @@ const CompanyData = () => {
   const [previewImg, setPreviewImg] = useState<string | null>(null);
 
   const { t } = useTranslation();
+
+  const { data: companyData, isPending: isCompanyDataPending } =
+    useGetCompanyData();
 
   const {
     register,
@@ -120,6 +119,20 @@ const CompanyData = () => {
   };
 
   useEffect(() => {
+    if (companyData) {
+      reset({
+        name: companyData.name,
+        email: companyData.email,
+        address: companyData.address,
+        identification: companyData.identification,
+        phone: companyData.phone,
+        currency: companyData.currency,
+        logo: companyData.logo ?? undefined,
+      });
+    }
+  }, [companyData, reset]);
+
+  useEffect(() => {
     return () => {
       if (previewImg) {
         URL.revokeObjectURL(previewImg);
@@ -131,7 +144,9 @@ const CompanyData = () => {
     console.log(formData);
   };
 
-  console.log(errors);
+  if (isCompanyDataPending) {
+    return <Loader />;
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -148,9 +163,10 @@ const CompanyData = () => {
                   <FieldLabel htmlFor="name">
                     <span>{t("company.logo")}</span>
                   </FieldLabel>
-                  <label htmlFor="logo" className="cursor-pointer">
-                    <div className="flex flex-col items-center">
-                      <div className="flex flex-col justify-center h-40 w-40">
+
+                  <div className="flex flex-col items-center">
+                    <div className="flex flex-col justify-center h-40 w-40">
+                      <label htmlFor="logo" className="cursor-pointer">
                         {previewImg ? (
                           <div className="relative">
                             <img
@@ -174,17 +190,17 @@ const CompanyData = () => {
                             <span>{t("company.formatSupported")}</span>
                           </div>
                         )}
-                      </div>
-
-                      <FieldLabel
-                        htmlFor="logo"
-                        className="cursor-pointer mt-2 items-center gap-2 border rounded-lg px-4 py-2 w-54 flex justify-center hover:bg-secondary transition-colors"
-                      >
-                        <Upload size={16} />
-                        <span>{t("company.selectFiles")}</span>
-                      </FieldLabel>
+                      </label>
                     </div>
-                  </label>
+
+                    <FieldLabel
+                      htmlFor="logo"
+                      className="cursor-pointer mt-2 items-center gap-2 border rounded-lg px-4 py-2 w-54 flex justify-center hover:bg-secondary transition-colors"
+                    >
+                      <Upload size={16} />
+                      <span>{t("company.selectFiles")}</span>
+                    </FieldLabel>
+                  </div>
 
                   <Input
                     id="logo"
@@ -286,7 +302,7 @@ const CompanyData = () => {
                         </SelectTrigger>
                         <SelectContent position="popper">
                           <SelectItem value="USD">USD</SelectItem>
-                          <SelectItem value="EURO">EURO</SelectItem>
+                          <SelectItem value="EUR">EURO</SelectItem>
                         </SelectContent>
                       </Select>
                     )}
