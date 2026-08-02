@@ -71,7 +71,8 @@
     "selectFiles": "Select a file",
     "formatSupported": "Supported formats: PNG, JPG, JPEG",
     "logoSizeSupportedError":"The file must be less than 2MB",
-    "logoSizeExtensionError":"Only image files are allowed"
+    "logoSizeExtensionError":"Only image files are allowed",
+    "updateCompanySuccess": "Company information updated successfully"
   },
   "errorsForm": {
     "common": {

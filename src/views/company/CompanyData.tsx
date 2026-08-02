@@ -22,8 +22,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { companyKeys } from "@/features/company/presentation/companyKeys";
+import { useEditCompanyData } from "@/features/company/presentation/useEditCompanyData";
 import { useGetCompanyData } from "@/features/company/presentation/useGetCompanyData";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import type { ParseKeys } from "i18next";
 import { CloudUpload, Trash2, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -73,9 +76,12 @@ const CompanyData = () => {
   const [previewImg, setPreviewImg] = useState<string | null>(null);
 
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
 
   const { data: companyData, isPending: isCompanyDataPending } =
     useGetCompanyData();
+
+  const editCompanyDataMutation = useEditCompanyData();
 
   const {
     register,
@@ -141,7 +147,33 @@ const CompanyData = () => {
   }, [previewImg]);
 
   const onSubmit: SubmitHandler<CompanyFormData> = (formData) => {
-    console.log(formData);
+    if (!companyData) return;
+
+    const dataToSend = {
+      id: companyData.id,
+      name: formData.name,
+      email: formData.email,
+      address: formData.address,
+      identification: formData.identification,
+      phone: formData.phone,
+      currency: formData.currency,
+      logo: companyData.logo,
+    };
+
+    editCompanyDataMutation.mutate(dataToSend, {
+      onSuccess: () => {
+        toast.success(t("common.success"), {
+          description: t("company.updateCompanySuccess"),
+        });
+
+        queryClient.invalidateQueries({ queryKey: companyKeys.all });
+      },
+      onError: (error) => {
+        toast.error(t("common.warning"), {
+          description: t(error.message as ParseKeys),
+        });
+      },
+    });
   };
 
   if (isCompanyDataPending) {
@@ -322,18 +354,19 @@ const CompanyData = () => {
           <Button
             variant={"destructive"}
             type="button"
-            /* onClick={handleClose}
-              disabled={isSubmitting} */
+            // onClick={handleClose}
+            disabled={editCompanyDataMutation.isPending}
           >
             {t("common.cancel")}
           </Button>
           <Button
             variant={"success"}
             type="submit"
-
-            //   disabled={isSubmitting}
+            disabled={editCompanyDataMutation.isPending}
           >
-            {t("common.save")}
+            {editCompanyDataMutation.isPending
+              ? t("common.loading")
+              : t("common.save")}
           </Button>
         </CardFooter>
       </Card>
