@@ -35,18 +35,43 @@ export class SupabaseCompanyRepository implements CompanyRepository {
   }
 
   async edit(companyData: Omit<Company, "createdAt">): Promise<void> {
-    const { error } = await supabase.from("company").update({
-      name: companyData.name,
-      identification: companyData.identification,
-      address: companyData.address,
-      phone: companyData.phone,
-      email: companyData.email,
-      logo: companyData.logo,
-      currency: companyData.currency,
-    }).eq("id", companyData.id);
+    const { error } = await supabase
+      .from("company")
+      .update({
+        name: companyData.name,
+        identification: companyData.identification,
+        address: companyData.address,
+        phone: companyData.phone,
+        email: companyData.email,
+        logo: companyData.logo,
+        currency: companyData.currency,
+      })
+      .eq("id", companyData.id);
 
     if (error) {
       throw mapSupabaseError(error);
     }
+  }
+
+  async uploadLogo(file: File, userId: string): Promise<string> {
+    // Path fijo por usuario, SIN extensión → upsert siempre sobrescribe el mismo archivo.
+    const path = `${userId}/logo`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("company-logos")
+      .upload(path, file, {
+        upsert: true,
+        contentType: file.type, // preserva el MIME real (image/png, image/jpeg...)
+      });
+
+    if (uploadError) {
+      throw mapSupabaseError(uploadError);
+    }
+
+    const { data } = supabase.storage.from("company-logos").getPublicUrl(path);
+
+    // Cache-buster: como el path es fijo, sin esto el navegador mostraría el logo viejo cacheado.
+    // El timestamp cambia en cada subida → el navegador trata cada logo nuevo como URL distinta.
+    return `${data.publicUrl}?t=${Date.now()}`;
   }
 }

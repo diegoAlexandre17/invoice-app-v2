@@ -22,9 +22,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useSession } from "@/features/auth/presentation/hooks/useSession";
 import { companyKeys } from "@/features/company/presentation/companyKeys";
 import { useEditCompanyData } from "@/features/company/presentation/useEditCompanyData";
 import { useGetCompanyData } from "@/features/company/presentation/useGetCompanyData";
+import { useUploadCompanyLogo } from "@/features/company/presentation/useUploadCompanyLogo";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import type { ParseKeys } from "i18next";
@@ -78,10 +80,13 @@ const CompanyData = () => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
+  const { data: session } = useSession();
+
   const { data: companyData, isPending: isCompanyDataPending } =
     useGetCompanyData();
 
   const editCompanyDataMutation = useEditCompanyData();
+  const uploadLogoMutation = useUploadCompanyLogo();
 
   const {
     register,
@@ -135,6 +140,7 @@ const CompanyData = () => {
         currency: companyData.currency,
         logo: companyData.logo ?? undefined,
       });
+      setPreviewImg(companyData.logo ?? null);
     }
   }, [companyData, reset]);
 
@@ -146,34 +152,46 @@ const CompanyData = () => {
     };
   }, [previewImg]);
 
-  const onSubmit: SubmitHandler<CompanyFormData> = (formData) => {
-    if (!companyData) return;
+  const onSubmit: SubmitHandler<CompanyFormData> = async (formData) => {
+    if (!companyData || !session) return;
 
-    const dataToSend = {
-      id: companyData.id,
-      name: formData.name,
-      email: formData.email,
-      address: formData.address,
-      identification: formData.identification,
-      phone: formData.phone,
-      currency: formData.currency,
-      logo: companyData.logo,
-    };
+    try {
+      // Por defecto conservamos el logo actual (si no se eligió uno nuevo).
+      let logoUrl = companyData.logo;
 
-    editCompanyDataMutation.mutate(dataToSend, {
-      onSuccess: () => {
-        toast.success(t("common.success"), {
-          description: t("company.updateCompanySuccess"),
+      const logoValue = formData.logo;
+      const isNewFile = logoValue instanceof FileList && logoValue.length > 0;
+
+      // 1) Si hay archivo nuevo, lo subimos primero y obtenemos su URL.
+      if (isNewFile) {
+        logoUrl = await uploadLogoMutation.mutateAsync({
+          file: logoValue[0],
+          userId: session.id,
         });
+      }
 
-        queryClient.invalidateQueries({ queryKey: companyKeys.all });
-      },
-      onError: (error) => {
-        toast.error(t("common.warning"), {
-          description: t(error.message as ParseKeys),
-        });
-      },
-    });
+      // 2) Editamos la company con la URL de logo resuelta.
+      await editCompanyDataMutation.mutateAsync({
+        id: companyData.id,
+        name: formData.name,
+        email: formData.email,
+        address: formData.address,
+        identification: formData.identification,
+        phone: formData.phone,
+        currency: formData.currency,
+        logo: logoUrl,
+      });
+
+      // 3) Éxito: feedback + refresco de la query.
+      toast.success(t("common.success"), {
+        description: t("company.updateCompanySuccess"),
+      });
+      queryClient.invalidateQueries({ queryKey: companyKeys.all });
+    } catch (error) {
+      toast.error(t("common.warning"), {
+        description: t((error as Error).message as ParseKeys),
+      });
+    }
   };
 
   if (isCompanyDataPending) {
@@ -355,16 +373,20 @@ const CompanyData = () => {
             variant={"destructive"}
             type="button"
             // onClick={handleClose}
-            disabled={editCompanyDataMutation.isPending}
+            disabled={
+              editCompanyDataMutation.isPending || uploadLogoMutation.isPending
+            }
           >
             {t("common.cancel")}
           </Button>
           <Button
             variant={"success"}
             type="submit"
-            disabled={editCompanyDataMutation.isPending}
+            disabled={
+              editCompanyDataMutation.isPending || uploadLogoMutation.isPending
+            }
           >
-            {editCompanyDataMutation.isPending
+            {editCompanyDataMutation.isPending || uploadLogoMutation.isPending
               ? t("common.loading")
               : t("common.save")}
           </Button>
