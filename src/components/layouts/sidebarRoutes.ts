@@ -1,5 +1,5 @@
 import { PATHS } from "@/router/paths";
-import { Building2, HandshakeIcon, LayoutDashboard } from "lucide-react";
+import { Building2, HandshakeIcon, LayoutDashboard, Receipt } from "lucide-react";
 
 export const routes = [
   {
@@ -11,6 +11,11 @@ export const routes = [
     titleKey: "navigation.customers",
     url: PATHS.customers,
     icon: HandshakeIcon,
+  },
+  {
+    titleKey: "navigation.invoices",
+    url: PATHS.invoices,
+    icon: Receipt,
   },
   {
     titleKey: "navigation.company",

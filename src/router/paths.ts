@@ -5,6 +5,9 @@ const AUTH = "/auth";
 export const SEGMENTS = {
   dashboard: "dashboard",
   customers: "customers",
+  invoices: {
+    index: "invoices",
+  },
   company: "company",
 } as const;
 
@@ -18,5 +21,6 @@ export const PATHS = {
   register: `${AUTH}/register`,
   dashboard: `${ADMIN}/${SEGMENTS.dashboard}`,
   customers: `${ADMIN}/${SEGMENTS.customers}`,
+  invoices: `${ADMIN}/${SEGMENTS.invoices.index}`,
   company: `${ADMIN}/${SEGMENTS.company}`,
 } as const;

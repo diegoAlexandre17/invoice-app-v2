@@ -13,6 +13,7 @@ const ResetPassword = lazy(() => import("@/views/auth/ResetPassword"));
 const Register = lazy(() => import("@/views/auth/Register"));
 const Dashboard = lazy(() => import("@/views/Dashboard"));
 const Customers = lazy(() => import("@/views/customers/Customers"));
+const InvoiceTable = lazy(() => import("@/views/invoices/InvoiceTable"));
 const CompanyData = lazy(() => import("@/views/company/CompanyData"));
 
 const Router = () => {
@@ -61,11 +62,16 @@ const Router = () => {
               handle: crumb("navigation.dashboard"),
             },
             {
+              path: SEGMENTS.invoices.index,
+              element: <InvoiceTable />,
+              handle: crumb("navigation.invoices"),
+            },
+            {
               path: SEGMENTS.customers,
               element: <Customers />,
               handle: crumb("navigation.customers"),
             },
-             {
+            {
               path: SEGMENTS.company,
               element: <CompanyData />,
               handle: crumb("navigation.company"),
