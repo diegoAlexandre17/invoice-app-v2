@@ -14,6 +14,68 @@ export type Database = {
   }
   public: {
     Tables: {
+      catalog: {
+        Row: {
+          category_id: number
+          created_at: string
+          description: string | null
+          id: number
+          name: string
+          price: number
+          type: string
+          user_id: string
+        }
+        Insert: {
+          category_id: number
+          created_at?: string
+          description?: string | null
+          id?: number
+          name: string
+          price: number
+          type: string
+          user_id?: string
+        }
+        Update: {
+          category_id?: number
+          created_at?: string
+          description?: string | null
+          id?: number
+          name?: string
+          price?: number
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalog_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      categories: {
+        Row: {
+          created_at: string
+          id: number
+          name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          name: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       company: {
         Row: {
           address: string
@@ -93,11 +155,15 @@ export type Database = {
           client_name: string
           client_phone: string | null
           created_at: string
+          due_date: string
           id: number
           invoice_number: string
+          issue_date: string
           items: Json
           notes: string | null
+          paid_at: string | null
           pdf_url: string | null
+          status: string
           total_amount: number
           user_id: string
         }
@@ -107,13 +173,17 @@ export type Database = {
           client_name: string
           client_phone?: string | null
           created_at?: string
+          due_date?: string
           id?: number
           invoice_number: string
+          issue_date?: string
           items: Json
           notes?: string | null
+          paid_at?: string | null
           pdf_url?: string | null
+          status?: string
           total_amount: number
-          user_id: string
+          user_id?: string
         }
         Update: {
           client_address?: string | null
@@ -121,11 +191,15 @@ export type Database = {
           client_name?: string
           client_phone?: string | null
           created_at?: string
+          due_date?: string
           id?: number
           invoice_number?: string
+          issue_date?: string
           items?: Json
           notes?: string | null
+          paid_at?: string | null
           pdf_url?: string | null
+          status?: string
           total_amount?: number
           user_id?: string
         }

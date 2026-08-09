@@ -107,6 +107,12 @@
       "customerNotFound": "Cliente no encontrado o sin permisos",
       "emailHasBeenUsed": "El correo electrónico ya ha sido utilizado"
     },
+    "catalog": {
+      "itemNotFound": "Ítem no encontrado o sin permisos"
+    },
+    "invoices": {
+      "invoiceNotFound": "Factura no encontrada o sin permisos"
+    },
     "auth": {
       "invalidCredentials": "Credenciales invalidas",
       "userAlreadyExists":"El usuario ya existe",

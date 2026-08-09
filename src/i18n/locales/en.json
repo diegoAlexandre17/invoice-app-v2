@@ -108,6 +108,12 @@
       "customerNotFound": "Customer not found or you don't have permission",
       "emailHasBeenUsed": "The email has already been used"
     },
+    "catalog": {
+      "itemNotFound": "Item not found or you don't have permission"
+    },
+    "invoices": {
+      "invoiceNotFound": "Invoice not found or you don't have permission"
+    },
     "auth": {
       "invalidCredentials": "Invalid credentials",
       "userAlreadyExists": "User already exists",
