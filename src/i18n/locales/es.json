@@ -2,8 +2,8 @@
   "common": {
     "success": "Éxito",
     "warning": "Advertencia",
-     "ok":"Aceptar",
-    "error":"Error",
+    "ok": "Aceptar",
+    "error": "Error",
     "goBack": "Regresar",
     "login": "Iniciar Sesión",
     "password": "Contraseña",
@@ -20,7 +20,9 @@
     "delete": "Eliminar",
     "logout": "Cerrar sesión",
     "commonError": "Ocurrió un error, por favor intente nuevamente",
-    "noData": "Sin datos"
+    "noData": "Sin datos",
+    "total": "Total",
+    "state":"Estado"
   },
   "auth": {
     "loginTitle": "Bienvenido de Vuelta",
@@ -67,17 +69,28 @@
     "deleteCustomerConfirm": "¿Estás seguro de que deseas eliminar este cliente?",
     "deleteCustomerSuccess": "Cliente eliminado exitosamente"
   },
-  "company":{
-    "companyInfo":"Información registrada de la empresa",
+  "invoices": {
+    "invoiceNumber": "Número de Factura",
+    "createdAtDate": "Fecha de creación",
+    "dueDate": "Fecha de vencimiento",
+    "states":{
+      "sent":"Enviada",
+      "paid":"Pagada",
+      "overdue":"Vencida",
+      "cancelled":"Cancelada"
+    }
+  },
+  "company": {
+    "companyInfo": "Información registrada de la empresa",
     "name": "Nombre de la empresa",
     "identification": "Identificación de la empresa",
     "currency": "Moneda",
     "logo": "Logo de la empresa",
     "selectFiles": "Selecciona un archivo",
     "formatSupported": "Formato soportado: PNG, JPG, JPEG",
-    "logoSizeSupportedError":"El archivo debe ser menor a 2MB",
-    "logoSizeExtensionError":"Solo se permiten archivos del tipo imagen",
-    "updateCompanySuccess" :"Información de la empresa actualizada exitosamente"
+    "logoSizeSupportedError": "El archivo debe ser menor a 2MB",
+    "logoSizeExtensionError": "Solo se permiten archivos del tipo imagen",
+    "updateCompanySuccess": "Información de la empresa actualizada exitosamente"
   },
   "errorsForm": {
     "common": {
@@ -115,8 +128,8 @@
     },
     "auth": {
       "invalidCredentials": "Credenciales invalidas",
-      "userAlreadyExists":"El usuario ya existe",
-      "overRequestRateLimit":"Demasiados intentos, por favor espere unos minutos"
+      "userAlreadyExists": "El usuario ya existe",
+      "overRequestRateLimit": "Demasiados intentos, por favor espere unos minutos"
     }
   }
 }

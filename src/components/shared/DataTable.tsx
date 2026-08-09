@@ -121,7 +121,7 @@ export function DataTable<TData, TValue>({
       <CardContent className="flex-1 px-0">
         <div className="overflow-hidden">
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-muted/50">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
