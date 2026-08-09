@@ -66,11 +66,11 @@ const Router = () => {
             {
               path: SEGMENTS.invoices.index,
               element: <CompanyDataCompleteGuard/>,
+              handle: crumb("navigation.invoices.invoices"),
               children:[
                 {
                   index: true,
                   element: <InvoiceTable />,
-                  handle: crumb("navigation.invoices.invoices"),
                 },
                 {
                   path: SEGMENTS.invoices.create,

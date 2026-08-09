@@ -77,6 +77,7 @@
     "invoiceNumber": "Invoice Number",
     "createdAtDate": "Creation Date",
     "dueDate": "Due Date",
+     "notes":"Notes",
     "states":{
       "sent":"Sent",
       "paid":"Paid",
