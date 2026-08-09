@@ -10,14 +10,18 @@ import { useDebounce } from "@/hooks/useDebounce";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { PATHS } from "@/router/paths";
+import { useNavigate } from "react-router";
 
 const PAGE_SIZE = 10;
 
-const invoiceStateColors = {
-  sent: "bg-yellow-500 text-white",
-  paid: "bg-green-500 text-white",
-  cancelled: "bg-red-500 text-white",
-  overdue: "bg-destructive text-white",
+const invoiceStateVariant: Record<
+  InvoiceStatus,
+  "default" | "success" | "warning" | "destructive"
+> = {
+  sent: "warning",
+  paid: "success",
+  cancelled: "destructive",
 };
 
 const InvoiceTable = () => {
@@ -25,6 +29,7 @@ const InvoiceTable = () => {
   const [page, setPage] = useState<number>(1);
 
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const debouncedSearch = useDebounce(search, 400);
 
   const { data, isLoading } = useGetAllInvoices({
@@ -40,6 +45,10 @@ const InvoiceTable = () => {
   const handleSearchChange = (value: string) => {
     setSearch(value);
     setPage(1);
+  };
+
+  const handleNavigateToCreateInvoice = () => {
+    navigate(PATHS.createInvoice);
   };
 
   const columns: ColumnDef<Invoice>[] = [
@@ -77,11 +86,7 @@ const InvoiceTable = () => {
         const invoiceStatus = row.getValue("status") as InvoiceStatus;
 
         return (
-          <Badge
-            className={
-              invoiceStateColors[invoiceStatus] || "bg-gray-500 text-white"
-            }
-          >
+          <Badge variant={invoiceStateVariant[invoiceStatus] ?? "default"}>
             {t(`invoices.states.${invoiceStatus}`) ?? "-"}
           </Badge>
         );
@@ -100,8 +105,8 @@ const InvoiceTable = () => {
       pageCount={pageCount}
       onPageChange={setPage}
       actions={
-        <Button /* onClick={handleOpenModal} */>
-          {t("customers.addCustomer")}
+        <Button onClick={handleNavigateToCreateInvoice}>
+          {t("invoices.createInvoice")}
         </Button>
       }
     />

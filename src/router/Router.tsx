@@ -15,6 +15,7 @@ const Dashboard = lazy(() => import("@/views/Dashboard"));
 const Customers = lazy(() => import("@/views/customers/Customers"));
 const CompanyDataCompleteGuard = lazy(() => import("@/router/guards/CompanyDataCompleteGuard"));
 const InvoiceTable = lazy(() => import("@/views/invoices/InvoiceTable"));
+const InvoiceForm = lazy(() => import("@/views/invoices/InvoiceForm"));
 const CompanyData = lazy(() => import("@/views/company/CompanyData"));
 
 const Router = () => {
@@ -69,7 +70,12 @@ const Router = () => {
                 {
                   index: true,
                   element: <InvoiceTable />,
-                  handle: crumb("navigation.invoices"),
+                  handle: crumb("navigation.invoices.invoices"),
+                },
+                {
+                  path: SEGMENTS.invoices.create,
+                  element: <InvoiceForm />,
+                  handle: crumb("navigation.invoices.create"),
                 }
               ]
             },

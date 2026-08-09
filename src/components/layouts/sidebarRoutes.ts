@@ -13,7 +13,7 @@ export const routes = [
     icon: HandshakeIcon,
   },
   {
-    titleKey: "navigation.invoices",
+    titleKey: "navigation.invoices.invoices",
     url: PATHS.invoices,
     icon: Receipt,
   },

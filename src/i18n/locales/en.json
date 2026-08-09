@@ -45,7 +45,10 @@
   "navigation": {
     "dashboard": "Dashboard",
     "customers": "Customers",
-    "invoices": "Invoices",
+    "invoices": {
+      "invoices": "Invoices",
+      "create": "Create Invoice"
+    },
     "clients": "Clients",
     "settings": "Settings",
     "company": "Company",
@@ -70,6 +73,7 @@
     "deleteCustomerSuccess": "Customer deleted successfully"
   },
   "invoices": {
+    "createInvoice": "Create Invoice",
     "invoiceNumber": "Invoice Number",
     "createdAtDate": "Creation Date",
     "dueDate": "Due Date",

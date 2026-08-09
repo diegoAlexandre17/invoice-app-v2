@@ -7,6 +7,7 @@ export const SEGMENTS = {
   customers: "customers",
   invoices: {
     index: "invoices",
+    create: "create",
   },
   company: "company",
 } as const;
@@ -22,5 +23,6 @@ export const PATHS = {
   dashboard: `${ADMIN}/${SEGMENTS.dashboard}`,
   customers: `${ADMIN}/${SEGMENTS.customers}`,
   invoices: `${ADMIN}/${SEGMENTS.invoices.index}`,
+  createInvoice: `${ADMIN}/${SEGMENTS.invoices.index}/${SEGMENTS.invoices.create}`,
   company: `${ADMIN}/${SEGMENTS.company}`,
 } as const;

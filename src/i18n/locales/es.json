@@ -45,7 +45,10 @@
   "navigation": {
     "dashboard": "Dashboard",
     "customers": "Clientes",
-    "invoices": "Facturas",
+    "invoices": {
+      "invoices": "Facturas",
+      "create": "Crear Factura"
+    },
     "clients": "Clientes",
     "settings": "Configuración",
     "company": "Empresa",
@@ -70,6 +73,7 @@
     "deleteCustomerSuccess": "Cliente eliminado exitosamente"
   },
   "invoices": {
+    "createInvoice": "Crear Factura",
     "invoiceNumber": "Número de Factura",
     "createdAtDate": "Fecha de creación",
     "dueDate": "Fecha de vencimiento",
