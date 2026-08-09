@@ -46,7 +46,12 @@
     "invoices": "Invoices",
     "clients": "Clients",
     "settings": "Settings",
-    "company": "Company"
+    "company": "Company",
+    "accessRestricted": "Access Restricted",
+    "companyDataRequired": "You cannot access this route because you need to complete your company's data",
+    "companyInfoRequired": "To access this functionality, you must first configure your company's information in the system.",
+    "configureCompany": "Configure Company",
+    "backToDashboard": "Back to Dashboard"
   },
   "customers": {
     "addCustomer": "Add customer",

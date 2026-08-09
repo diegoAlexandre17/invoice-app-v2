@@ -46,7 +46,12 @@
     "invoices": "Facturas",
     "clients": "Clientes",
     "settings": "Configuración",
-    "company": "Empresa"
+    "company": "Empresa",
+    "accessRestricted": "Acceso Restringido",
+    "companyDataRequired": "No puede acceder a esta ruta porque necesita completar los datos de su empresa",
+    "companyInfoRequired": "Para acceder a esta funcionalidad, primero debe configurar la información de su empresa en el sistema.",
+    "configureCompany": "Configurar Empresa",
+    "backToDashboard": "Volver al Dashboard"
   },
   "customers": {
     "addCustomer": "Agregar cliente",
