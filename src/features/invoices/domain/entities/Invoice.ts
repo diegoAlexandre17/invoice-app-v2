@@ -75,7 +75,27 @@ export interface GetInvoicesParams {
  * 'overdue' se deriva, no se persiste: una factura 'sent' cuya dueDate ya pasó.
  * Las 'paid' y 'cancelled' nunca están vencidas.
  */
-export const isOverdue = (invoice: Invoice, now: Date = new Date()): boolean => {
+export const isOverdue = (
+  invoice: Invoice,
+  now: Date = new Date(),
+): boolean => {
   if (invoice.status !== "sent") return false;
   return new Date(invoice.dueDate) < now;
+};
+
+export const calculateItemTotal = (
+  quantity: number,
+  unitPrice: number,
+): number => {
+  if (!Number.isFinite(quantity) || !Number.isFinite(unitPrice)) {
+    return 0;
+  }
+  return quantity * unitPrice;
+};
+
+export const calculateInvoiceTotal = (items: InvoiceItem[]): number => {
+  return items.reduce(
+    (sum, item) => sum + calculateItemTotal(item.quantity, item.unitPrice),
+    0,
+  );
 };

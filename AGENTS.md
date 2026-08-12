@@ -73,7 +73,12 @@ src/features/<feature>/
 
 ### Las reglas que hacen que esto funcione (no las rompas)
 
-1. **`domain/` es puro.** Sin imports de React, Supabase, TanStack ni ninguna librería externa. Solo otros tipos del domain. Las entidades describen el negocio, no la forma de la respuesta del backend.
+1. **`domain/` es puro.** Sin imports de React, Supabase, TanStack ni ninguna librería externa. Solo otros tipos del domain. Las entidades describen el negocio, no la forma de la respuesta del backend. Puro también significa **sin efectos colaterales**: nada de `console.*`, I/O ni fechas/aleatorios no inyectados. Para un input incompleto, devolvé un valor neutro (ej. `0`) en silencio; no loguees.
+   - **Dónde vive una función de dominio (regla de ubicación).** Hay dos hogares y el criterio es la **cohesión**:
+     - **Regla que ES la entidad** → **dentro del archivo de la entidad** (`domain/entities/<X>.ts`). Es aritmética o lógica intrínseca que define qué significa esa entidad. Ej: `isOverdue`, `calculateItemTotal`, `calculateInvoiceTotal` viven en `Invoice.ts`.
+     - **Utilidad que opera SOBRE la entidad** → **suelta en `domain/`** (`domain/<fn>.ts`). Es un validador/transformador periférico que razona sobre la estructura de la entidad desde afuera. Ej: `isCompanyDataComplete` (itera `keyof Company`) vive suelta en `features/company/domain/`.
+     - No es dogma: cuando un archivo de entidad acumula muchas reglas, separalas en archivos sueltos. El disparador es cohesión/tamaño, no capricho.
+     - **Funciones derivadas > estado guardado.** Si un valor se puede calcular a partir de otros (ej. `total = quantity × unitPrice`), se **deriva** con una función pura; no se guarda en el form state ni se sincroniza con `useEffect`. La única excepción es el **snapshot** de un documento muerto ya emitido (ver `InvoiceItem.total`, congelado en la base).
 2. **`domain/repositories/` define solo interfaces.** La capa de application depende de la interfaz, nunca de una clase concreta.
 3. **`application/useCases/` son funciones delgadas** que reciben un repositorio como primer argumento y orquestan la lógica de dominio. Sin React, sin Supabase.
 4. **`infrastructure/` es el único lugar que conoce Supabase.** La implementación del repositorio traduce filas de Supabase ⇄ entidades del domain (ej. `id_number` ⇄ `identification`, `created_at` ⇄ `createdAt`). El mapeo de nombres de columna sucede ACÁ, en ningún otro lado.
