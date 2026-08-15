@@ -1,4 +1,11 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Field,
   FieldError,
@@ -10,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import InvoiceItemsSection from "@/views/invoices/InvoiceItemsSection";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ParseKeys } from "i18next";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import * as z from "zod";
 
@@ -32,18 +39,12 @@ const invoiceSchema = z.object({
     .min(1, "errorsForm.common.nameRequired")
     .max(60, "errorsForm.common.maxLength60"),
   email: z.email("errorsForm.common.emailRequired"),
-  address: z
-    .string()
-    .min(1, "errorsForm.customers.addressRequired")
-    .max(120, "errorsForm.common.maxLength120"),
+  address: z.string().max(120, "errorsForm.common.maxLength120").optional(),
   identification: z
     .string()
     .min(1, "errorsForm.customers.identificationRequired")
     .max(15, "errorsForm.common.maxLength15"),
-  phone: z
-    .string()
-    .min(1, "errorsForm.customers.phoneRequired")
-    .max(15, "errorsForm.common.maxLength15"),
+  phone: z.string().max(15, "errorsForm.common.maxLength15").optional(),
   notes: z.string().max(500, "errorsForm.common.maxLength500").optional(),
   // "Al menos un ítem" para emitir. Valida la LISTA, no los inputs de carga.
   items: z.array(invoiceItemSchema).min(1, "errorsForm.invoices.itemsRequired"),
@@ -58,6 +59,7 @@ const InvoiceForm = () => {
   const {
     register,
     control,
+    handleSubmit,
     formState: { errors },
   } = useForm<InvoiceFormData>({
     resolver: zodResolver(invoiceSchema),
@@ -70,6 +72,12 @@ const InvoiceForm = () => {
     control,
     name: "items",
   });
+
+  const onSubmit: SubmitHandler<InvoiceFormData> = (formData) => {
+    console.log(formData);
+  };
+
+  console.log(errors);
 
   return (
     <div className="flex flex-col gap-6">
@@ -127,7 +135,6 @@ const InvoiceForm = () => {
             <Field>
               <FieldLabel htmlFor="phone">
                 <span>{t("customers.phone")}</span>
-                <span className="text-destructive">*</span>
               </FieldLabel>
               <Input id="phone" {...register("phone")} />
               {errors.phone && (
@@ -153,7 +160,7 @@ const InvoiceForm = () => {
               <FieldLabel htmlFor="notes">
                 <span>{t("invoices.notes")}</span>
               </FieldLabel>
-              <Textarea id="notes" placeholder="Type your message here." />
+              <Textarea id="notes" placeholder="Type your message here." {...register("notes")}  />
               {errors.notes && (
                 <FieldError>
                   {t(errors.notes.message as ErrorFormKey)}
@@ -162,8 +169,37 @@ const InvoiceForm = () => {
             </Field>
           </FieldGroup>
         </CardContent>
-        <InvoiceItemsSection fields={fields} append={append} remove={remove} />
-        
+        <div>
+          <InvoiceItemsSection
+            fields={fields}
+            append={append}
+            remove={remove}
+          />
+          {errors.items && (
+            <FieldError className="text-center">{t(errors.items.message as ErrorFormKey)}</FieldError>
+          )}
+        </div>
+        <CardFooter className="gap-2 justify-end">
+          <Button
+            variant={"destructive"}
+            type="button"
+            /* disabled={
+              editCompanyDataMutation.isPending || uploadLogoMutation.isPending
+            } */
+          >
+            {t("common.cancel")}
+          </Button>
+          <Button
+            variant={"success"}
+            type="button"
+            onClick={handleSubmit(onSubmit)}
+            /* disabled={
+              editCompanyDataMutation.isPending || uploadLogoMutation.isPending
+            } */
+          >
+            {t("invoices.createInvoice")}
+          </Button>
+        </CardFooter>
       </Card>
     </div>
   );
