@@ -18,7 +18,6 @@ import { Input } from "@/components/ui/input";
 import type { Customer } from "@/features/customers/domain/entities/Customer";
 import { useCreateCustomer } from "@/features/customers/presentation/hooks/useCreateCustomer";
 import { useEditCustomer } from "@/features/customers/presentation/hooks/useEditCustomer";
-import en from "@/i18n/locales/en.json";
 import type { ParseKeys } from "i18next";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
@@ -29,15 +28,21 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 const customerSchema = z.object({
-  name: z.string().min(1, "nameRequired").max(60, "maxLength60"),
-  email: z.email("emailRequired"),
+  name: z
+    .string()
+    .min(1, "errorsForm.common.nameRequired")
+    .max(60, "errorsForm.common.maxLength60"),
+  email: z.email("errorsForm.common.emailRequired"),
   phone: z.string().max(15, "maxLength15").optional(),
-  identification: z.string().max(15, "maxLength15").optional(),
+  identification: z
+    .string()
+    .min(1, "errorsForm.customers.identificationRequired")
+    .max(15, "errorsForm.common.maxLength15"),
   address: z.string().max(60, "maxLength60").optional(),
 });
 
 type CustomerFormData = z.infer<typeof customerSchema>;
-type ErrorFormKey = keyof typeof en.errorsForm.customers;
+type ErrorFormKey = ParseKeys;
 
 interface CustomerModalProps {
   isOpen: boolean;
@@ -168,9 +173,10 @@ const CustomerModal = ({
                   <Input id="name" {...register("name")} />
                   {errors.name && (
                     <FieldError>
-                      {t(
+                      {/* {t(
                         `errorsForm.customers.${errors.name.message as ErrorFormKey}`,
-                      )}
+                      )} */}
+                      {t(errors.name.message as ErrorFormKey)}
                     </FieldError>
                   )}
                 </Field>
@@ -183,9 +189,20 @@ const CustomerModal = ({
                   <Input id="email" {...register("email")} />
                   {errors.email && (
                     <FieldError>
-                      {t(
-                        `errorsForm.customers.${errors.email.message as ErrorFormKey}`,
-                      )}
+                      {t(errors.email.message as ErrorFormKey)}
+                    </FieldError>
+                  )}
+                </Field>
+
+                <Field>
+                  <FieldLabel htmlFor="identification">
+                    <span>{t("customers.identification")}</span>
+                    <span className="text-destructive">*</span>
+                  </FieldLabel>
+                  <Input id="identification" {...register("identification")} />
+                  {errors.identification && (
+                    <FieldError>
+                      {t(errors.identification.message as ErrorFormKey)}
                     </FieldError>
                   )}
                 </Field>
@@ -195,13 +212,6 @@ const CustomerModal = ({
                     <span>{t("customers.phone")}</span>
                   </FieldLabel>
                   <Input id="phone" {...register("phone")} />
-                </Field>
-
-                <Field>
-                  <FieldLabel htmlFor="identification">
-                    <span>{t("customers.identification")}</span>
-                  </FieldLabel>
-                  <Input id="identification" {...register("identification")} />
                 </Field>
 
                 <Field>
