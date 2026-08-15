@@ -59,6 +59,7 @@
     "backToDashboard": "Volver al Dashboard"
   },
   "customers": {
+    "clientDetails": "Detalles del cliente",
     "addCustomer": "Agregar cliente",
     "customerDescriptionModal": "Completa la información cliente aquí",
     "editCustomer": "Editar cliente",
@@ -78,6 +79,15 @@
     "createdAtDate": "Fecha de creación",
     "dueDate": "Fecha de vencimiento",
     "notes":"Notas",
+    "items": "Ítems de la factura",
+    "description": "Descripción",
+    "descriptionPlaceholder": "Descripción del producto o servicio",
+    "quantity": "Cantidad",
+    "unitPrice": "Precio unitario",
+    "addItem": "Agregar ítem",
+    "noItemsYet": "Aún no se agregaron ítems",
+    "itemNumber": "Ítem #{{number}}",
+    "itemTotal": "Total del ítem:",
     "states":{
       "sent":"Enviada",
       "paid":"Pagada",
@@ -109,10 +119,14 @@
     "customers": {
       "addressRequired": "La dirección es requerida",
       "identificationRequired": "La identificación es requerida",
-      "phoneRequired": "El teléfono es requerido",
+      "phoneRequired": "El teléfono es requerido"
+    },
+    "invoices": {
+      "descriptionRequired": "La descripción es requerida",
       "quantityRequired": "La cantidad debe ser al menos 1",
+      "quantityInteger": "La cantidad debe ser un número entero",
       "priceRequired": "El precio debe ser mayor o igual a 0",
-      "itemsRequired": "Se requiere al menos un item"
+      "itemsRequired": "Se requiere al menos un ítem"
     },
     "auth": {
       "passwordRequired": "La contraseña es requerida",

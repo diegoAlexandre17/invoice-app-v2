@@ -59,6 +59,7 @@
     "backToDashboard": "Back to Dashboard"
   },
   "customers": {
+    "clientDetails": "Client Details",
     "addCustomer": "Add customer",
     "customerDescriptionModal": "Complete the information for the customer here",
     "editCustomer": "Edit customer",
@@ -78,6 +79,15 @@
     "createdAtDate": "Creation Date",
     "dueDate": "Due Date",
      "notes":"Notes",
+    "items": "Invoice Items",
+    "description": "Description",
+    "descriptionPlaceholder": "Product or service description",
+    "quantity": "Quantity",
+    "unitPrice": "Unit Price",
+    "addItem": "Add Item",
+    "noItemsYet": "No items added yet",
+    "itemNumber": "Item #{{number}}",
+    "itemTotal": "Item total:",
     "states":{
       "sent":"Sent",
       "paid":"Paid",
@@ -109,9 +119,12 @@
     "customers": {
       "addressRequired": "The address is required",
       "identificationRequired": "The identification is required",
-      "phoneRequired": "The phone is required",
-
+      "phoneRequired": "The phone is required"
+    },
+    "invoices": {
+      "descriptionRequired": "The description is required",
       "quantityRequired": "Quantity must be at least 1",
+      "quantityInteger": "Quantity must be a whole number",
       "priceRequired": "Price must be greater than or equal to 0",
       "itemsRequired": "At least one item is required"
     },
