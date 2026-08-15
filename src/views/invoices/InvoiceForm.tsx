@@ -163,6 +163,7 @@ const InvoiceForm = () => {
           </FieldGroup>
         </CardContent>
         <InvoiceItemsSection fields={fields} append={append} remove={remove} />
+        
       </Card>
     </div>
   );

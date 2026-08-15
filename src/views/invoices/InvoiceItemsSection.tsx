@@ -24,17 +24,22 @@ import type {
 import { useTranslation } from "react-i18next";
 import * as z from "zod";
 
-
 const invoiceItemSchema = z.object({
   description: z
     .string()
     .min(1, "errorsForm.invoices.descriptionRequired")
     .max(120, "errorsForm.common.maxLength120"),
+  // El { message } cubre el caso "no es un number válido" (incl. NaN, que es lo
+  // que produce valueAsNumber cuando el user tipea "1-", "+", o deja vacío).
+  // Sin esto, zod tira su mensaje CRUDO en inglés ("expected number, received
+  // NaN") en vez de la clave i18n.
   quantity: z
-    .number()
+    .number({ message: "errorsForm.invoices.quantityRequired" })
     .int("errorsForm.invoices.quantityInteger")
     .min(1, "errorsForm.invoices.quantityRequired"),
-  unitPrice: z.number().min(0, "errorsForm.invoices.priceRequired"),
+  unitPrice: z
+    .number({ message: "errorsForm.invoices.priceRequired" })
+    .min(0, "errorsForm.invoices.priceRequired"),
 });
 
 type InvoiceItemFormData = z.infer<typeof invoiceItemSchema>;
@@ -87,78 +92,80 @@ const InvoiceItemsSection = ({
         <CardTitle className="text-xl">{t("invoices.items")}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
-        <FieldGroup className="grid grid-cols-1 gap-0 md:gap-4 md:grid-cols-[1fr_auto_auto_auto]">
-          <Field data-invalid={!!errors.description}>
-            <FieldLabel htmlFor="item-description">
-              <span>{t("invoices.description")}</span>
-              <span className="text-destructive">*</span>
-            </FieldLabel>
-            <Input
-              id="item-description"
-              placeholder={t("invoices.descriptionPlaceholder")}
-              aria-invalid={!!errors.description}
-              {...register("description")}
-            />
-            <FieldMessageSlot>
-              {errors.description && (
-                <FieldError>
-                  {t(errors.description.message as ErrorFormKey)}
-                </FieldError>
-              )}
-            </FieldMessageSlot>
-          </Field>
+        <form onSubmit={handleSubmit(onAddItem)}>
+          <FieldGroup className="grid grid-cols-1 gap-0 md:gap-4 md:grid-cols-[1fr_auto_auto_auto]">
+            <Field data-invalid={!!errors.description}>
+              <FieldLabel htmlFor="item-description">
+                <span>{t("invoices.description")}</span>
+                <span className="text-destructive">*</span>
+              </FieldLabel>
+              <Input
+                id="item-description"
+                placeholder={t("invoices.descriptionPlaceholder")}
+                aria-invalid={!!errors.description}
+                {...register("description")}
+              />
+              <FieldMessageSlot>
+                {errors.description && (
+                  <FieldError>
+                    {t(errors.description.message as ErrorFormKey)}
+                  </FieldError>
+                )}
+              </FieldMessageSlot>
+            </Field>
 
-          <Field data-invalid={!!errors.quantity}>
-            <FieldLabel htmlFor="item-quantity">
-              <span>{t("invoices.quantity")}</span>
-              <span className="text-destructive">*</span>
-            </FieldLabel>
-            <Input
-              id="item-quantity"
-              type="number"
-              min={1}
-              step={1}
-              aria-invalid={!!errors.quantity}
-              {...register("quantity", { valueAsNumber: true })}
-            />
-            <FieldMessageSlot>
-              {errors.quantity && (
-                <FieldError>
-                  {t(errors.quantity.message as ErrorFormKey)}
-                </FieldError>
-              )}
-            </FieldMessageSlot>
-          </Field>
+            <Field data-invalid={!!errors.quantity}>
+              <FieldLabel htmlFor="item-quantity">
+                <span>{t("invoices.quantity")}</span>
+                <span className="text-destructive">*</span>
+              </FieldLabel>
+              <Input
+                id="item-quantity"
+                type="number"
+                min={1}
+                step={1}
+                aria-invalid={!!errors.quantity}
+                {...register("quantity", { valueAsNumber: true })}
+              />
+              <FieldMessageSlot>
+                {errors.quantity && (
+                  <FieldError>
+                    {t(errors.quantity.message as ErrorFormKey)}
+                  </FieldError>
+                )}
+              </FieldMessageSlot>
+            </Field>
 
-          <Field data-invalid={!!errors.unitPrice}>
-            <FieldLabel htmlFor="item-unitPrice">
-              <span>{t("invoices.unitPrice")}</span>
-              <span className="text-destructive">*</span>
-            </FieldLabel>
-            <Input
-              id="item-unitPrice"
-              type="number"
-              min={0}
-              step="0.01"
-              aria-invalid={!!errors.unitPrice}
-              {...register("unitPrice", { valueAsNumber: true })}
-            />
-            <FieldMessageSlot>
-              {errors.unitPrice && (
-                <FieldError>
-                  {t(errors.unitPrice.message as ErrorFormKey)}
-                </FieldError>
-              )}
-            </FieldMessageSlot>
-          </Field>
+            <Field data-invalid={!!errors.unitPrice}>
+              <FieldLabel htmlFor="item-unitPrice">
+                <span>{t("invoices.unitPrice")}</span>
+                <span className="text-destructive">*</span>
+              </FieldLabel>
+              <Input
+                id="item-unitPrice"
+                type="number"
+                min={0}
+                step="0.01"
+                aria-invalid={!!errors.unitPrice}
+                {...register("unitPrice", { valueAsNumber: true })}
+              />
+              <FieldMessageSlot>
+                {errors.unitPrice && (
+                  <FieldError>
+                    {t(errors.unitPrice.message as ErrorFormKey)}
+                  </FieldError>
+                )}
+              </FieldMessageSlot>
+            </Field>
 
-          <div className="my-auto">
-            <Button type="button" onClick={handleSubmit(onAddItem)}>
-              <Plus />
-              {t("invoices.addItem")}
-            </Button>
-          </div>
-        </FieldGroup>
+            <div className="my-auto">
+              <Button type="submit">
+                <Plus />
+                {t("invoices.addItem")}
+              </Button>
+            </div>
+          </FieldGroup>
+        </form>
 
         {fields.length === 0 ? (
           <p className="py-8 text-center text-muted-foreground">
