@@ -7,6 +7,8 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { getCurrencySymbol } from "@/features/company/domain/currencySymbol";
+import { useGetCompanyData } from "@/features/company/presentation/useGetCompanyData";
 import {
   calculateInvoiceTotal,
   calculateItemTotal,
@@ -61,6 +63,8 @@ const InvoiceItemsSection = ({
   remove,
 }: InvoiceItemsSectionProps) => {
   const { t } = useTranslation();
+  const { data: company } = useGetCompanyData();
+  const currencySymbol = getCurrencySymbol(company?.currency);
 
   const {
     register,
@@ -208,7 +212,10 @@ const InvoiceItemsSection = ({
                       <p className="text-muted-foreground">
                         {t("invoices.unitPrice")}
                       </p>
-                      <p>${field.unitPrice.toFixed(2)}</p>
+                      <p>
+                        {currencySymbol}
+                        {field.unitPrice.toFixed(2)}
+                      </p>
                     </div>
                   </div>
 
@@ -217,7 +224,7 @@ const InvoiceItemsSection = ({
                       {t("invoices.itemTotal")}{" "}
                     </span>
                     <span className="font-semibold text-success">
-                      $
+                      {currencySymbol}
                       {calculateItemTotal(
                         field.quantity,
                         field.unitPrice,
@@ -234,7 +241,8 @@ const InvoiceItemsSection = ({
                 {t("common.total")}:
               </span>
               <span className="ml-2 font-bold text-success">
-                ${invoiceTotal.toFixed(2)}
+                {currencySymbol}
+                {invoiceTotal.toFixed(2)}
               </span>
             </div>
           </div>
