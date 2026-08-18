@@ -79,6 +79,8 @@
     "invoiceNumber": "Invoice Number",
     "createdAtDate": "Creation Date",
     "dueDate": "Due Date",
+    "issueDate": "Issue Date",
+    "pickDate": "Pick a date",
      "notes":"Notes",
     "items": "Invoice Items",
     "description": "Description",
@@ -128,7 +130,10 @@
       "quantityRequired": "Quantity must be at least 1",
       "quantityInteger": "Quantity must be a whole number",
       "priceRequired": "Price must be greater than or equal to 0",
-      "itemsRequired": "At least one item is required"
+      "itemsRequired": "At least one item is required",
+      "issueDateRequired": "The issue date is required",
+      "dueDateRequired": "The due date is required",
+      "dueDateBeforeIssue": "The due date cannot be before the issue date"
     },
     "auth": {
       "passwordRequired": "Password is required",

@@ -24,15 +24,20 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { getCurrencySymbol } from "@/features/company/domain/currencySymbol";
 import { useGetCompanyData } from "@/features/company/presentation/useGetCompanyData";
+import DatePicker from "@/components/shared/DatePicker";
 import InvoiceItemsSection from "@/views/invoices/InvoiceItemsSection";
 import InvoicePDFPreview from "@/views/invoices/InvoicePDFPreview";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ParseKeys } from "i18next";
 import { useState } from "react";
-import { useFieldArray, useForm, type SubmitHandler } from "react-hook-form";
+import {
+  Controller,
+  useFieldArray,
+  useForm,
+  type SubmitHandler,
+} from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import * as z from "zod";
-
 
 const invoiceItemSchema = z.object({
   description: z.string().min(1).max(120),
@@ -42,22 +47,35 @@ const invoiceItemSchema = z.object({
   total: z.number(),
 });
 
-const invoiceSchema = z.object({
-  name: z
-    .string()
-    .min(1, "errorsForm.common.nameRequired")
-    .max(60, "errorsForm.common.maxLength60"),
-  email: z.email("errorsForm.common.emailRequired"),
-  address: z.string().max(120, "errorsForm.common.maxLength120").optional(),
-  identification: z
-    .string()
-    .min(1, "errorsForm.customers.identificationRequired")
-    .max(15, "errorsForm.common.maxLength15"),
-  phone: z.string().max(15, "errorsForm.common.maxLength15").optional(),
-  notes: z.string().max(500, "errorsForm.common.maxLength500").optional(),
-  // "Al menos un ítem" para emitir. Valida la LISTA, no los inputs de carga.
-  items: z.array(invoiceItemSchema).min(1, "errorsForm.invoices.itemsRequired"),
-});
+const invoiceSchema = z
+  .object({
+    name: z
+      .string()
+      .min(1, "errorsForm.common.nameRequired")
+      .max(60, "errorsForm.common.maxLength60"),
+    email: z.email("errorsForm.common.emailRequired"),
+    address: z.string().max(120, "errorsForm.common.maxLength120").optional(),
+    identification: z
+      .string()
+      .min(1, "errorsForm.customers.identificationRequired")
+      .max(15, "errorsForm.common.maxLength15"),
+    phone: z.string().max(15, "errorsForm.common.maxLength15").optional(),
+    notes: z.string().max(500, "errorsForm.common.maxLength500").optional(),
+    // Fechas de negocio. En el dominio (Invoice) viven como ISO string; acá se
+    // validan como Date y se convierten al emitir (borde de infrastructure).
+    issueDate: z.date({ message: "errorsForm.invoices.issueDateRequired" }),
+    dueDate: z.date({ message: "errorsForm.invoices.dueDateRequired" }),
+    // "Al menos un ítem" para emitir. Valida la LISTA, no los inputs de carga.
+    items: z
+      .array(invoiceItemSchema)
+      .min(1, "errorsForm.invoices.itemsRequired"),
+  })
+  .refine((data) => data.dueDate >= data.issueDate, {
+    // Red de seguridad: el calendario ya bloquea fechas previas, pero el usuario
+    // podría cambiar issueDate DESPUÉS de elegir dueDate. La regla vive acá.
+    message: "errorsForm.invoices.dueDateBeforeIssue",
+    path: ["dueDate"],
+  });
 
 export type InvoiceFormData = z.infer<typeof invoiceSchema>;
 type ErrorFormKey = ParseKeys;
@@ -73,17 +91,25 @@ const InvoiceForm = () => {
   const {
     register,
     control,
+    watch,
     handleSubmit,
     formState: { errors },
   } = useForm<InvoiceFormData>({
     resolver: zodResolver(invoiceSchema),
-    defaultValues: { items: [] },
+    // issueDate arranca en hoy (la emisión suele ser el día actual);
+    // dueDate queda vacío para que el usuario lo elija.
+    defaultValues: { items: [], issueDate: new Date() },
   });
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "items",
   });
+
+  // Observamos ambas fechas para acotar los calendarios entre sí en vivo:
+  // dueDate no puede ser < issueDate, e issueDate no puede ser > dueDate.
+  const issueDate = watch("issueDate");
+  const dueDate = watch("dueDate");
 
   const onSubmit: SubmitHandler<InvoiceFormData> = (formData) => {
     console.log(formData);
@@ -103,8 +129,8 @@ const InvoiceForm = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-6">
-          <FieldGroup className="grid grid-cols-1 md:grid-cols-3">
-            <Field>
+          <FieldGroup className="grid grid-cols-1 lg:grid-cols-4 md:grid-cols-2">
+            <Field className="col-span-1 md:col-span-2">
               <FieldLabel htmlFor="name">
                 <span>{t("customers.customerName")}</span>
                 <span className="text-destructive">*</span>
@@ -113,6 +139,59 @@ const InvoiceForm = () => {
               {errors.name && (
                 <FieldError>
                   {t(errors.name.message as ErrorFormKey)}
+                </FieldError>
+              )}
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="issueDate">
+                <span>{t("invoices.issueDate")}</span>
+                <span className="text-destructive">*</span>
+              </FieldLabel>
+              <Controller
+                control={control}
+                name="issueDate"
+                render={({ field }) => (
+                  <DatePicker
+                    id="issueDate"
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder={t("invoices.pickDate")}
+                    // Bloquea días posteriores al vencimiento (mismo día permitido).
+                    disabledDates={dueDate ? { after: dueDate } : undefined}
+                  />
+                )}
+              />
+              {errors.issueDate && (
+                <FieldError>
+                  {t(errors.issueDate.message as ErrorFormKey)}
+                </FieldError>
+              )}
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="dueDate">
+                <span>{t("invoices.dueDate")}</span>
+                <span className="text-destructive">*</span>
+              </FieldLabel>
+              <Controller
+                control={control}
+                name="dueDate"
+                render={({ field }) => (
+                  <DatePicker
+                    id="dueDate"
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder={t("invoices.pickDate")}
+                    // Bloquea días anteriores a la emisión (mismo día permitido).
+                    disabledDates={
+                      issueDate ? { before: issueDate } : undefined
+                    }
+                  />
+                )}
+              />
+              {errors.dueDate && (
+                <FieldError>
+                  {t(errors.dueDate.message as ErrorFormKey)}
                 </FieldError>
               )}
             </Field>

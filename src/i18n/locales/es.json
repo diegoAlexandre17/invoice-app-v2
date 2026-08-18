@@ -79,6 +79,8 @@
     "invoiceNumber": "Número de Factura",
     "createdAtDate": "Fecha de creación",
     "dueDate": "Fecha de vencimiento",
+    "issueDate": "Fecha de emisión",
+    "pickDate": "Seleccionar fecha",
     "notes":"Notas",
     "items": "Ítems de la factura",
     "description": "Descripción",
@@ -128,7 +130,10 @@
       "quantityRequired": "La cantidad debe ser al menos 1",
       "quantityInteger": "La cantidad debe ser un número entero",
       "priceRequired": "El precio debe ser mayor o igual a 0",
-      "itemsRequired": "Se requiere al menos un ítem"
+      "itemsRequired": "Se requiere al menos un ítem",
+      "issueDateRequired": "La fecha de emisión es requerida",
+      "dueDateRequired": "La fecha de vencimiento es requerida",
+      "dueDateBeforeIssue": "La fecha de vencimiento no puede ser anterior a la de emisión"
     },
     "auth": {
       "passwordRequired": "La contraseña es requerida",
