@@ -7,8 +7,6 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { getCurrencySymbol } from "@/features/company/domain/currencySymbol";
-import { useGetCompanyData } from "@/features/company/presentation/useGetCompanyData";
 import {
   calculateInvoiceTotal,
   calculateItemTotal,
@@ -31,10 +29,6 @@ const invoiceItemSchema = z.object({
     .string()
     .min(1, "errorsForm.invoices.descriptionRequired")
     .max(120, "errorsForm.common.maxLength120"),
-  // El { message } cubre el caso "no es un number válido" (incl. NaN, que es lo
-  // que produce valueAsNumber cuando el user tipea "1-", "+", o deja vacío).
-  // Sin esto, zod tira su mensaje CRUDO en inglés ("expected number, received
-  // NaN") en vez de la clave i18n.
   quantity: z
     .number({ message: "errorsForm.invoices.quantityRequired" })
     .int("errorsForm.invoices.quantityInteger")
@@ -55,16 +49,16 @@ interface InvoiceItemsSectionProps {
   fields: FieldArrayWithId<InvoiceFormData, "items", "id">[];
   append: UseFieldArrayAppend<InvoiceFormData, "items">;
   remove: UseFieldArrayRemove;
+  currencySymbol: string
 }
 
 const InvoiceItemsSection = ({
   fields,
   append,
   remove,
+  currencySymbol
 }: InvoiceItemsSectionProps) => {
   const { t } = useTranslation();
-  const { data: company } = useGetCompanyData();
-  const currencySymbol = getCurrencySymbol(company?.currency);
 
   const {
     register,

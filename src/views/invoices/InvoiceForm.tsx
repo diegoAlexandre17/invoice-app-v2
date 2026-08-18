@@ -1,3 +1,4 @@
+import Loader from "@/components/shared/Loader";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,19 +13,27 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { getCurrencySymbol } from "@/features/company/domain/currencySymbol";
+import { useGetCompanyData } from "@/features/company/presentation/useGetCompanyData";
 import InvoiceItemsSection from "@/views/invoices/InvoiceItemsSection";
+import InvoicePDFPreview from "@/views/invoices/InvoicePDFPreview";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ParseKeys } from "i18next";
+import { useState } from "react";
 import { useFieldArray, useForm, type SubmitHandler } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import * as z from "zod";
 
-/**
- * Schema de la línea de factura, reusado como elemento del array `items`.
- * total no está: es DERIVADO (se calcula, no se valida como input).
- */
+
 const invoiceItemSchema = z.object({
   description: z.string().min(1).max(120),
   categoryName: z.string(),
@@ -54,7 +63,12 @@ export type InvoiceFormData = z.infer<typeof invoiceSchema>;
 type ErrorFormKey = ParseKeys;
 
 const InvoiceForm = () => {
+  const [previewOpen, setPreviewOpen] = useState(false);
   const { t } = useTranslation();
+
+  const { data: company, isPending: isCompanyDataPending } =
+    useGetCompanyData();
+  const currencySymbol = getCurrencySymbol(company?.currency);
 
   const {
     register,
@@ -66,8 +80,6 @@ const InvoiceForm = () => {
     defaultValues: { items: [] },
   });
 
-  // useFieldArray vive en el form de FACTURA. La sección de items consume
-  // fields/append/remove vía props (un solo salto, sin contexto).
   const { fields, append, remove } = useFieldArray({
     control,
     name: "items",
@@ -75,9 +87,12 @@ const InvoiceForm = () => {
 
   const onSubmit: SubmitHandler<InvoiceFormData> = (formData) => {
     console.log(formData);
+    setPreviewOpen(true);
   };
 
-  console.log(errors);
+  if (isCompanyDataPending) {
+    return <Loader />;
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -160,7 +175,11 @@ const InvoiceForm = () => {
               <FieldLabel htmlFor="notes">
                 <span>{t("invoices.notes")}</span>
               </FieldLabel>
-              <Textarea id="notes" placeholder="Type your message here." {...register("notes")}  />
+              <Textarea
+                id="notes"
+                placeholder="Type your message here."
+                {...register("notes")}
+              />
               {errors.notes && (
                 <FieldError>
                   {t(errors.notes.message as ErrorFormKey)}
@@ -174,9 +193,12 @@ const InvoiceForm = () => {
             fields={fields}
             append={append}
             remove={remove}
+            currencySymbol={currencySymbol}
           />
           {errors.items && (
-            <FieldError className="text-center">{t(errors.items.message as ErrorFormKey)}</FieldError>
+            <FieldError className="text-center">
+              {t(errors.items.message as ErrorFormKey)}
+            </FieldError>
           )}
         </div>
         <CardFooter className="gap-2 justify-end">
@@ -197,10 +219,43 @@ const InvoiceForm = () => {
               editCompanyDataMutation.isPending || uploadLogoMutation.isPending
             } */
           >
-            {t("invoices.createInvoice")}
+            {t("common.preview")}
           </Button>
         </CardFooter>
       </Card>
+
+      <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+        <DialogContent className="sm:max-w-4xl max-h-[90vh] grid-rows-[auto_1fr_auto]">
+          <DialogHeader>
+            <DialogTitle className="pr-8">
+              {t("invoices.invoicePreview")}
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className=" overflow-auto">
+            {company && <InvoicePDFPreview company={company} />}
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant={"destructive"}
+              // disabled={isSubmitting}
+              type="button"
+              onClick={() => setPreviewOpen(false)}
+            >
+              {t("common.cancel")}
+            </Button>
+            <Button
+              type="button"
+              variant={"success"}
+              // onClick={handleSubmit(onSubmit)}
+              // disabled={isSubmitting}
+            >
+              {t("invoices.createInvoice")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -22,7 +22,8 @@
     "commonError": "Ocurrió un error, por favor intente nuevamente",
     "noData": "Sin datos",
     "total": "Total",
-    "state":"Estado"
+    "state":"Estado",
+    "preview":"Previsualizar"
   },
   "auth": {
     "loginTitle": "Bienvenido de Vuelta",
@@ -88,6 +89,7 @@
     "noItemsYet": "Aún no se agregaron ítems",
     "itemNumber": "Ítem #{{number}}",
     "itemTotal": "Total del ítem:",
+    "invoicePreview":"Vista previa de factura",
     "states":{
       "sent":"Enviada",
       "paid":"Pagada",

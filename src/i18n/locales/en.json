@@ -22,7 +22,8 @@
     "commonError": "An error occurred, please try again",
     "noData": "No data",
     "total": "Total",
-    "state":"State"
+    "state":"State",
+    "preview":"Preview"
   },
   "auth": {
     "loginTitle": "Welcome Back",
@@ -88,6 +89,7 @@
     "noItemsYet": "No items added yet",
     "itemNumber": "Item #{{number}}",
     "itemTotal": "Item total:",
+    "invoicePreview":"Invoice Preview",
     "states":{
       "sent":"Sent",
       "paid":"Paid",
