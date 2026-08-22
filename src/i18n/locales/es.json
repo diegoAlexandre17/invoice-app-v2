@@ -92,6 +92,8 @@
     "itemNumber": "Ítem #{{number}}",
     "itemTotal": "Total del ítem:",
     "invoicePreview":"Vista previa de factura",
+    "registeredCustomer": "Cliente registrado",
+    "searchCustomer":"Buscar cliente",
     "states":{
       "sent":"Enviada",
       "paid":"Pagada",

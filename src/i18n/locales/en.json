@@ -92,6 +92,8 @@
     "itemNumber": "Item #{{number}}",
     "itemTotal": "Item total:",
     "invoicePreview":"Invoice Preview",
+    "registeredCustomer": "Registered customer",
+    "searchCustomer":"Search customer",
     "states":{
       "sent":"Sent",
       "paid":"Paid",

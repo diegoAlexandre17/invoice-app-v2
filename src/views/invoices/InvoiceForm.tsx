@@ -1,3 +1,4 @@
+import DatePicker from "@/components/shared/DatePicker";
 import Loader from "@/components/shared/Loader";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,11 +9,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox";
 import {
   Dialog,
   DialogContent,
@@ -20,11 +23,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { getCurrencySymbol } from "@/features/company/domain/currencySymbol";
 import { useGetCompanyData } from "@/features/company/presentation/useGetCompanyData";
-import DatePicker from "@/components/shared/DatePicker";
+import type { Customer } from "@/features/customers/domain/entities/Customer";
+import { useGetAllCustomers } from "@/features/customers/presentation/hooks/useGetAllCustomer";
 import InvoiceItemsSection from "@/views/invoices/InvoiceItemsSection";
 import InvoicePDFPreview from "@/views/invoices/InvoicePDFPreview";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -82,16 +92,27 @@ type ErrorFormKey = ParseKeys;
 
 const InvoiceForm = () => {
   const [previewOpen, setPreviewOpen] = useState(false);
+
   const { t } = useTranslation();
 
   const { data: company, isPending: isCompanyDataPending } =
     useGetCompanyData();
   const currencySymbol = getCurrencySymbol(company?.currency);
 
+  // Traemos todos los clientes de una: el Combobox filtra en el cliente al tipear.
+  // Volumen esperado (PyME) entra sobrado en un fetch. Si algún día son cientos,
+  // migrar a búsqueda server-side (search del repo), no subir el pageSize.
+  const { data: customersData, isPending: isCustomersPending } =
+    useGetAllCustomers({
+      pageSize: 100,
+    });
+  const customers = customersData?.data ?? [];
+
   const {
     register,
     control,
     watch,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm<InvoiceFormData>({
@@ -116,7 +137,16 @@ const InvoiceForm = () => {
     setPreviewOpen(true);
   };
 
-  if (isCompanyDataPending) {
+  const handleSelectCustomer = (customer: Customer | null)=>{
+    if(!customer) return
+    setValue("name", customer.name, {shouldValidate: true})
+    setValue("email", customer.email, {shouldValidate: true})
+    setValue("identification", customer.identification, {shouldValidate: true})
+    setValue("phone", customer.phone ?? "", {shouldValidate: true})
+    setValue("address", customer.address ?? "", {shouldValidate: true})
+  }
+
+  if (isCompanyDataPending || isCustomersPending) {
     return <Loader />;
   }
 
@@ -130,7 +160,34 @@ const InvoiceForm = () => {
         </CardHeader>
         <CardContent className="flex flex-col gap-6">
           <FieldGroup className="grid grid-cols-1 lg:grid-cols-4 md:grid-cols-2">
-            <Field className="col-span-1 md:col-span-2">
+            <Field /* className="col-span-1 md:col-span-2" */>
+              <FieldLabel htmlFor="name">
+                <span>{t("invoices.registeredCustomer")}</span>
+              </FieldLabel>
+              <Combobox<Customer> // <Customer> tipamos el componente Combobox para sus props items e itemToStringLabel
+                items={customers}
+                itemToStringLabel={(customer) => customer.name}
+                onValueChange={handleSelectCustomer}
+              >
+                <ComboboxInput placeholder={t("invoices.searchCustomer")} />
+                <ComboboxContent>
+                  <ComboboxEmpty>{t("common.noData")}</ComboboxEmpty>
+                  <ComboboxList>
+                    {(customer: Customer) => (
+                      <ComboboxItem key={customer.id} value={customer}>
+                        {customer.name}
+                      </ComboboxItem>
+                    )}
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
+              {errors.name && (
+                <FieldError>
+                  {t(errors.name.message as ErrorFormKey)}
+                </FieldError>
+              )}
+            </Field>
+            <Field /* className="col-span-1 md:col-span-2" */>
               <FieldLabel htmlFor="name">
                 <span>{t("customers.customerName")}</span>
                 <span className="text-destructive">*</span>
