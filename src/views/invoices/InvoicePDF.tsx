@@ -1,4 +1,5 @@
 import type { Company } from "@/features/company/domain/entities/Company";
+import type { Invoice } from "@/features/invoices/domain/entities/Invoice";
 import {
   Page,
   Text,
@@ -220,9 +221,22 @@ const styles = StyleSheet.create({
 
 interface InvoicePDFProps {
   company: Omit<Company, "createdAt" | "currency" | "id">;
+  invoiceData: Omit<
+    Invoice,
+    "createdAt" | "id" | "paidAt" | "pdfUrl" | "status"
+  >;
 }
 
-const InvoicePDF = ({ company }: InvoicePDFProps) => {
+const formatDate = (date: Date | string) => {
+  const dateCast = new Date(date);
+  return dateCast.toLocaleDateString("es-ES", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+};
+
+const InvoicePDF = ({ company, invoiceData }: InvoicePDFProps) => {
   const { t } = useTranslation();
 
   return (
@@ -236,21 +250,27 @@ const InvoicePDF = ({ company }: InvoicePDFProps) => {
             </View>
           )}
 
-          {/* <View style={styles.invoiceInfo}>
+          <View style={styles.invoiceInfo}>
             <View>
-              {invoiceData?.invoiceNumber && (
-                <Text style={styles.invoiceDetails}>
-                  <Text style={styles.invoiceDetailLabel}>N°: </Text>
-                  {invoiceData.invoiceNumber}
-                </Text>
-              )}
+              <Text style={styles.invoiceDetails}>
+                <Text style={styles.invoiceDetailLabel}>N°: </Text>
+                {invoiceData.invoiceNumber}
+              </Text>
+
               <Text style={styles.invoiceDetails}>
                 <Text style={styles.invoiceDetailLabel}>
-                  {`${t("invoice.date")}: ${invoiceData.date}`}
+                  {`${t("invoices.issueDate")}: `}
                 </Text>
+                <Text>{formatDate(invoiceData.issueDate)}</Text>
+              </Text>
+              <Text style={styles.invoiceDetails}>
+                <Text style={styles.invoiceDetailLabel}>
+                  {`${t("invoices.dueDate")}: `}
+                </Text>
+                <Text>{formatDate(invoiceData.dueDate)}</Text>
               </Text>
             </View>
-          </View> */}
+          </View>
         </View>
 
         {/* Información de empresa y cliente */}
@@ -275,35 +295,35 @@ const InvoicePDF = ({ company }: InvoicePDFProps) => {
             <Text style={styles.companyInfo}>{`Email: ${company.email}`}</Text>
           </View>
 
-          {/* <View style={styles.clientSection}>
-            <Text style={styles.sectionTitle}>{t("invoice.client")}</Text>
-            {invoiceData.client?.name && (
-              <Text style={styles.companyName}>{invoiceData.client.name}</Text>
-            )}
+          <View style={styles.clientSection}>
+            <Text style={styles.sectionTitle}>
+              {t("customers.clientDetails")}
+            </Text>
 
-            {invoiceData.client?.id && (
+            <Text style={styles.companyName}>{invoiceData.clientName}</Text>
+
+            <Text
+              style={styles.companyInfo}
+            >{`Email: ${invoiceData.clientEmail}`}</Text>
+
+            {/*  {invoiceData.id && (
               <Text
                 style={styles.companyInfo}
-              >{`ID: ${invoiceData.client.id}`}</Text>
-            )}
+              >{`ID: ${invoiceDataid}`}</Text>
+            )} */}
 
-            {invoiceData.client?.address && (
+            {invoiceData.clientAddress && (
               <Text style={styles.companyInfo}>
-                {`${t("customers.address")}: ${invoiceData.client.address}`}
+                {`${t("customers.address")}: ${invoiceData.clientAddress}`}
               </Text>
             )}
 
-            {invoiceData.client?.phone && (
+            {invoiceData.clientPhone && (
               <Text style={styles.companyInfo}>{`${t("customers.phone")}: ${
-                invoiceData.client.phone
+                invoiceData.clientPhone
               }`}</Text>
             )}
-            {invoiceData.client?.email && (
-              <Text
-                style={styles.companyInfo}
-              >{`Email: ${invoiceData.client.email}`}</Text>
-            )}
-          </View> */}
+          </View>
         </View>
 
         {/* Tabla de productos/servicios */}

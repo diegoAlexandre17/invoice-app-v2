@@ -35,6 +35,8 @@ import { getCurrencySymbol } from "@/features/company/domain/currencySymbol";
 import { useGetCompanyData } from "@/features/company/presentation/useGetCompanyData";
 import type { Customer } from "@/features/customers/domain/entities/Customer";
 import { useGetAllCustomers } from "@/features/customers/presentation/hooks/useGetAllCustomer";
+import type { Invoice } from "@/features/invoices/domain/entities/Invoice";
+import { generateInvoiceNumber } from "@/features/invoices/domain/generateInvoiceNumber";
 import InvoiceItemsSection from "@/views/invoices/InvoiceItemsSection";
 import InvoicePDFPreview from "@/views/invoices/InvoicePDFPreview";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -92,6 +94,7 @@ type ErrorFormKey = ParseKeys;
 
 const InvoiceForm = () => {
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [invoiceData, setInvoiceData] = useState<Omit<Invoice, "createdAt" | "id" | "paidAt" | "pdfUrl" | "status"> | null>(null);
 
   const { t } = useTranslation();
 
@@ -134,17 +137,34 @@ const InvoiceForm = () => {
 
   const onSubmit: SubmitHandler<InvoiceFormData> = (formData) => {
     console.log(formData);
+    setInvoiceData({
+      // El número se genera acá, una sola vez, con el instante actual (fecha+hora+
+      // segundos de generación). El mismo que ve el usuario en el preview es el que
+      // se persiste: no se regenera al guardar en Supabase.
+      invoiceNumber: generateInvoiceNumber(),
+      clientName: formData.name,
+      clientEmail: formData.email,
+      dueDate: String(formData.dueDate),
+      issueDate: String(formData.issueDate),
+      clientPhone: formData.phone ?? "",
+      clientAddress: formData.address ?? "",
+      items: formData.items,
+      notes: formData.notes ?? "",
+      totalAmount: 200
+    })
     setPreviewOpen(true);
   };
 
-  const handleSelectCustomer = (customer: Customer | null)=>{
-    if(!customer) return
-    setValue("name", customer.name, {shouldValidate: true})
-    setValue("email", customer.email, {shouldValidate: true})
-    setValue("identification", customer.identification, {shouldValidate: true})
-    setValue("phone", customer.phone ?? "", {shouldValidate: true})
-    setValue("address", customer.address ?? "", {shouldValidate: true})
-  }
+  const handleSelectCustomer = (customer: Customer | null) => {
+    if (!customer) return;
+    setValue("name", customer.name, { shouldValidate: true });
+    setValue("email", customer.email, { shouldValidate: true });
+    setValue("identification", customer.identification, {
+      shouldValidate: true,
+    });
+    setValue("phone", customer.phone ?? "", { shouldValidate: true });
+    setValue("address", customer.address ?? "", { shouldValidate: true });
+  };
 
   if (isCompanyDataPending || isCustomersPending) {
     return <Loader />;
@@ -369,7 +389,7 @@ const InvoiceForm = () => {
           </DialogHeader>
 
           <div className=" overflow-auto">
-            {company && <InvoicePDFPreview company={company} />}
+            {company && invoiceData && <InvoicePDFPreview company={company} invoiceData={invoiceData} />}
           </div>
 
           <DialogFooter>
