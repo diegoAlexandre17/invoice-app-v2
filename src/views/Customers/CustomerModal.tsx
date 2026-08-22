@@ -108,7 +108,7 @@ const CustomerModal = ({
       name: formData.name,
       email: formData.email,
       phone: formData.phone || undefined,
-      identification: formData.identification || undefined,
+      identification: formData.identification,
       address: formData.address || undefined,
     };
 

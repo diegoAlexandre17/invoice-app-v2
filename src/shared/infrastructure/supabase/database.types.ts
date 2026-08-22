@@ -121,7 +121,7 @@ export type Database = {
           created_at: string
           email: string
           id: number
-          id_number: string | null
+          id_number: string
           name: string
           phone: string | null
           user_id: string
@@ -131,7 +131,7 @@ export type Database = {
           created_at?: string
           email: string
           id?: number
-          id_number?: string | null
+          id_number: string
           name: string
           phone?: string | null
           user_id?: string
@@ -141,7 +141,7 @@ export type Database = {
           created_at?: string
           email?: string
           id?: number
-          id_number?: string | null
+          id_number?: string
           name?: string
           phone?: string | null
           user_id?: string
