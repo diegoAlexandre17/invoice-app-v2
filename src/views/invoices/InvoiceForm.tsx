@@ -95,6 +95,7 @@ type ErrorFormKey = ParseKeys;
 const InvoiceForm = () => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [invoiceData, setInvoiceData] = useState<Omit<Invoice, "createdAt" | "id" | "paidAt" | "pdfUrl" | "status"> | null>(null);
+  const [customerId, setCustomerId] = useState<number | null>(null)
 
   const { t } = useTranslation();
 
@@ -142,6 +143,8 @@ const InvoiceForm = () => {
       // segundos de generación). El mismo que ve el usuario en el preview es el que
       // se persiste: no se regenera al guardar en Supabase.
       invoiceNumber: generateInvoiceNumber(),
+      clientIdentification: formData.identification,
+      customerId: customerId,
       clientName: formData.name,
       clientEmail: formData.email,
       dueDate: String(formData.dueDate),
@@ -157,6 +160,7 @@ const InvoiceForm = () => {
 
   const handleSelectCustomer = (customer: Customer | null) => {
     if (!customer) return;
+    setCustomerId(customer.id)
     setValue("name", customer.name, { shouldValidate: true });
     setValue("email", customer.email, { shouldValidate: true });
     setValue("identification", customer.identification, {

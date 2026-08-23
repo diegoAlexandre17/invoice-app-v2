@@ -26,9 +26,24 @@ export interface InvoiceItem {
 /**
  * Factura.
  *
+ * CONVENCIÓN DE NOMENCLATURA (importante — customer y client NO son sinónimos acá):
+ *  - `customer*` (customerId) → REFERENCIA VIVA a la tabla customers (la FK).
+ *    Apunta al cliente tal como está HOY. Puede quedar null.
+ *  - `client*` (clientName, clientEmail, clientIdentification, ...) → SNAPSHOT
+ *    congelado de los datos del cliente al momento de emitir. Nunca cambian.
+ *  Regla mnemotécnica: customer = el vínculo vivo, client = la foto histórica.
+ *
  * Los datos del cliente están APLANADOS (client*) como snapshot: la factura
  * congela al cliente tal como estaba al emitir. Si el cliente cambia su
  * dirección mañana, esta factura sigue mostrando la de hoy.
+ *
+ * customerId es la REFERENCIA VIVA al cliente (FK). Coexiste con el snapshot,
+ * no lo reemplaza: sirve para NAVEGAR/FILTRAR ("dame las facturas del cliente X",
+ * ej. pantalla CustomerDetails), nunca para leer sus datos. Los datos que se
+ * muestran DENTRO de esta factura salen SIEMPRE del snapshot client_*, JAMÁS por
+ * JOIN a customers: una factura vieja debe mostrar cómo estaba el cliente al
+ * emitir, no cómo está hoy. Es `null` si el cliente fue borrado (ON DELETE SET NULL):
+ * la factura sobrevive al cliente porque el snapshot es autosuficiente.
  *
  * Fechas:
  *  - createdAt: cuándo se creó la fila (técnico, lo pone la base).
@@ -45,9 +60,13 @@ export interface Invoice {
   dueDate: string;
   paidAt?: string | null;
 
-  // Snapshot del cliente
+  // Referencia viva al cliente (FK). null si el cliente fue borrado.
+  customerId: number | null;
+
+  // Snapshot del cliente (congelado al emitir)
   clientName: string;
   clientEmail: string;
+  clientIdentification: string;
   clientPhone?: string | null;
   clientAddress?: string | null;
 

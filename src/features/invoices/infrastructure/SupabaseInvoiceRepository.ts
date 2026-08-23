@@ -63,6 +63,8 @@ export class SupabaseInvoiceRepository implements InvoiceRepository {
 
     const invoices: Invoice[] = (data ?? []).map((row) => ({
       id: row.id,
+      customerId: row.customer_id,
+      clientIdentification: row.client_id_number,
       createdAt: row.created_at,
       invoiceNumber: row.invoice_number,
       status: row.status as InvoiceStatus,
@@ -92,6 +94,8 @@ export class SupabaseInvoiceRepository implements InvoiceRepository {
     // Supabase con el usuario logueado (igual que las otras tablas).
     const { error } = await supabase.from("invoices").insert({
       invoice_number: invoiceData.invoiceNumber,
+      customer_id: invoiceData.customerId,
+      client_id_number: invoiceData.clientIdentification,
       status: invoiceData.status,
       issue_date: invoiceData.issueDate,
       due_date: invoiceData.dueDate,

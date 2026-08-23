@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5"
+    PostgrestVersion: "14.15"
   }
   public: {
     Tables: {
@@ -99,7 +99,7 @@ export type Database = {
           logo?: string | null
           name: string
           phone: string
-          user_id: string
+          user_id?: string
         }
         Update: {
           address?: string
@@ -152,9 +152,11 @@ export type Database = {
         Row: {
           client_address: string | null
           client_email: string
+          client_id_number: string
           client_name: string
           client_phone: string | null
           created_at: string
+          customer_id: number | null
           due_date: string
           id: number
           invoice_number: string
@@ -170,9 +172,11 @@ export type Database = {
         Insert: {
           client_address?: string | null
           client_email: string
+          client_id_number: string
           client_name: string
           client_phone?: string | null
           created_at?: string
+          customer_id?: number | null
           due_date?: string
           id?: number
           invoice_number: string
@@ -188,9 +192,11 @@ export type Database = {
         Update: {
           client_address?: string | null
           client_email?: string
+          client_id_number?: string
           client_name?: string
           client_phone?: string | null
           created_at?: string
+          customer_id?: number | null
           due_date?: string
           id?: number
           invoice_number?: string
@@ -203,7 +209,15 @@ export type Database = {
           total_amount?: number
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "invoices_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
