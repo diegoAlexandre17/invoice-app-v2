@@ -178,19 +178,15 @@ const InvoiceForm = () => {
 
   const handleSelectCustomer = (customer: Customer | null) => {
     if (!customer) {
-      // Al limpiar el combo reseteamos SOLO los campos del cliente, campo por
+      // Al limpiar el combobox reseteamos SOLO los campos del cliente, campo por
       // campo. No usamos reset() global: eso pisaría issueDate/dueDate/items y
       // el usuario perdería el trabajo cargado (fechas + ítems).
       setCustomerId(null);
-      setValue("name", defaultValuesCustomer.name, { shouldValidate: true });
-      setValue("email", defaultValuesCustomer.email, { shouldValidate: true });
-      setValue("identification", defaultValuesCustomer.identification, {
-        shouldValidate: true,
-      });
-      setValue("phone", defaultValuesCustomer.phone, { shouldValidate: true });
-      setValue("address", defaultValuesCustomer.address, {
-        shouldValidate: true,
-      });
+      setValue("name", defaultValuesCustomer.name);
+      setValue("email", defaultValuesCustomer.email);
+      setValue("identification", defaultValuesCustomer.identification);
+      setValue("phone", defaultValuesCustomer.phone);
+      setValue("address", defaultValuesCustomer.address);
       return;
     }
     setCustomerId(customer.id);
