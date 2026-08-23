@@ -8,6 +8,7 @@ import { usePDF } from "@react-pdf/renderer";
 interface InvoicePDFPreviewProps {
   company: Omit<Company, "createdAt" | "currency" | "id">;
   invoiceData: Omit<Invoice, "createdAt" | "id" | "paidAt" | "pdfUrl" | "status">
+  currencySymbol: string
 }
 
 /**
@@ -15,8 +16,8 @@ interface InvoicePDFPreviewProps {
  * delega al visualizador genérico. La factura sabe QUÉ documento generar;
  * PDFViewer sabe CÓMO mostrarlo.
  */
-const InvoicePDFPreview = ({ company, invoiceData }: InvoicePDFPreviewProps) => {
-  const [instance] = usePDF({ document: <InvoicePDF company={company} invoiceData={invoiceData} /> });
+const InvoicePDFPreview = ({ company, invoiceData, currencySymbol }: InvoicePDFPreviewProps) => {
+  const [instance] = usePDF({ document: <InvoicePDF company={company} invoiceData={invoiceData} currencySymbol={currencySymbol} /> });
 
   if (instance.loading || !instance.blob) {
     return <Loader />;

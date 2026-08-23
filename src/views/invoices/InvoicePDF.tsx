@@ -32,13 +32,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 15,
-  },
-
   invoiceInfo: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -189,10 +182,17 @@ const styles = StyleSheet.create({
     color: "#333",
   },
 
-  totalAmount: {
-    fontSize: 12,
+  currencyText:{
+    fontSize: 10,
     fontWeight: "bold",
-    color: "#333",
+    textAlign: "center",
+    color: "#2DBE70"
+  },
+
+  totalAmount: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#2DBE70",
   },
 
   // Notes section
@@ -225,19 +225,27 @@ interface InvoicePDFProps {
     Invoice,
     "createdAt" | "id" | "paidAt" | "pdfUrl" | "status"
   >;
+  currencySymbol: string;
 }
 
-const formatDate = (date: Date | string) => {
+// El locale se INYECTA (viene de i18n.language) para no hardcodear "es-ES":
+// un usuario en inglés ve la fecha en su formato. Función pura, sin efectos.
+const formatDate = (date: Date | string, locale: string) => {
   const dateCast = new Date(date);
-  return dateCast.toLocaleDateString("es-ES", {
+  if (Number.isNaN(dateCast.getTime())) return "";
+  return dateCast.toLocaleDateString(locale, {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
   });
 };
 
-const InvoicePDF = ({ company, invoiceData }: InvoicePDFProps) => {
-  const { t } = useTranslation();
+const InvoicePDF = ({
+  company,
+  invoiceData,
+  currencySymbol,
+}: InvoicePDFProps) => {
+  const { t, i18n } = useTranslation();
 
   return (
     <Document>
@@ -261,13 +269,13 @@ const InvoicePDF = ({ company, invoiceData }: InvoicePDFProps) => {
                 <Text style={styles.invoiceDetailLabel}>
                   {`${t("invoices.issueDate")}: `}
                 </Text>
-                <Text>{formatDate(invoiceData.issueDate)}</Text>
+                <Text>{formatDate(invoiceData.issueDate, i18n.language)}</Text>
               </Text>
               <Text style={styles.invoiceDetails}>
                 <Text style={styles.invoiceDetailLabel}>
                   {`${t("invoices.dueDate")}: `}
                 </Text>
-                <Text>{formatDate(invoiceData.dueDate)}</Text>
+                <Text>{formatDate(invoiceData.dueDate, i18n.language)}</Text>
               </Text>
             </View>
           </View>
@@ -327,22 +335,22 @@ const InvoicePDF = ({ company, invoiceData }: InvoicePDFProps) => {
         </View>
 
         {/* Tabla de productos/servicios */}
-        {/*  {invoiceData.items && invoiceData.items.length > 0 && (
+        {invoiceData.items && invoiceData.items.length > 0 && (
           <View style={styles.table}>
             <View style={styles.tableHeader}>
               <View style={styles.descriptionCol}>
                 <Text style={styles.tableHeaderText}>
-                  {t("invoice.description")}
+                  {t("invoices.description")}
                 </Text>
               </View>
               <View style={styles.quantityCol}>
                 <Text style={styles.tableHeaderText}>
-                  {t("invoice.quantity")}
+                  {t("invoices.quantity")}
                 </Text>
               </View>
               <View style={styles.priceCol}>
                 <Text style={styles.tableHeaderText}>
-                  {t("invoice.unitPrice")}
+                  {t("invoices.unitPrice")}
                 </Text>
               </View>
               <View style={styles.totalCol}>
@@ -361,13 +369,13 @@ const InvoicePDF = ({ company, invoiceData }: InvoicePDFProps) => {
                   <Text style={styles.tableCellText}>{item.quantity}</Text>
                 </View>
                 <View style={styles.priceCol}>
-                  <Text style={styles.tableCellText}>
+                  <Text style={styles.currencyText}>
                     {currencySymbol}
                     {item.unitPrice.toFixed(2)}
                   </Text>
                 </View>
                 <View style={styles.totalCol}>
-                  <Text style={styles.tableCellText}>
+                  <Text style={styles.currencyText}>
                     {currencySymbol}
                     {item.total.toFixed(2)}
                   </Text>
@@ -375,31 +383,29 @@ const InvoicePDF = ({ company, invoiceData }: InvoicePDFProps) => {
               </View>
             ))}
           </View>
-        )} */}
+        )}
 
         {/* Sección de total */}
-        {/* {invoiceData.subtotal !== undefined &&
-          invoiceData.subtotal !== null && (
-            <View style={styles.totalSection}>
-              <View style={styles.totalContainer}>
-                <View style={styles.totalRow}>
-                  <Text style={styles.totalLabel}>Total</Text>
-                  <Text style={styles.totalAmount}>
-                    {currencySymbol}
-                    {invoiceData.subtotal.toFixed(2)}
-                  </Text>
-                </View>
-              </View>
+
+        <View style={styles.totalSection}>
+          <View style={styles.totalContainer}>
+            <View style={styles.totalRow}>
+              <Text style={styles.totalLabel}>Total</Text>
+              <Text style={styles.totalAmount}>
+                {currencySymbol}
+                {invoiceData.totalAmount.toFixed(2)}
+              </Text>
             </View>
-          )} */}
+          </View>
+        </View>
 
         {/* Notas */}
-        {/* {invoiceData?.notes && (
+        {invoiceData?.notes && (
           <View style={styles.notesSection}>
-            <Text style={styles.notesTitle}>{t("invoice.notes")}</Text>
+            <Text style={styles.notesTitle}>{t("invoices.notes")}</Text>
             <Text style={styles.notesText}>{invoiceData.notes}</Text>
           </View>
-        )} */}
+        )}
       </Page>
     </Document>
   );

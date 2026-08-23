@@ -35,7 +35,7 @@ import { getCurrencySymbol } from "@/features/company/domain/currencySymbol";
 import { useGetCompanyData } from "@/features/company/presentation/useGetCompanyData";
 import type { Customer } from "@/features/customers/domain/entities/Customer";
 import { useGetAllCustomers } from "@/features/customers/presentation/hooks/useGetAllCustomer";
-import type { Invoice } from "@/features/invoices/domain/entities/Invoice";
+import { calculateInvoiceTotal, type Invoice } from "@/features/invoices/domain/entities/Invoice";
 import { generateInvoiceNumber } from "@/features/invoices/domain/generateInvoiceNumber";
 import InvoiceItemsSection from "@/views/invoices/InvoiceItemsSection";
 import InvoicePDFPreview from "@/views/invoices/InvoicePDFPreview";
@@ -150,7 +150,7 @@ const InvoiceForm = () => {
       clientAddress: formData.address ?? "",
       items: formData.items,
       notes: formData.notes ?? "",
-      totalAmount: 200
+      totalAmount: calculateInvoiceTotal(formData.items)
     })
     setPreviewOpen(true);
   };
@@ -389,7 +389,7 @@ const InvoiceForm = () => {
           </DialogHeader>
 
           <div className=" overflow-auto">
-            {company && invoiceData && <InvoicePDFPreview company={company} invoiceData={invoiceData} />}
+            {company && invoiceData && <InvoicePDFPreview company={company} invoiceData={invoiceData} currencySymbol={currencySymbol}/>}
           </div>
 
           <DialogFooter>
