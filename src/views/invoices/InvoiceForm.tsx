@@ -35,7 +35,10 @@ import { getCurrencySymbol } from "@/features/company/domain/currencySymbol";
 import { useGetCompanyData } from "@/features/company/presentation/useGetCompanyData";
 import type { Customer } from "@/features/customers/domain/entities/Customer";
 import { useGetAllCustomers } from "@/features/customers/presentation/hooks/useGetAllCustomer";
-import { calculateInvoiceTotal, type Invoice } from "@/features/invoices/domain/entities/Invoice";
+import {
+  calculateInvoiceTotal,
+  type Invoice,
+} from "@/features/invoices/domain/entities/Invoice";
 import { generateInvoiceNumber } from "@/features/invoices/domain/generateInvoiceNumber";
 import InvoiceItemsSection from "@/views/invoices/InvoiceItemsSection";
 import InvoicePDFPreview from "@/views/invoices/InvoicePDFPreview";
@@ -92,10 +95,21 @@ const invoiceSchema = z
 export type InvoiceFormData = z.infer<typeof invoiceSchema>;
 type ErrorFormKey = ParseKeys;
 
+const defaultValuesCustomer = {
+  name: "",
+  email: "",
+  identification: "",
+  phone: "",
+  address: "",
+};
+
 const InvoiceForm = () => {
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [invoiceData, setInvoiceData] = useState<Omit<Invoice, "createdAt" | "id" | "paidAt" | "pdfUrl" | "status"> | null>(null);
-  const [customerId, setCustomerId] = useState<number | null>(null)
+  const [invoiceData, setInvoiceData] = useState<Omit<
+    Invoice,
+    "createdAt" | "id" | "paidAt" | "pdfUrl" | "status"
+  > | null>(null);
+  const [customerId, setCustomerId] = useState<number | null>(null);
 
   const { t } = useTranslation();
 
@@ -123,7 +137,11 @@ const InvoiceForm = () => {
     resolver: zodResolver(invoiceSchema),
     // issueDate arranca en hoy (la emisión suele ser el día actual);
     // dueDate queda vacío para que el usuario lo elija.
-    defaultValues: { items: [], issueDate: new Date() },
+    defaultValues: {
+      ...defaultValuesCustomer,
+      items: [],
+      issueDate: new Date(),
+    },
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -153,14 +171,29 @@ const InvoiceForm = () => {
       clientAddress: formData.address ?? "",
       items: formData.items,
       notes: formData.notes ?? "",
-      totalAmount: calculateInvoiceTotal(formData.items)
-    })
+      totalAmount: calculateInvoiceTotal(formData.items),
+    });
     setPreviewOpen(true);
   };
 
   const handleSelectCustomer = (customer: Customer | null) => {
-    if (!customer) return;
-    setCustomerId(customer.id)
+    if (!customer) {
+      // Al limpiar el combo reseteamos SOLO los campos del cliente, campo por
+      // campo. No usamos reset() global: eso pisaría issueDate/dueDate/items y
+      // el usuario perdería el trabajo cargado (fechas + ítems).
+      setCustomerId(null);
+      setValue("name", defaultValuesCustomer.name, { shouldValidate: true });
+      setValue("email", defaultValuesCustomer.email, { shouldValidate: true });
+      setValue("identification", defaultValuesCustomer.identification, {
+        shouldValidate: true,
+      });
+      setValue("phone", defaultValuesCustomer.phone, { shouldValidate: true });
+      setValue("address", defaultValuesCustomer.address, {
+        shouldValidate: true,
+      });
+      return;
+    }
+    setCustomerId(customer.id);
     setValue("name", customer.name, { shouldValidate: true });
     setValue("email", customer.email, { shouldValidate: true });
     setValue("identification", customer.identification, {
@@ -193,7 +226,10 @@ const InvoiceForm = () => {
                 itemToStringLabel={(customer) => customer.name}
                 onValueChange={handleSelectCustomer}
               >
-                <ComboboxInput placeholder={t("invoices.searchCustomer")} />
+                <ComboboxInput
+                  placeholder={t("invoices.searchCustomer")}
+                  showClear
+                />
                 <ComboboxContent>
                   <ComboboxEmpty>{t("common.noData")}</ComboboxEmpty>
                   <ComboboxList>
@@ -216,7 +252,7 @@ const InvoiceForm = () => {
                 <span>{t("customers.customerName")}</span>
                 <span className="text-destructive">*</span>
               </FieldLabel>
-              <Input id="name" {...register("name")} />
+              <Input id="name" {...register("name")} disabled={!!customerId} />
               {errors.name && (
                 <FieldError>
                   {t(errors.name.message as ErrorFormKey)}
@@ -282,7 +318,11 @@ const InvoiceForm = () => {
                 <span>{t("company.identification")}</span>
                 <span className="text-destructive">*</span>
               </FieldLabel>
-              <Input id="identification" {...register("identification")} />
+              <Input
+                id="identification"
+                {...register("identification")}
+                disabled={!!customerId}
+              />
               {errors.identification && (
                 <FieldError>
                   {t(errors.identification.message as ErrorFormKey)}
@@ -295,7 +335,11 @@ const InvoiceForm = () => {
                 <span>Email</span>
                 <span className="text-destructive">*</span>
               </FieldLabel>
-              <Input id="email" {...register("email")} />
+              <Input
+                id="email"
+                {...register("email")}
+                disabled={!!customerId}
+              />
               {errors.email && (
                 <FieldError>
                   {errors.email && (
@@ -311,7 +355,11 @@ const InvoiceForm = () => {
               <FieldLabel htmlFor="phone">
                 <span>{t("customers.phone")}</span>
               </FieldLabel>
-              <Input id="phone" {...register("phone")} />
+              <Input
+                id="phone"
+                {...register("phone")}
+                disabled={!!customerId}
+              />
               {errors.phone && (
                 <FieldError>
                   {t(errors.phone.message as ErrorFormKey)}
@@ -323,7 +371,11 @@ const InvoiceForm = () => {
               <FieldLabel htmlFor="address">
                 <span>{t("customers.address")}</span>
               </FieldLabel>
-              <Input id="address" {...register("address")} />
+              <Input
+                id="address"
+                {...register("address")}
+                disabled={!!customerId}
+              />
               {errors.address && (
                 <FieldError>
                   {t(errors.address.message as ErrorFormKey)}
@@ -393,7 +445,13 @@ const InvoiceForm = () => {
           </DialogHeader>
 
           <div className=" overflow-auto">
-            {company && invoiceData && <InvoicePDFPreview company={company} invoiceData={invoiceData} currencySymbol={currencySymbol}/>}
+            {company && invoiceData && (
+              <InvoicePDFPreview
+                company={company}
+                invoiceData={invoiceData}
+                currencySymbol={currencySymbol}
+              />
+            )}
           </div>
 
           <DialogFooter>
