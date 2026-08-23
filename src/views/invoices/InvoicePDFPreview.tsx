@@ -1,23 +1,18 @@
 import Loader from "@/components/shared/Loader";
 import PDFViewer from "@/components/shared/PDFViewer";
-import type { Company } from "@/features/company/domain/entities/Company";
-import type { Invoice } from "@/features/invoices/domain/entities/Invoice";
-import InvoicePDF from "@/views/invoices/InvoicePDF";
+import InvoicePDF, { type InvoicePDFProps } from "@/views/invoices/InvoicePDF";
 import { usePDF } from "@react-pdf/renderer";
-
-interface InvoicePDFPreviewProps {
-  company: Omit<Company, "createdAt" | "currency" | "id">;
-  invoiceData: Omit<Invoice, "createdAt" | "id" | "paidAt" | "pdfUrl" | "status">
-  currencySymbol: string
-}
 
 /**
  * Envoltorio específico de la factura: genera el Blob del <InvoicePDF> y lo
  * delega al visualizador genérico. La factura sabe QUÉ documento generar;
  * PDFViewer sabe CÓMO mostrarlo.
+ *
+ * Reusa InvoicePDFProps (fuente única de verdad) y hace spread {...props}: al
+ * agregar una prop a InvoicePDF, este envoltorio no necesita cambios.
  */
-const InvoicePDFPreview = ({ company, invoiceData, currencySymbol }: InvoicePDFPreviewProps) => {
-  const [instance] = usePDF({ document: <InvoicePDF company={company} invoiceData={invoiceData} currencySymbol={currencySymbol} /> });
+const InvoicePDFPreview = (props: InvoicePDFProps) => {
+  const [instance] = usePDF({ document: <InvoicePDF {...props} /> });
 
   if (instance.loading || !instance.blob) {
     return <Loader />;

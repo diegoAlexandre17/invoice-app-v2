@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
   },
 });
 
-interface InvoicePDFProps {
+export interface InvoicePDFProps {
   company: Omit<Company, "createdAt" | "currency" | "id">;
   invoiceData: Omit<
     Invoice,
