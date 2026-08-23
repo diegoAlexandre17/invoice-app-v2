@@ -9,6 +9,7 @@ import {
   Image,
 } from "@react-pdf/renderer";
 import { useTranslation } from "react-i18next";
+import { useFormatDate } from "@/hooks/useFormatDate";
 
 const styles = StyleSheet.create({
   page: {
@@ -228,24 +229,13 @@ interface InvoicePDFProps {
   currencySymbol: string;
 }
 
-// El locale se INYECTA (viene de i18n.language) para no hardcodear "es-ES":
-// un usuario en inglés ve la fecha en su formato. Función pura, sin efectos.
-const formatDate = (date: Date | string, locale: string) => {
-  const dateCast = new Date(date);
-  if (Number.isNaN(dateCast.getTime())) return "";
-  return dateCast.toLocaleDateString(locale, {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
-};
-
 const InvoicePDF = ({
   company,
   invoiceData,
   currencySymbol,
 }: InvoicePDFProps) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
+  const formatDate = useFormatDate();
 
   return (
     <Document>
@@ -269,13 +259,13 @@ const InvoicePDF = ({
                 <Text style={styles.invoiceDetailLabel}>
                   {`${t("invoices.issueDate")}: `}
                 </Text>
-                <Text>{formatDate(invoiceData.issueDate, i18n.language)}</Text>
+                <Text>{formatDate(invoiceData.issueDate, "numeric")}</Text>
               </Text>
               <Text style={styles.invoiceDetails}>
                 <Text style={styles.invoiceDetailLabel}>
                   {`${t("invoices.dueDate")}: `}
                 </Text>
-                <Text>{formatDate(invoiceData.dueDate, i18n.language)}</Text>
+                <Text>{formatDate(invoiceData.dueDate, "numeric")}</Text>
               </Text>
             </View>
           </View>

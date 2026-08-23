@@ -12,6 +12,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PATHS } from "@/router/paths";
 import { useNavigate } from "react-router";
+import { useFormatDate } from "@/hooks/useFormatDate";
 
 const PAGE_SIZE = 10;
 
@@ -29,6 +30,7 @@ const InvoiceTable = () => {
   const [page, setPage] = useState<number>(1);
 
   const { t } = useTranslation();
+  const formatDate = useFormatDate();
   const navigate = useNavigate();
   const debouncedSearch = useDebounce(search, 400);
 
@@ -67,12 +69,12 @@ const InvoiceTable = () => {
     {
       accessorKey: "issueDate",
       header: t("invoices.createdAtDate"),
-      cell: ({ row }) => <div>{row.getValue("issueDate") ?? "-"}</div>,
+      cell: ({ row }) => <div>{formatDate(row.getValue("issueDate")) ?? "-"}</div>,
     },
     {
       accessorKey: "dueDate",
       header: t("invoices.dueDate"),
-      cell: ({ row }) => <div>{row.getValue("dueDate") ?? "-"}</div>,
+      cell: ({ row }) => <div>{formatDate(row.getValue("dueDate")) ?? "-"}</div>,
     },
     {
       accessorKey: "totalAmount",
