@@ -20,8 +20,9 @@ export interface InvoiceRepository {
    * El id/createdAt/paidAt/pdfUrl los define el sistema, no el emisor.
    */
   create(
-    invoiceData: Omit<Invoice, "id" | "createdAt" | "paidAt" | "pdfUrl">,
-  ): Promise<void>;
+  invoiceData: Omit<Invoice, "id" | "createdAt" | "paidAt" | "pdfUrl">,
+  pdfBlob: Blob,
+): Promise<void>;
 
   /**
    * Cambia el estado (marcar 'paid' o 'cancelled').

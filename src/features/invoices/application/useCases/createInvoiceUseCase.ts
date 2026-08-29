@@ -4,6 +4,7 @@ import type { InvoiceRepository } from "@/features/invoices/domain/repositories/
 export const createInvoiceUseCase = (
   invoiceRepository: InvoiceRepository,
   invoiceData: Omit<Invoice, "id" | "createdAt" | "paidAt" | "pdfUrl">,
+  pdfBlob: Blob,
 ): Promise<void> => {
-  return invoiceRepository.create(invoiceData);
+  return invoiceRepository.create(invoiceData, pdfBlob);
 };

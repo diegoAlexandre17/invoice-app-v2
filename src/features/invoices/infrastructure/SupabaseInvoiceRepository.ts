@@ -29,9 +29,7 @@ const serializeItems = (items: InvoiceItem[]): Json => {
 };
 
 export class SupabaseInvoiceRepository implements InvoiceRepository {
-  async getAll(
-    params?: GetInvoicesParams,
-  ): Promise<PaginatedResult<Invoice>> {
+  async getAll(params?: GetInvoicesParams): Promise<PaginatedResult<Invoice>> {
     let query = supabase.from("invoices").select("*", { count: "exact" });
 
     if (params?.status) {
@@ -51,9 +49,7 @@ export class SupabaseInvoiceRepository implements InvoiceRepository {
     const pageSize = params?.pageSize ?? 10;
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
-    query = query
-      .order("created_at", { ascending: false })
-      .range(from, to);
+    query = query.order("created_at", { ascending: false }).range(from, to);
 
     const { data, error, count } = await query;
 
@@ -89,34 +85,57 @@ export class SupabaseInvoiceRepository implements InvoiceRepository {
 
   async create(
     invoiceData: Omit<Invoice, "id" | "createdAt" | "paidAt" | "pdfUrl">,
+    pdfBlob: Blob,
   ): Promise<void> {
-    // No mandamos user_id: la columna tiene DEFAULT auth.uid() y lo completa
-    // Supabase con el usuario logueado (igual que las otras tablas).
-    const { error } = await supabase.from("invoices").insert({
-      invoice_number: invoiceData.invoiceNumber,
-      customer_id: invoiceData.customerId,
-      client_id_number: invoiceData.clientIdentification,
-      status: invoiceData.status,
-      issue_date: invoiceData.issueDate,
-      due_date: invoiceData.dueDate,
+    // TODO (ejercicio): implementar la orquestación storage + insert.
+    // Pasos a reconstruir:
+    //   1. Obtener el userId de la sesión (supabase.auth.getUser). Guard si no hay.
+    const { data } = await supabase.auth.getUser();
+    if (!data.user) {
+      throw new Error("errors.auth.notAuthenticated");
+    }
+
+    const userId = data.user.id;
+    const pdfPath = `${userId}/${invoiceData.invoiceNumber}.pdf`;
+    //   3. Subir el pdfBlob al bucket privado 'invoice-pdfs'. Manejar uploadError.
+    const { error: uploadError } = await supabase.storage
+      .from("invoice-pdfs")
+      .upload(pdfPath, pdfBlob, {
+        upsert: false,
+        contentType: "application/pdf",
+      });
+
+    if (uploadError) {
+      throw mapSupabaseError(uploadError);
+    }
+
+    //   4. Insertar la fila en 'invoices' mapeando dominio → columnas snake_case.
+    //      Guardar el PATH en pdf_url (NO una signed URL: expira).
+    const { error: insertInvoiceError } = await supabase.from("invoices").insert({
       client_name: invoiceData.clientName,
       client_email: invoiceData.clientEmail,
       client_phone: invoiceData.clientPhone,
       client_address: invoiceData.clientAddress,
+      client_id_number: invoiceData.clientIdentification,
       items: serializeItems(invoiceData.items),
-      total_amount: invoiceData.totalAmount,
       notes: invoiceData.notes,
+      invoice_number: invoiceData.invoiceNumber,
+      issue_date: invoiceData.issueDate,
+      due_date: invoiceData.dueDate,
+      customer_id: invoiceData.customerId,
+      pdf_url: pdfPath,
+      total_amount: invoiceData.totalAmount,
+      status: invoiceData.status
     });
-
-    if (error) {
-      throw mapSupabaseError(error);
+    //   5. Rollback: si el insert falla, borrar el PDF ya subido (huérfano) y throw.
+    if(insertInvoiceError){
+      await supabase.storage.from("invoice-pdfs").remove([pdfPath])
+      throw mapSupabaseError(insertInvoiceError);
     }
+
   }
 
-  async updateStatus(
-    invoiceId: number,
-    status: InvoiceStatus,
-  ): Promise<void> {
+  async updateStatus(invoiceId: number, status: InvoiceStatus): Promise<void> {
     // paid_at se setea solo cuando pasa a 'paid'; se limpia en otro caso.
     const paidAt = status === "paid" ? new Date().toISOString() : null;
 

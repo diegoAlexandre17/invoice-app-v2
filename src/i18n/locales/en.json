@@ -76,6 +76,7 @@
   },
   "invoices": {
     "createInvoice": "Create Invoice",
+    "createInvoiceSuccess": "Invoice created successfully",
     "invoiceNumber": "Invoice Number",
     "createdAtDate": "Creation Date",
     "dueDate": "Due Date",
@@ -157,7 +158,8 @@
     "auth": {
       "invalidCredentials": "Invalid credentials",
       "userAlreadyExists": "User already exists",
-      "overRequestRateLimit": "Too many attempts. Please wait a few minutes"
+      "overRequestRateLimit": "Too many attempts. Please wait a few minutes",
+      "notAuthenticated": "You are not authenticated. Please log in again"
     }
   }
 }

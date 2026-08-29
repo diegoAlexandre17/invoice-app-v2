@@ -17,13 +17,6 @@ import {
   ComboboxList,
 } from "@/components/ui/combobox";
 import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
   Field,
   FieldError,
   FieldGroup,
@@ -40,8 +33,9 @@ import {
   type Invoice,
 } from "@/features/invoices/domain/entities/Invoice";
 import { generateInvoiceNumber } from "@/features/invoices/domain/generateInvoiceNumber";
+import { toISODateOnly } from "@/lib/date";
 import InvoiceItemsSection from "@/views/invoices/InvoiceItemsSection";
-import InvoicePDFPreview from "@/views/invoices/InvoicePDFPreview";
+import InvoiceModalPreviw from "@/views/invoices/InvoiceModalPreview";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ParseKeys } from "i18next";
 import { useState } from "react";
@@ -157,20 +151,17 @@ const InvoiceForm = () => {
   const onSubmit: SubmitHandler<InvoiceFormData> = (formData) => {
     console.log(formData);
     setInvoiceData({
-      // El número se genera acá, una sola vez, con el instante actual (fecha+hora+
-      // segundos de generación). El mismo que ve el usuario en el preview es el que
-      // se persiste: no se regenera al guardar en Supabase.
       invoiceNumber: generateInvoiceNumber(),
       clientIdentification: formData.identification,
       customerId: customerId,
       clientName: formData.name,
       clientEmail: formData.email,
-      dueDate: String(formData.dueDate),
-      issueDate: String(formData.issueDate),
-      clientPhone: formData.phone ?? "",
-      clientAddress: formData.address ?? "",
+      dueDate: toISODateOnly(formData.dueDate),
+      issueDate: toISODateOnly(formData.issueDate),
+      clientPhone: formData.phone ?? null,
+      clientAddress: formData.address ?? null,
       items: formData.items,
-      notes: formData.notes ?? "",
+      notes: formData.notes ?? null,
       totalAmount: calculateInvoiceTotal(formData.items),
     });
     setPreviewOpen(true);
@@ -432,44 +423,15 @@ const InvoiceForm = () => {
         </CardFooter>
       </Card>
 
-      <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
-        <DialogContent className="sm:max-w-4xl max-h-[90vh] grid-rows-[auto_1fr_auto]">
-          <DialogHeader>
-            <DialogTitle className="pr-8">
-              {t("invoices.invoicePreview")}
-            </DialogTitle>
-          </DialogHeader>
-
-          <div className=" overflow-auto">
-            {company && invoiceData && (
-              <InvoicePDFPreview
-                company={company}
-                invoiceData={invoiceData}
-                currencySymbol={currencySymbol}
-              />
-            )}
-          </div>
-
-          <DialogFooter>
-            <Button
-              variant={"destructive"}
-              // disabled={isSubmitting}
-              type="button"
-              onClick={() => setPreviewOpen(false)}
-            >
-              {t("common.cancel")}
-            </Button>
-            <Button
-              type="button"
-              variant={"success"}
-              // onClick={handleSubmit(onSubmit)}
-              // disabled={isSubmitting}
-            >
-              {t("invoices.createInvoice")}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {company && invoiceData && (
+        <InvoiceModalPreviw
+          open={previewOpen}
+          onOpenChange={setPreviewOpen}
+          company={company}
+          invoiceData={invoiceData}
+          currencySymbol={currencySymbol}
+        />
+      )}
     </div>
   );
 };

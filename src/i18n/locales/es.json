@@ -76,6 +76,7 @@
   },
   "invoices": {
     "createInvoice": "Crear Factura",
+    "createInvoiceSuccess": "Factura creada correctamente",
     "invoiceNumber": "Número de Factura",
     "createdAtDate": "Fecha de creación",
     "dueDate": "Fecha de vencimiento",
@@ -157,7 +158,8 @@
     "auth": {
       "invalidCredentials": "Credenciales invalidas",
       "userAlreadyExists": "El usuario ya existe",
-      "overRequestRateLimit": "Demasiados intentos, por favor espere unos minutos"
+      "overRequestRateLimit": "Demasiados intentos, por favor espere unos minutos",
+      "notAuthenticated": "No estás autenticado. Por favor iniciá sesión de nuevo"
     }
   }
 }
