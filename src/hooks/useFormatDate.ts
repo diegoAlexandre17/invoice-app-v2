@@ -21,6 +21,7 @@ export const formatDate = (
   const parsed = new Date(date);
   if (Number.isNaN(parsed.getTime())) return "";
   return parsed.toLocaleDateString(locale, {
+    timeZone: "UTC",
     day: "2-digit",
     month: format === "short" ? "short" : "2-digit",
     year: "numeric",
