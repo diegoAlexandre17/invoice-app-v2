@@ -35,7 +35,7 @@ import {
 import { generateInvoiceNumber } from "@/features/invoices/domain/generateInvoiceNumber";
 import { toISODateOnly } from "@/lib/date";
 import InvoiceItemsSection from "@/views/invoices/InvoiceItemsSection";
-import InvoiceModalPreviw from "@/views/invoices/InvoiceModalPreview";
+import InvoiceModalPreview from "@/views/invoices/InvoiceModalPreview";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ParseKeys } from "i18next";
 import { useState } from "react";
@@ -103,7 +103,10 @@ const InvoiceForm = () => {
     Invoice,
     "createdAt" | "id" | "paidAt" | "pdfUrl" | "status"
   > | null>(null);
-  const [customerId, setCustomerId] = useState<number | null>(null);
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
+    null,
+  );
+  const customerId = selectedCustomer?.id ?? null;
 
   const { t } = useTranslation();
 
@@ -124,6 +127,7 @@ const InvoiceForm = () => {
     register,
     control,
     watch,
+    reset,
     setValue,
     handleSubmit,
     formState: { errors },
@@ -134,6 +138,7 @@ const InvoiceForm = () => {
     defaultValues: {
       ...defaultValuesCustomer,
       items: [],
+      notes: "",
       issueDate: new Date(),
     },
   });
@@ -149,7 +154,6 @@ const InvoiceForm = () => {
   const dueDate = watch("dueDate");
 
   const onSubmit: SubmitHandler<InvoiceFormData> = (formData) => {
-    console.log(formData);
     setInvoiceData({
       invoiceNumber: generateInvoiceNumber(),
       clientIdentification: formData.identification,
@@ -172,7 +176,7 @@ const InvoiceForm = () => {
       // Al limpiar el combobox reseteamos SOLO los campos del cliente, campo por
       // campo. No usamos reset() global: eso pisaría issueDate/dueDate/items y
       // el usuario perdería el trabajo cargado (fechas + ítems).
-      setCustomerId(null);
+      setSelectedCustomer(null);
       setValue("name", defaultValuesCustomer.name);
       setValue("email", defaultValuesCustomer.email);
       setValue("identification", defaultValuesCustomer.identification);
@@ -180,7 +184,7 @@ const InvoiceForm = () => {
       setValue("address", defaultValuesCustomer.address);
       return;
     }
-    setCustomerId(customer.id);
+    setSelectedCustomer(customer);
     setValue("name", customer.name, { shouldValidate: true });
     setValue("email", customer.email, { shouldValidate: true });
     setValue("identification", customer.identification, {
@@ -188,6 +192,16 @@ const InvoiceForm = () => {
     });
     setValue("phone", customer.phone ?? "", { shouldValidate: true });
     setValue("address", customer.address ?? "", { shouldValidate: true });
+  };
+
+  const resetInvoiceForm = () => {
+    setSelectedCustomer(null);
+    reset({
+      ...defaultValuesCustomer,
+      items: [],
+      notes: "",
+      issueDate: new Date(),
+    });
   };
 
   if (isCompanyDataPending || isCustomersPending) {
@@ -204,12 +218,13 @@ const InvoiceForm = () => {
         </CardHeader>
         <CardContent className="flex flex-col gap-6">
           <FieldGroup className="grid grid-cols-1 lg:grid-cols-4 md:grid-cols-2">
-            <Field /* className="col-span-1 md:col-span-2" */>
+            <Field>
               <FieldLabel htmlFor="name">
                 <span>{t("invoices.registeredCustomer")}</span>
               </FieldLabel>
               <Combobox<Customer> // <Customer> tipamos el componente Combobox para sus props items e itemToStringLabel
                 items={customers}
+                value={selectedCustomer}
                 itemToStringLabel={(customer) => customer.name}
                 onValueChange={handleSelectCustomer}
               >
@@ -424,12 +439,13 @@ const InvoiceForm = () => {
       </Card>
 
       {company && invoiceData && (
-        <InvoiceModalPreviw
+        <InvoiceModalPreview
           open={previewOpen}
           onOpenChange={setPreviewOpen}
           company={company}
           invoiceData={invoiceData}
           currencySymbol={currencySymbol}
+          resetInvoiceForm={resetInvoiceForm}
         />
       )}
     </div>

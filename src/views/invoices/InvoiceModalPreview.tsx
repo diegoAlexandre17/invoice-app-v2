@@ -19,6 +19,7 @@ import { toast } from "sonner";
 interface InvoiceModalPreviewProps extends InvoicePDFProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  resetInvoiceForm: () => void;
 }
 
 const InvoiceModalPreview = ({
@@ -27,6 +28,7 @@ const InvoiceModalPreview = ({
   company,
   invoiceData,
   currencySymbol,
+  resetInvoiceForm,
 }: InvoiceModalPreviewProps) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
@@ -59,7 +61,8 @@ const InvoiceModalPreview = ({
             description: t("invoices.createInvoiceSuccess"),
           });
           queryClient.invalidateQueries({ queryKey: ["invoices"] });
-          onOpenChange(false)
+          resetInvoiceForm();
+          onOpenChange(false);
         },
         onError: (error) => {
           toast.error(t("common.warning"), {
@@ -92,7 +95,9 @@ const InvoiceModalPreview = ({
             variant={"destructive"}
             type="button"
             disabled={createInvoice.isPending}
-            onClick={() => onOpenChange(false)}
+            onClick={() => {
+              onOpenChange(false);
+            }}
           >
             {t("common.cancel")}
           </Button>
