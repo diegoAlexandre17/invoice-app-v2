@@ -14,7 +14,7 @@ import { PATHS } from "@/router/paths";
 import { useNavigate } from "react-router";
 import { useFormatDate } from "@/hooks/useFormatDate";
 import { ActionTable } from "@/components/shared/ActionTable";
-import { FileSearch } from "lucide-react";
+import { FileSearch, Trash2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +25,9 @@ import PDFViewer from "@/components/shared/PDFViewer";
 import { useGetSignedPdfUrl } from "@/features/invoices/presentation/hooks/useGetSignedPdfUrl";
 import { toast } from "sonner";
 import type { ParseKeys } from "i18next";
+import { useDeleteInvoice } from "@/features/invoices/presentation/hooks/useDeleteInvoice";
+import { useQueryClient } from "@tanstack/react-query";
+import SweetModal from "@/components/shared/SweetAlert";
 
 const PAGE_SIZE = 10;
 
@@ -49,6 +52,8 @@ const InvoiceTable = () => {
   const navigate = useNavigate();
   const debouncedSearch = useDebounce(search, 400);
   const getSignedPdfUrl = useGetSignedPdfUrl();
+  const deleteInvoice = useDeleteInvoice();
+  const queryClient = useQueryClient();
 
   const { data, isLoading } = useGetAllInvoices({
     search: debouncedSearch,
@@ -69,6 +74,33 @@ const InvoiceTable = () => {
     navigate(PATHS.createInvoice);
   };
 
+  const handleDeleteInvoice = (invoiceId: number) => {
+    SweetModal(
+      "warning",
+      t("common.warning"),
+      t("invoices.deleteInvoiceConfirm"),
+      t("common.delete"),
+      (result) => {
+        if (result?.isConfirmed) {
+          deleteInvoice.mutate(invoiceId, {
+            onSuccess: () => {
+              toast.success(t("common.success"), {
+                description: t("invoices.createInvoiceSuccess"),
+              });
+              queryClient.invalidateQueries({ queryKey: ["invoices"] });
+            },
+            onError: (error) => {
+              toast.error(t("common.warning"), {
+                description: t(error.message as ParseKeys),
+              });
+            },
+          });
+        }
+      },
+      { showCancelButton: true, cancelButtonText: t("common.cancel") },
+    );
+  };
+
   const columns: ColumnDef<Invoice>[] = [
     {
       accessorKey: "invoiceNumber",
@@ -83,8 +115,15 @@ const InvoiceTable = () => {
       header: "Email",
     },
     {
-      accessorKey: "issueDate",
+      accessorKey: "createdAt",
       header: t("invoices.createdAtDate"),
+      cell: ({ row }) => (
+        <div>{formatDate(row.getValue("createdAt")) ?? "-"}</div>
+      ),
+    },
+    {
+      accessorKey: "issueDate",
+      header: t("invoices.issueDate"),
       cell: ({ row }) => (
         <div>{formatDate(row.getValue("issueDate")) ?? "-"}</div>
       ),
@@ -147,12 +186,19 @@ const InvoiceTable = () => {
           ) : (
             ""
           )}
+
+          <ActionTable
+            icon={<Trash2 />}
+            onClick={() => handleDeleteInvoice(row.original.id)}
+            tooltipText={t("invoices.deleteInvoice")}
+            // loading={deleteCustomer.isPending}
+          />
         </>
       ),
     },
   ];
 
-  console.log(pdfUrl)
+  console.log(invoices)
 
   return (
     <>

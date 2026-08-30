@@ -77,6 +77,9 @@
   "invoices": {
     "createInvoice": "Crear Factura",
     "viewInvoice":"Ver factura",
+    "deleteInvoice":"Eliminar factura",
+    "deleteInvoiceConfirm":"¿Estás seguro de que deseas eliminar esta factura?",
+    "deleteInvoiceSuccess":"Factura eliminada correctamente",
     "createInvoiceSuccess": "Factura creada correctamente",
     "invoiceNumber": "Número de Factura",
     "createdAtDate": "Fecha de creación",
