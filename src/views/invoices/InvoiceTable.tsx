@@ -14,7 +14,8 @@ import { PATHS } from "@/router/paths";
 import { useNavigate } from "react-router";
 import { useFormatDate } from "@/hooks/useFormatDate";
 import { ActionTable } from "@/components/shared/ActionTable";
-import { FileSearch, Trash2 } from "lucide-react";
+import { Download, FileSearch, Trash2 } from "lucide-react";
+import { useDownloadFile } from "@/hooks/useDownloadFile";
 import {
   Dialog,
   DialogContent,
@@ -46,12 +47,14 @@ const InvoiceTable = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [loadingPdfId, setLoadingPdfId] = useState<number | null>(null);
+  const [downloadingId, setDownloadingId] = useState<number | null>(null);
 
   const { t } = useTranslation();
   const formatDate = useFormatDate();
   const navigate = useNavigate();
   const debouncedSearch = useDebounce(search, 400);
   const getSignedPdfUrl = useGetSignedPdfUrl();
+  const { download } = useDownloadFile();
   const deleteInvoice = useDeleteInvoice();
   const queryClient = useQueryClient();
 
@@ -72,6 +75,30 @@ const InvoiceTable = () => {
 
   const handleNavigateToCreateInvoice = () => {
     navigate(PATHS.createInvoice);
+  };
+
+  const handleDownloadInvoice = (invoice: Invoice) => {
+    if (!invoice.pdfUrl) return;
+    setDownloadingId(invoice.id);
+    getSignedPdfUrl.mutate(invoice.pdfUrl, {
+      onSuccess: async (url) => {
+        try {
+          await download(url, `${invoice.invoiceNumber}.pdf`);
+        } catch {
+          toast.error(t("common.warning"), {
+            description: t("invoices.downloadInvoiceError"),
+          });
+        }
+      },
+      onError: (error) => {
+        toast.error(t("common.warning"), {
+          description: t(error.message as ParseKeys),
+        });
+      },
+      onSettled: () => {
+        setDownloadingId(null);
+      },
+    });
   };
 
   const handleDeleteInvoice = (invoiceId: number) => {
@@ -159,30 +186,40 @@ const InvoiceTable = () => {
       cell: ({ row }) => (
         <>
           {row.original.pdfUrl ? (
-            <ActionTable
-              icon={<FileSearch />}
-              loading={loadingPdfId === row.original.id}
-              disabled={getSignedPdfUrl.isPending}
-              onClick={() => {
-                if (!row.original.pdfUrl) return;
-                setLoadingPdfId(row.original.id);
-                getSignedPdfUrl.mutate(row.original.pdfUrl, {
-                  onSuccess: (url) => {
-                    setPdfUrl(url);
-                    setIsOpen(true);
-                  },
-                  onError: (error) => {
-                    toast.error(t("common.warning"), {
-                      description: t(error.message as ParseKeys),
-                    });
-                  },
-                  onSettled: () => {
-                    setLoadingPdfId(null);
-                  },
-                });
-              }}
-              tooltipText={t("invoices.viewInvoice")}
-            />
+            <>
+              <ActionTable
+                icon={<FileSearch />}
+                loading={loadingPdfId === row.original.id}
+                disabled={getSignedPdfUrl.isPending}
+                onClick={() => {
+                  if (!row.original.pdfUrl) return;
+                  setLoadingPdfId(row.original.id);
+                  getSignedPdfUrl.mutate(row.original.pdfUrl, {
+                    onSuccess: (url) => {
+                      setPdfUrl(url);
+                      setIsOpen(true);
+                    },
+                    onError: (error) => {
+                      toast.error(t("common.warning"), {
+                        description: t(error.message as ParseKeys),
+                      });
+                    },
+                    onSettled: () => {
+                      setLoadingPdfId(null);
+                    },
+                  });
+                }}
+                tooltipText={t("invoices.viewInvoice")}
+              />
+
+              <ActionTable
+                icon={<Download />}
+                loading={downloadingId === row.original.id}
+                disabled={getSignedPdfUrl.isPending}
+                onClick={() => handleDownloadInvoice(row.original)}
+                tooltipText={t("invoices.downloadInvoice")}
+              />
+            </>
           ) : (
             ""
           )}
@@ -197,8 +234,6 @@ const InvoiceTable = () => {
       ),
     },
   ];
-
-  console.log(invoices)
 
   return (
     <>

@@ -77,6 +77,8 @@
   "invoices": {
     "createInvoice": "Crear Factura",
     "viewInvoice":"Ver factura",
+    "downloadInvoice":"Descargar factura",
+    "downloadInvoiceError":"No se pudo descargar la factura",
     "deleteInvoice":"Eliminar factura",
     "deleteInvoiceConfirm":"¿Estás seguro de que deseas eliminar esta factura?",
     "deleteInvoiceSuccess":"Factura eliminada correctamente",
