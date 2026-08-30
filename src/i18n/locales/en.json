@@ -76,6 +76,7 @@
   },
   "invoices": {
     "createInvoice": "Create Invoice",
+    "viewInvoice":"View invoice",
     "createInvoiceSuccess": "Invoice created successfully",
     "invoiceNumber": "Invoice Number",
     "createdAtDate": "Creation Date",

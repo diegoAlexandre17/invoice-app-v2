@@ -111,28 +111,29 @@ export class SupabaseInvoiceRepository implements InvoiceRepository {
 
     //   4. Insertar la fila en 'invoices' mapeando dominio → columnas snake_case.
     //      Guardar el PATH en pdf_url (NO una signed URL: expira).
-    const { error: insertInvoiceError } = await supabase.from("invoices").insert({
-      client_name: invoiceData.clientName,
-      client_email: invoiceData.clientEmail,
-      client_phone: invoiceData.clientPhone,
-      client_address: invoiceData.clientAddress,
-      client_id_number: invoiceData.clientIdentification,
-      items: serializeItems(invoiceData.items),
-      notes: invoiceData.notes,
-      invoice_number: invoiceData.invoiceNumber,
-      issue_date: invoiceData.issueDate,
-      due_date: invoiceData.dueDate,
-      customer_id: invoiceData.customerId,
-      pdf_url: pdfPath,
-      total_amount: invoiceData.totalAmount,
-      status: invoiceData.status
-    });
+    const { error: insertInvoiceError } = await supabase
+      .from("invoices")
+      .insert({
+        client_name: invoiceData.clientName,
+        client_email: invoiceData.clientEmail,
+        client_phone: invoiceData.clientPhone,
+        client_address: invoiceData.clientAddress,
+        client_id_number: invoiceData.clientIdentification,
+        items: serializeItems(invoiceData.items),
+        notes: invoiceData.notes,
+        invoice_number: invoiceData.invoiceNumber,
+        issue_date: invoiceData.issueDate,
+        due_date: invoiceData.dueDate,
+        customer_id: invoiceData.customerId,
+        pdf_url: pdfPath,
+        total_amount: invoiceData.totalAmount,
+        status: invoiceData.status,
+      });
     //   5. Rollback: si el insert falla, borrar el PDF ya subido (huérfano) y throw.
-    if(insertInvoiceError){
-      await supabase.storage.from("invoice-pdfs").remove([pdfPath])
+    if (insertInvoiceError) {
+      await supabase.storage.from("invoice-pdfs").remove([pdfPath]);
       throw mapSupabaseError(insertInvoiceError);
     }
-
   }
 
   async updateStatus(invoiceId: number, status: InvoiceStatus): Promise<void> {
@@ -166,5 +167,17 @@ export class SupabaseInvoiceRepository implements InvoiceRepository {
 
     if (!data || data.length === 0)
       throw new Error("errors.invoices.invoiceNotFound");
+  }
+
+  async getSignedPdfUrl(path: string): Promise<string> {
+    const { data, error } = await supabase.storage
+      .from("invoice-pdfs")
+      .createSignedUrl(path, 60);
+
+    if (error) {
+      throw mapSupabaseError(error);
+    }
+
+    return data.signedUrl;
   }
 }

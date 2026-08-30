@@ -33,4 +33,10 @@ export interface InvoiceRepository {
 
   /** Borrado físico (para cargas erróneas). El flujo normal es cancelar. */
   delete(invoiceId: number): Promise<void>;
+
+  /**
+   * Firma un path del bucket privado de PDFs y devuelve una URL temporal
+   * visualizable. La URL expira: se pide bajo demanda, no se persiste.
+   */
+  getSignedPdfUrl(path: string): Promise<string>;
 }

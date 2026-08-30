@@ -13,6 +13,18 @@ import { useTranslation } from "react-i18next";
 import { PATHS } from "@/router/paths";
 import { useNavigate } from "react-router";
 import { useFormatDate } from "@/hooks/useFormatDate";
+import { ActionTable } from "@/components/shared/ActionTable";
+import { FileSearch } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import PDFViewer from "@/components/shared/PDFViewer";
+import { useGetSignedPdfUrl } from "@/features/invoices/presentation/hooks/useGetSignedPdfUrl";
+import { toast } from "sonner";
+import type { ParseKeys } from "i18next";
 
 const PAGE_SIZE = 10;
 
@@ -28,11 +40,15 @@ const invoiceStateVariant: Record<
 const InvoiceTable = () => {
   const [search, setSearch] = useState<string>("");
   const [page, setPage] = useState<number>(1);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [loadingPdfId, setLoadingPdfId] = useState<number | null>(null);
 
   const { t } = useTranslation();
   const formatDate = useFormatDate();
   const navigate = useNavigate();
   const debouncedSearch = useDebounce(search, 400);
+  const getSignedPdfUrl = useGetSignedPdfUrl();
 
   const { data, isLoading } = useGetAllInvoices({
     search: debouncedSearch,
@@ -69,12 +85,16 @@ const InvoiceTable = () => {
     {
       accessorKey: "issueDate",
       header: t("invoices.createdAtDate"),
-      cell: ({ row }) => <div>{formatDate(row.getValue("issueDate")) ?? "-"}</div>,
+      cell: ({ row }) => (
+        <div>{formatDate(row.getValue("issueDate")) ?? "-"}</div>
+      ),
     },
     {
       accessorKey: "dueDate",
       header: t("invoices.dueDate"),
-      cell: ({ row }) => <div>{formatDate(row.getValue("dueDate")) ?? "-"}</div>,
+      cell: ({ row }) => (
+        <div>{formatDate(row.getValue("dueDate")) ?? "-"}</div>
+      ),
     },
     {
       accessorKey: "totalAmount",
@@ -94,24 +114,78 @@ const InvoiceTable = () => {
         );
       },
     },
+    {
+      accessorKey: "actions",
+      header: t("common.actions"),
+      cell: ({ row }) => (
+        <>
+          {row.original.pdfUrl ? (
+            <ActionTable
+              icon={<FileSearch />}
+              loading={loadingPdfId === row.original.id}
+              disabled={getSignedPdfUrl.isPending}
+              onClick={() => {
+                if (!row.original.pdfUrl) return;
+                setLoadingPdfId(row.original.id);
+                getSignedPdfUrl.mutate(row.original.pdfUrl, {
+                  onSuccess: (url) => {
+                    setPdfUrl(url);
+                    setIsOpen(true);
+                  },
+                  onError: (error) => {
+                    toast.error(t("common.warning"), {
+                      description: t(error.message as ParseKeys),
+                    });
+                  },
+                  onSettled: () => {
+                    setLoadingPdfId(null);
+                  },
+                });
+              }}
+              tooltipText={t("invoices.viewInvoice")}
+            />
+          ) : (
+            ""
+          )}
+        </>
+      ),
+    },
   ];
 
+  console.log(pdfUrl)
+
   return (
-    <DataTable
-      columns={columns}
-      data={invoices}
-      searchValue={search}
-      onSearchChange={handleSearchChange}
-      isLoading={isLoading}
-      page={page}
-      pageCount={pageCount}
-      onPageChange={setPage}
-      actions={
-        <Button onClick={handleNavigateToCreateInvoice}>
-          {t("invoices.createInvoice")}
-        </Button>
-      }
-    />
+    <>
+      <DataTable
+        columns={columns}
+        data={invoices}
+        searchValue={search}
+        onSearchChange={handleSearchChange}
+        isLoading={isLoading}
+        page={page}
+        pageCount={pageCount}
+        onPageChange={setPage}
+        actions={
+          <Button onClick={handleNavigateToCreateInvoice}>
+            {t("invoices.createInvoice")}
+          </Button>
+        }
+      />
+
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="sm:max-w-4xl max-h-[90vh] grid-rows-[auto_1fr_auto]">
+          <DialogHeader>
+            <DialogTitle className="pr-8">
+              {t("invoices.invoicePreview")}
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className=" overflow-auto">
+            <PDFViewer file={pdfUrl ?? ""} />
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

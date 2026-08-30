@@ -76,6 +76,7 @@
   },
   "invoices": {
     "createInvoice": "Crear Factura",
+    "viewInvoice":"Ver factura",
     "createInvoiceSuccess": "Factura creada correctamente",
     "invoiceNumber": "Número de Factura",
     "createdAtDate": "Fecha de creación",
