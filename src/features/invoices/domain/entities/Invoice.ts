@@ -102,6 +102,40 @@ export const isOverdue = (
   return new Date(invoice.dueDate) < now;
 };
 
+/**
+ * Máquina de estados del ciclo de vida de la factura.
+ * Declara, por estado, a qué estados puede transicionar.
+ *   - sent → paid | cancelled
+ *   - paid → (terminal, ya cobrada)
+ *   - cancelled → (terminal, solo resta borrarla)
+ */
+const VALID_TRANSITIONS: Record<InvoiceStatus, InvoiceStatus[]> = {
+  sent: ["paid", "cancelled"],
+  paid: [],
+  cancelled: [],
+};
+
+/**
+ * ¿Es válido pasar una factura de `from` a `to`?
+ * Única fuente de verdad de las transiciones permitidas.
+ */
+export const canTransition = (
+  from: InvoiceStatus,
+  to: InvoiceStatus,
+): boolean => {
+  return VALID_TRANSITIONS[from].includes(to);
+};
+
+/**
+ * ¿Se puede borrar esta factura?
+ * Regla de negocio: solo las canceladas. El borrado es el paso final
+ * tras cancelar; una factura viva (sent) o cobrada (paid) no se elimina.
+ */
+export const canDelete = (invoice: Invoice): boolean => {
+  return invoice.status === "cancelled";
+};
+
+
 export const calculateItemTotal = (
   quantity: number,
   unitPrice: number,

@@ -1,9 +1,11 @@
 import { DataTable } from "@/components/shared/DataTable";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import type {
-  Invoice,
-  InvoiceStatus,
+import {
+  canDelete,
+  canTransition,
+  type Invoice,
+  type InvoiceStatus,
 } from "@/features/invoices/domain/entities/Invoice";
 import { useGetAllInvoices } from "@/features/invoices/presentation/hooks/useGetAllInvoices";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -14,7 +16,7 @@ import { PATHS } from "@/router/paths";
 import { useNavigate } from "react-router";
 import { useFormatDate } from "@/hooks/useFormatDate";
 import { ActionTable } from "@/components/shared/ActionTable";
-import { Download, FileSearch, Trash2 } from "lucide-react";
+import { CircleCheck, CircleX, Download, FileSearch, Trash2 } from "lucide-react";
 import { useDownloadFile } from "@/hooks/useDownloadFile";
 import {
   Dialog,
@@ -29,6 +31,7 @@ import type { ParseKeys } from "i18next";
 import { useDeleteInvoice } from "@/features/invoices/presentation/hooks/useDeleteInvoice";
 import { useQueryClient } from "@tanstack/react-query";
 import SweetModal from "@/components/shared/SweetAlert";
+import { useUpdateInvoiceStatus } from "@/features/invoices/presentation/hooks/useUpdateInvoiceStatus";
 
 const PAGE_SIZE = 10;
 
@@ -63,6 +66,7 @@ const InvoiceTable = () => {
     page,
     pageSize: PAGE_SIZE,
   });
+  const updateInvoiceStatus = useUpdateInvoiceStatus();
 
   const invoices = data?.data ?? [];
   const total = data?.total ?? 0;
@@ -112,7 +116,7 @@ const InvoiceTable = () => {
           deleteInvoice.mutate(invoiceId, {
             onSuccess: () => {
               toast.success(t("common.success"), {
-                description: t("invoices.createInvoiceSuccess"),
+                description: t("invoices.deleteInvoiceSuccess"),
               });
               queryClient.invalidateQueries({ queryKey: ["invoices"] });
             },
@@ -126,6 +130,77 @@ const InvoiceTable = () => {
       },
       { showCancelButton: true, cancelButtonText: t("common.cancel") },
     );
+  };
+
+  const handleUpdateInvoiceStatus = (
+    invoiceId: number,
+    status: Exclude<InvoiceStatus, "sent">,
+  ) => {
+    const getMessages = (
+      status: Exclude<InvoiceStatus, "sent">,
+    ): { confirm: ParseKeys; success: ParseKeys } => {
+      switch (status) {
+        case "paid":
+          return {
+            confirm: "invoices.markAsPaidConfirm",
+            success: "invoices.markAsPaidSuccess",
+          };
+        case "cancelled":
+          return {
+            confirm: "invoices.cancelInvoiceConfirm",
+            success: "invoices.cancelInvoiceSuccess",
+          };
+      }
+    };
+
+    const { confirm, success } = getMessages(status);
+
+    SweetModal(
+      "warning",
+      t("common.warning"),
+      t(confirm),
+      t("common.ok"),
+      (result) => {
+        if (result?.isConfirmed) {
+          updateInvoiceStatus.mutate(
+            { invoiceId, status },
+            {
+              onSuccess: () => {
+                toast.success(t("common.success"), {
+                  description: t(success),
+                });
+                queryClient.invalidateQueries({ queryKey: ["invoices"] });
+              },
+              onError: (error) => {
+                toast.error(t("common.warning"), {
+                  description: t(error.message as ParseKeys),
+                });
+              },
+            },
+          );
+        }
+      },
+      { showCancelButton: true, cancelButtonText: t("common.cancel") },
+    );
+  };
+
+  const handleViewPdf = (invoice: Invoice) => {
+    if (!invoice.pdfUrl) return;
+    setLoadingPdfId(invoice.id);
+    getSignedPdfUrl.mutate(invoice.pdfUrl, {
+      onSuccess: (url) => {
+        setPdfUrl(url);
+        setIsOpen(true);
+      },
+      onError: (error) => {
+        toast.error(t("common.warning"), {
+          description: t(error.message as ParseKeys),
+        });
+      },
+      onSettled: () => {
+        setLoadingPdfId(null);
+      },
+    });
   };
 
   const columns: ColumnDef<Invoice>[] = [
@@ -192,22 +267,7 @@ const InvoiceTable = () => {
                 loading={loadingPdfId === row.original.id}
                 disabled={getSignedPdfUrl.isPending}
                 onClick={() => {
-                  if (!row.original.pdfUrl) return;
-                  setLoadingPdfId(row.original.id);
-                  getSignedPdfUrl.mutate(row.original.pdfUrl, {
-                    onSuccess: (url) => {
-                      setPdfUrl(url);
-                      setIsOpen(true);
-                    },
-                    onError: (error) => {
-                      toast.error(t("common.warning"), {
-                        description: t(error.message as ParseKeys),
-                      });
-                    },
-                    onSettled: () => {
-                      setLoadingPdfId(null);
-                    },
-                  });
+                  handleViewPdf(row.original);
                 }}
                 tooltipText={t("invoices.viewInvoice")}
               />
@@ -224,12 +284,33 @@ const InvoiceTable = () => {
             ""
           )}
 
-          <ActionTable
-            icon={<Trash2 />}
-            onClick={() => handleDeleteInvoice(row.original.id)}
-            tooltipText={t("invoices.deleteInvoice")}
-            // loading={deleteCustomer.isPending}
-          />
+          {canDelete(row.original) && (
+            <ActionTable
+              icon={<Trash2 />}
+              onClick={() => handleDeleteInvoice(row.original.id)}
+              tooltipText={t("invoices.deleteInvoice")}
+            />
+          )}
+
+          {canTransition(row.original.status, "paid") && (
+            <ActionTable
+              icon={<CircleCheck />}
+              onClick={() => {
+                handleUpdateInvoiceStatus(row.original.id, "paid");
+              }}
+              tooltipText={t("invoices.markAsPaid")}
+            />
+          )}
+
+          {canTransition(row.original.status, "cancelled") && (
+            <ActionTable
+              icon={<CircleX />}
+              onClick={() => {
+                handleUpdateInvoiceStatus(row.original.id, "cancelled");
+              }}
+              tooltipText={t("invoices.cancelInvoice")}
+            />
+          )}
         </>
       ),
     },
