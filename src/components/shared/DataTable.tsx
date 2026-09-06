@@ -101,20 +101,22 @@ export function DataTable<TData, TValue>({
   return (
     <Card className={cn("flex-1 gap-0 pt-0", className)}>
       <CardHeader className="px-4 py-3">
-        <div className="flex items-center justify-between flex-wrap gap-2">
-          {search && (
-            <div className="relative w-full md:max-w-sm">
-              <Search className="absolute left-2 top-2 h-4 w-4 text-primary" />
-              <Input
-                placeholder={t("common.search")}
-                value={searchValue}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                className="pl-8"
-              />
-            </div>
-          )}
+        <div className="@container">
+          <div className="flex flex-col gap-2 @4xl:flex-row @4xl:items-center @4xl:justify-between">
+            {search && (
+              <div className="relative w-full @4xl:w-72">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-primary" />
+                <Input
+                  placeholder={t("common.search")}
+                  value={searchValue}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  className="pl-8"
+                />
+              </div>
+            )}
 
-          {actions && actions}
+            {actions && actions}
+          </div>
         </div>
       </CardHeader>
 

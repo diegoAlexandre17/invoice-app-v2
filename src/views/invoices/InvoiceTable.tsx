@@ -369,14 +369,14 @@ const InvoiceTable = () => {
         pageCount={pageCount}
         onPageChange={setPage}
         actions={
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 @lg:flex-row @lg:flex-wrap">
             <Select
               value={invoiceStatusFilter}
               onValueChange={(value: StatusFilter) =>
                 setInvoiceStatusFilter(value)
               }
             >
-              <SelectTrigger className="w-45">
+              <SelectTrigger className="w-full @lg:w-auto @lg:flex-1 @lg:min-w-40">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent position="popper">
@@ -395,13 +395,16 @@ const InvoiceTable = () => {
                 </SelectItem>
               </SelectContent>
             </Select>
-            <div className="w-60">
+            <div className="w-full @lg:flex-1 @lg:min-w-52">
               <DateRangePicker
                 value={dateRange}
                 onChange={handleDateRangeChange}
               />
             </div>
-            <Button onClick={handleNavigateToCreateInvoice}>
+            <Button
+              className="w-full @lg:w-auto @lg:flex-1 @lg:min-w-32"
+              onClick={handleNavigateToCreateInvoice}
+            >
               {t("invoices.createInvoice")}
             </Button>
           </div>
