@@ -16,7 +16,13 @@ import { PATHS } from "@/router/paths";
 import { useNavigate } from "react-router";
 import { useFormatDate } from "@/hooks/useFormatDate";
 import { ActionTable } from "@/components/shared/ActionTable";
-import { CircleCheck, CircleX, Download, FileSearch, Trash2 } from "lucide-react";
+import {
+  CircleCheck,
+  CircleX,
+  Download,
+  FileSearch,
+  Trash2,
+} from "lucide-react";
 import { useDownloadFile } from "@/hooks/useDownloadFile";
 import {
   Dialog,
@@ -32,6 +38,16 @@ import { useDeleteInvoice } from "@/features/invoices/presentation/hooks/useDele
 import { useQueryClient } from "@tanstack/react-query";
 import SweetModal from "@/components/shared/SweetAlert";
 import { useUpdateInvoiceStatus } from "@/features/invoices/presentation/hooks/useUpdateInvoiceStatus";
+import { type DateRange } from "react-day-picker";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { format } from "date-fns";
+import DateRangePicker from "@/components/shared/DateRangePicker";
 
 const PAGE_SIZE = 10;
 
@@ -44,8 +60,13 @@ const invoiceStateVariant: Record<
   cancelled: "destructive",
 };
 
+type StatusFilter = "all" | InvoiceStatus | "overdue";
+
 const InvoiceTable = () => {
   const [search, setSearch] = useState<string>("");
+  const [invoiceStatusFilter, setInvoiceStatusFilter] =
+    useState<StatusFilter>("all");
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
   const [page, setPage] = useState<number>(1);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
@@ -61,8 +82,23 @@ const InvoiceTable = () => {
   const deleteInvoice = useDeleteInvoice();
   const queryClient = useQueryClient();
 
+  // Si es "all" o "overdue", NO mando status. En cualquier otro caso, mando el valor.
+  const statusParam =
+    invoiceStatusFilter === "all" || invoiceStatusFilter === "overdue"
+      ? undefined
+      : invoiceStatusFilter;
+
+  // overdue es true SOLO cuando el filtro es "overdue". Si no, undefined.
+  const overdueParam = invoiceStatusFilter === "overdue" ? true : undefined;
+
   const { data, isLoading } = useGetAllInvoices({
     search: debouncedSearch,
+    status: statusParam,
+    overdue: overdueParam,
+    dateFrom: dateRange?.from
+      ? format(dateRange.from, "yyyy-MM-dd")
+      : undefined,
+    dateTo: dateRange?.to ? format(dateRange.to, "yyyy-MM-dd") : undefined,
     page,
     pageSize: PAGE_SIZE,
   });
@@ -316,6 +352,11 @@ const InvoiceTable = () => {
     },
   ];
 
+  const handleDateRangeChange = (range: DateRange | undefined) => {
+    setDateRange(range);
+    setPage(1);
+  };
+
   return (
     <>
       <DataTable
@@ -328,9 +369,42 @@ const InvoiceTable = () => {
         pageCount={pageCount}
         onPageChange={setPage}
         actions={
-          <Button onClick={handleNavigateToCreateInvoice}>
-            {t("invoices.createInvoice")}
-          </Button>
+          <div className="flex gap-2">
+            <Select
+              value={invoiceStatusFilter}
+              onValueChange={(value: StatusFilter) =>
+                setInvoiceStatusFilter(value)
+              }
+            >
+              <SelectTrigger className="w-45">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent position="popper">
+                <SelectItem value="all">{t("invoices.all")}</SelectItem>
+                <SelectItem value="sent">
+                  {t("invoices.states.sent")}
+                </SelectItem>
+                <SelectItem value="paid">
+                  {t("invoices.states.paid")}
+                </SelectItem>
+                <SelectItem value="cancelled">
+                  {t("invoices.states.cancelled")}
+                </SelectItem>
+                <SelectItem value="overdue">
+                  {t("invoices.states.overdue")}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            <div className="w-60">
+              <DateRangePicker
+                value={dateRange}
+                onChange={handleDateRangeChange}
+              />
+            </div>
+            <Button onClick={handleNavigateToCreateInvoice}>
+              {t("invoices.createInvoice")}
+            </Button>
+          </div>
         }
       />
 

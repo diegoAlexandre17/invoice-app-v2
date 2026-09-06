@@ -23,7 +23,9 @@
     "noData": "Sin datos",
     "total": "Total",
     "state":"Estado",
-    "preview":"Previsualizar"
+    "preview":"Previsualizar",
+    "clear":"Limpiar",
+    "pickDates":"Seleccionar fechas"
   },
   "auth": {
     "loginTitle": "Bienvenido de Vuelta",
@@ -107,6 +109,7 @@
     "invoicePreview":"Vista previa de factura",
     "registeredCustomer": "Cliente registrado",
     "searchCustomer":"Buscar cliente",
+    "all": "Todas",
     "states":{
       "sent":"Enviada",
       "paid":"Pagada",

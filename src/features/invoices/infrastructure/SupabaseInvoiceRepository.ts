@@ -9,6 +9,7 @@ import type { PaginatedResult } from "@/shared/domain/pagination";
 import type { Json } from "@/shared/infrastructure/supabase/database.types";
 import { mapSupabaseError } from "@/shared/infrastructure/supabase/mapSupabaseError";
 import { supabase } from "@/shared/infrastructure/supabase/supabaseClient";
+import { format } from "date-fns";
 
 /**
  * Mapea la columna jsonb `items` (tipada como Json, opaca) al InvoiceItem[]
@@ -34,6 +35,21 @@ export class SupabaseInvoiceRepository implements InvoiceRepository {
 
     if (params?.status) {
       query = query.eq("status", params.status);
+    }
+
+    // 'overdue' NO es un status persistido: se DERIVA (ver isOverdue en el dominio).
+    // Regla: status='sent' AND due_date < hoy. Se traduce a dos condiciones SQL
+    if (params?.overdue) {
+      const today = format(new Date(), "yyyy-MM-dd"); //MM en mayuscula describe meses, mm describe minutos
+      query = query.eq("status", "sent").lt("due_date", today);
+    }
+
+    if (params?.dateFrom) {
+      query = query.gte("issue_date", params.dateFrom);
+    }
+
+    if (params?.dateTo) {
+      query = query.lte("issue_date", params.dateTo);
     }
 
     const search = params?.search?.trim();

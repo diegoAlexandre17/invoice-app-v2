@@ -23,7 +23,9 @@
     "noData": "No data",
     "total": "Total",
     "state":"State",
-    "preview":"Preview"
+    "preview":"Preview",
+    "clear":"Clear",
+    "pickDates":"Pick Dates"
   },
   "auth": {
     "loginTitle": "Welcome Back",
@@ -107,6 +109,7 @@
     "invoicePreview":"Invoice Preview",
     "registeredCustomer": "Registered customer",
     "searchCustomer":"Search customer",
+    "all": "All",
     "states":{
       "sent":"Sent",
       "paid":"Paid",

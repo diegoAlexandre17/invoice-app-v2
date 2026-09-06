@@ -12,15 +12,24 @@ export const useGetAllInvoices = (params?: GetInvoicesParams) => {
   const page = params?.page ?? 1;
   const pageSize = params?.pageSize ?? 10;
   const status = params?.status;
+  const overdue = params?.overdue;
+  const dateFrom = params?.dateFrom;
+  const dateTo = params?.dateTo;
 
   return useQuery<PaginatedResult<Invoice>>({
-    queryKey: ["invoices", { search, page, pageSize, status }],
+    queryKey: [
+      "invoices",
+      { search, page, pageSize, status, overdue, dateFrom, dateTo },
+    ],
     queryFn: () =>
       getAllInvoicesUseCase(invoiceRepositoryInstance, {
         search,
         page,
         pageSize,
         status,
+        overdue,
+        dateFrom,
+        dateTo,
       }),
     placeholderData: keepPreviousData,
   });

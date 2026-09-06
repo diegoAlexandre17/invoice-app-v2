@@ -79,12 +79,17 @@ export interface Invoice {
 /**
  * Parámetros de consulta para listar facturas.
  * `status` opcional: filtra por estado (ej. mostrar solo 'sent' pendientes).
+ * overdue: muestra solo las vencidas (status === 'sent' && dueDate < hoy). Se calcula, no se guarda.
+ * dateFrom/dateTo: filtra por rango de fechas de emisión (issueDate).
  */
 export interface GetInvoicesParams {
   search?: string;
   page?: number;
   pageSize?: number;
   status?: InvoiceStatus;
+  overdue?: boolean;
+  dateFrom?: string;
+  dateTo?: string;
 }
 
 /**
@@ -134,7 +139,6 @@ export const canTransition = (
 export const canDelete = (invoice: Invoice): boolean => {
   return invoice.status === "cancelled";
 };
-
 
 export const calculateItemTotal = (
   quantity: number,
