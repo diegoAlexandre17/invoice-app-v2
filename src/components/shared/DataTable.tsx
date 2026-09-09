@@ -121,7 +121,7 @@ export function DataTable<TData, TValue>({
       </CardHeader>
 
       <CardContent className="flex-1 px-0">
-        <div className="overflow-hidden">
+       
           <Table>
             <TableHeader className="bg-muted/50">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -182,7 +182,7 @@ export function DataTable<TData, TValue>({
               )}
             </TableBody>
           </Table>
-        </div>
+        
       </CardContent>
 
       {pageCount >= 1 && (
