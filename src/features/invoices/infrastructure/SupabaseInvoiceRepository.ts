@@ -5,6 +5,7 @@ import type {
   GetInvoicesParams,
 } from "@/features/invoices/domain/entities/Invoice";
 import type { InvoiceRepository } from "@/features/invoices/domain/repositories/InvoiceRepository";
+import type { Currency } from "@/shared/domain/currency";
 import type { PaginatedResult } from "@/shared/domain/pagination";
 import type { Json } from "@/shared/infrastructure/supabase/database.types";
 import { mapSupabaseError } from "@/shared/infrastructure/supabase/mapSupabaseError";
@@ -89,6 +90,7 @@ export class SupabaseInvoiceRepository implements InvoiceRepository {
       clientAddress: row.client_address,
       items: mapItems(row.items),
       totalAmount: row.total_amount,
+      currency: row.currency as Currency,
       notes: row.notes,
       pdfUrl: row.pdf_url,
     }));
@@ -103,9 +105,6 @@ export class SupabaseInvoiceRepository implements InvoiceRepository {
     invoiceData: Omit<Invoice, "id" | "createdAt" | "paidAt" | "pdfUrl">,
     pdfBlob: Blob,
   ): Promise<void> {
-    // TODO (ejercicio): implementar la orquestación storage + insert.
-    // Pasos a reconstruir:
-    //   1. Obtener el userId de la sesión (supabase.auth.getUser). Guard si no hay.
     const { data } = await supabase.auth.getUser();
     if (!data.user) {
       throw new Error("errors.auth.notAuthenticated");
@@ -125,8 +124,6 @@ export class SupabaseInvoiceRepository implements InvoiceRepository {
       throw mapSupabaseError(uploadError);
     }
 
-    //   4. Insertar la fila en 'invoices' mapeando dominio → columnas snake_case.
-    //      Guardar el PATH en pdf_url (NO una signed URL: expira).
     const { error: insertInvoiceError } = await supabase
       .from("invoices")
       .insert({
@@ -143,9 +140,11 @@ export class SupabaseInvoiceRepository implements InvoiceRepository {
         customer_id: invoiceData.customerId,
         pdf_url: pdfPath,
         total_amount: invoiceData.totalAmount,
+        currency: invoiceData.currency,
         status: invoiceData.status,
       });
-    //   5. Rollback: si el insert falla, borrar el PDF ya subido (huérfano) y throw.
+
+    // Rollback: si el insert falla, borrar el PDF ya subido (huérfano) y throw.
     if (insertInvoiceError) {
       await supabase.storage.from("invoice-pdfs").remove([pdfPath]);
       throw mapSupabaseError(insertInvoiceError);

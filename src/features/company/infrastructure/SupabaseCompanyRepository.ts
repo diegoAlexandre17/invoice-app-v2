@@ -1,8 +1,8 @@
 import type {
   Company,
-  Currency,
 } from "@/features/company/domain/entities/Company";
 import type { CompanyRepository } from "@/features/company/domain/repositories/CompanyRepository";
+import type { Currency } from "@/shared/domain/currency";
 import { mapSupabaseError } from "@/shared/infrastructure/supabase/mapSupabaseError";
 import { supabase } from "@/shared/infrastructure/supabase/supabaseClient";
 

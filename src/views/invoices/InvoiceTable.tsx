@@ -49,6 +49,7 @@ import {
 } from "@/components/ui/select";
 import { format } from "date-fns";
 import DateRangePicker from "@/components/shared/DateRangePicker";
+import { getCurrencySymbol } from "@/features/company/domain/currencySymbol";
 
 const PAGE_SIZE = 10;
 
@@ -277,7 +278,11 @@ const InvoiceTable = () => {
     {
       accessorKey: "totalAmount",
       header: t("common.total"),
-      cell: ({ row }) => <div>{row.getValue("totalAmount") ?? "-"}</div>,
+      cell: ({ row }) => (
+        <span className="font-medium text-success">
+          {`${getCurrencySymbol(row.original.currency)} ${row.getValue("totalAmount") ?? "-"}`}
+        </span>
+      ),
     },
     {
       accessorKey: "status",

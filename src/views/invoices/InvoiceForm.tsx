@@ -154,6 +154,8 @@ const InvoiceForm = () => {
   const dueDate = watch("dueDate");
 
   const onSubmit: SubmitHandler<InvoiceFormData> = (formData) => {
+    if (!company) return;
+
     setInvoiceData({
       invoiceNumber: generateInvoiceNumber(),
       clientIdentification: formData.identification,
@@ -167,6 +169,7 @@ const InvoiceForm = () => {
       items: formData.items,
       notes: formData.notes ?? null,
       totalAmount: calculateInvoiceTotal(formData.items),
+      currency: company.currency,
     });
     setPreviewOpen(true);
   };

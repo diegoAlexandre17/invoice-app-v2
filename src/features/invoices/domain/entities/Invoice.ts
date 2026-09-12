@@ -1,3 +1,5 @@
+import type { Currency } from "@/shared/domain/currency";
+
 /**
  * Estado del ciclo de vida de una factura.
  *
@@ -72,6 +74,12 @@ export interface Invoice {
 
   items: InvoiceItem[];
   totalAmount: number;
+
+  // Moneda congelada al emitir (snapshot de company.currency). La factura es un
+  // documento muerto: si el usuario cambia la moneda del sistema después, esta
+  // factura conserva la moneda con la que nació. Ver filosofía de snapshot arriba.
+  currency: Currency;
+
   notes?: string | null;
   pdfUrl?: string | null;
 }

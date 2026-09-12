@@ -1,4 +1,4 @@
-export type Currency = "USD" | "EUR";
+import type { Currency } from "@/shared/domain/currency";
 
 export interface Company {
   id: number;
@@ -8,6 +8,6 @@ export interface Company {
   address: string;
   phone: string;
   email: string;
-  logo: string | null; 
+  logo: string | null;
   currency: Currency;
 }
