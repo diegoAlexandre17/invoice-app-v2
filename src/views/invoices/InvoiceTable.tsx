@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   canDelete,
   canTransition,
+  isOverdue,
   type Invoice,
   type InvoiceStatus,
 } from "@/features/invoices/domain/entities/Invoice";
@@ -53,11 +54,11 @@ const PAGE_SIZE = 10;
 
 const invoiceStateVariant: Record<
   InvoiceStatus,
-  "default" | "success" | "warning" | "destructive"
+  "default" | "success" | "warning" | "ghost"
 > = {
   sent: "warning",
   paid: "success",
-  cancelled: "destructive",
+  cancelled: "ghost",
 };
 
 type StatusFilter = "all" | InvoiceStatus | "overdue";
@@ -284,11 +285,15 @@ const InvoiceTable = () => {
       cell: ({ row }) => {
         const invoiceStatus = row.getValue("status") as InvoiceStatus;
 
-        return (
-          <Badge variant={invoiceStateVariant[invoiceStatus] ?? "default"}>
-            {t(`invoices.states.${invoiceStatus}`) ?? "-"}
-          </Badge>
-        );
+        const isOverdueStatus = isOverdue(row.original);
+        const badgeVariant = isOverdueStatus
+          ? "destructive"
+          : (invoiceStateVariant[invoiceStatus] ?? "default");
+        const badgeText = isOverdueStatus
+          ? t("invoices.states.overdue")
+          : (t(`invoices.states.${invoiceStatus}`) ?? "-");
+
+        return <Badge variant={badgeVariant}>{badgeText}</Badge>;
       },
     },
     {
