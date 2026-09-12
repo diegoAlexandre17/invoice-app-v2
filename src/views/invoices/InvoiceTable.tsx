@@ -395,7 +395,7 @@ const InvoiceTable = () => {
                 </SelectItem>
               </SelectContent>
             </Select>
-            <div className="w-full @lg:flex-1 @lg:min-w-52">
+            <div className="w-full @lg:flex-1 @lg:min-w-56">
               <DateRangePicker
                 value={dateRange}
                 onChange={handleDateRangeChange}
