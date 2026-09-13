@@ -50,6 +50,7 @@ import {
 import { format } from "date-fns";
 import DateRangePicker from "@/components/shared/DateRangePicker";
 import { getCurrencySymbol } from "@/features/company/domain/currencySymbol";
+import InvoiceCharts from "@/views/invoices/InvoiceCharts";
 
 const PAGE_SIZE = 10;
 
@@ -369,6 +370,7 @@ const InvoiceTable = () => {
 
   return (
     <>
+    <InvoiceCharts />
       <DataTable
         columns={columns}
         data={invoices}
