@@ -370,7 +370,7 @@ const InvoiceTable = () => {
 
   return (
     <>
-    <InvoiceCharts />
+    <InvoiceCharts dateRange={dateRange} />
       <DataTable
         columns={columns}
         data={invoices}

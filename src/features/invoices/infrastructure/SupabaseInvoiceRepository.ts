@@ -4,6 +4,7 @@ import type {
   InvoiceStatus,
   GetInvoicesParams,
 } from "@/features/invoices/domain/entities/Invoice";
+import type { GetInvoiceSummaryParams, InvoiceSummary } from "@/features/invoices/domain/entities/InvoiceSummary";
 import type { InvoiceRepository } from "@/features/invoices/domain/repositories/InvoiceRepository";
 import type { Currency } from "@/shared/domain/currency";
 import type { PaginatedResult } from "@/shared/domain/pagination";
@@ -194,5 +195,45 @@ export class SupabaseInvoiceRepository implements InvoiceRepository {
     }
 
     return data.signedUrl;
+  }
+
+  async getSummary(params: GetInvoiceSummaryParams): Promise<InvoiceSummary> {
+    const { data, error } = await supabase.rpc("get_invoices_summary", {
+      p_today: params.today,
+      p_status: params.status,
+      p_from: params.dateFrom,
+      p_to: params.dateTo,
+    });
+
+    if (error) {
+      throw mapSupabaseError(error);
+    }
+
+    // La RPC devuelve un array con UNA fila (returns table).
+    const row = data?.[0];
+
+    // Cuenta sin facturas: la RPC no devuelve fila. Resumen en cero.
+    if (!row) {
+      return {
+        totalPaid: 0,
+        pendingAmount: 0,
+        overdueAmount: 0,
+        invoiceCount: 0,
+        paidCount: 0,
+        pendingCount: 0,
+        overdueCount: 0,
+      };
+    }
+
+    // Traducción base (snake_case) -> dominio (camelCase). Vive SOLO acá.
+    return {
+      totalPaid: row.total_paid,
+      pendingAmount: row.pending_amount,
+      overdueAmount: row.overdue_amount,
+      invoiceCount: row.invoice_count,
+      paidCount: row.count_paid,
+      pendingCount: row.count_pending,
+      overdueCount: row.count_overdue,
+    };
   }
 }

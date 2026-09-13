@@ -110,6 +110,9 @@
     "registeredCustomer": "Registered customer",
     "searchCustomer":"Search customer",
     "all": "All",
+    "graphs":{
+      "invoicesByState":"Invoices by State"
+    },
     "states":{
       "sent":"Sent",
       "paid":"Paid",

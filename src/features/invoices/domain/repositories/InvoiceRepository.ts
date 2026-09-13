@@ -3,6 +3,7 @@ import type {
   InvoiceStatus,
   GetInvoicesParams,
 } from "@/features/invoices/domain/entities/Invoice";
+import type { GetInvoiceSummaryParams, InvoiceSummary } from "@/features/invoices/domain/entities/InvoiceSummary";
 import type { PaginatedResult } from "@/shared/domain/pagination";
 
 /**
@@ -39,4 +40,7 @@ export interface InvoiceRepository {
    * visualizable. La URL expira: se pide bajo demanda, no se persiste.
    */
   getSignedPdfUrl(path: string): Promise<string>;
+
+  /* params obligatorio, ya que necesita el today para verificar las vencidas */
+  getSummary(params: GetInvoiceSummaryParams): Promise<InvoiceSummary>;
 }

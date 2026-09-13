@@ -110,6 +110,9 @@
     "registeredCustomer": "Cliente registrado",
     "searchCustomer":"Buscar cliente",
     "all": "Todas",
+    "graphs":{
+      "invoicesByState":"Facturas por estado"
+    },
     "states":{
       "sent":"Enviada",
       "paid":"Pagada",
