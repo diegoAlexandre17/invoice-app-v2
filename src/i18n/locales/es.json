@@ -111,7 +111,8 @@
     "searchCustomer":"Buscar cliente",
     "all": "Todas",
     "graphs":{
-      "invoicesByState":"Facturas por estado"
+      "invoicesByState":"Facturas por estado",
+      "totalPaid": "Total pagado"
     },
     "states":{
       "sent":"Enviada",

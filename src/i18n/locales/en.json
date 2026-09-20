@@ -111,7 +111,8 @@
     "searchCustomer":"Search customer",
     "all": "All",
     "graphs":{
-      "invoicesByState":"Invoices by State"
+      "invoicesByState":"Invoices by State",
+      "totalPaid": "Total Paid"
     },
     "states":{
       "sent":"Sent",
