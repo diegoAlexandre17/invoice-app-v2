@@ -112,7 +112,8 @@
     "all": "All",
     "graphs":{
       "invoicesByState":"Invoices by State",
-      "totalPaid": "Total Paid"
+      "totalPaid": "Total Paid",
+      "totalByState": "Total by state"
     },
     "states":{
       "sent":"Sent",

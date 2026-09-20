@@ -112,7 +112,8 @@
     "all": "Todas",
     "graphs":{
       "invoicesByState":"Facturas por estado",
-      "totalPaid": "Total pagado"
+      "totalPaid": "Total pagado",
+      "totalByState": "Total por estado"
     },
     "states":{
       "sent":"Enviada",

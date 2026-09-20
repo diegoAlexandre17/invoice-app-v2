@@ -1,9 +1,10 @@
 import DonutChart from "@/components/shared/charts/DonutChart";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import StatListCard, {
+  type StatListItem,
+} from "@/components/shared/charts/StatListCard";
 import { useGetInvoicesSummary } from "@/features/invoices/presentation/hooks/useGetInvoicesSummary";
 import { format } from "date-fns";
-import { FileChartLine, FileExclamationPoint } from "lucide-react";
+import { FileChartLine, FileExclamationPoint, FileX } from "lucide-react";
 import type { DateRange } from "react-day-picker";
 import { useTranslation } from "react-i18next";
 
@@ -39,6 +40,33 @@ const InvoiceCharts = ({ dateRange }: InvoiceChartsProps) => {
     },
   ];
 
+  const totalsByStateData: StatListItem[] = [
+    {
+      id: "paid",
+      icon: FileChartLine,
+      label: t("invoices.graphs.totalPaid"),
+      value: invoiceSummary?.totalPaid ?? 0,
+      avatarFallbackClassName: "bg-success/10 text-success",
+      valueClassName: "text-success",
+    },
+    {
+      id: "pending",
+      icon: FileExclamationPoint,
+      label: t("invoices.states.sent"),
+      value: invoiceSummary?.pendingAmount ?? 0,
+      avatarFallbackClassName: "bg-warning/10 text-warning",
+      valueClassName: "text-success",
+    },
+    {
+      id: "overdue",
+      icon: FileX,
+      label: t("invoices.states.overdue"),
+      value: invoiceSummary?.overdueAmount ?? 0,
+      avatarFallbackClassName: "bg-destructive/10 text-destructive",
+      valueClassName: "text-success",
+    },
+  ];
+
   return (
     <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
       <DonutChart
@@ -46,32 +74,10 @@ const InvoiceCharts = ({ dateRange }: InvoiceChartsProps) => {
         data={invoicesStateData}
       />
 
-      <Card>
-        <CardContent className="flex justify-around h-full">
-          <div className="flex flex-col items-center justify-center gap-0.5">
-            <Avatar className="size-18 after:border-0">
-              <AvatarFallback className="bg-success/10 text-success">
-                <FileChartLine className="size-10" />
-              </AvatarFallback>
-            </Avatar>
-            <CardTitle>{t("invoices.graphs.totalPaid")}</CardTitle>
-            <CardTitle className="font-semibold text-success">
-              {invoiceSummary?.totalPaid ?? 0}
-            </CardTitle>
-          </div>
-          <div className="flex flex-col items-center justify-center gap-0.5">
-            <Avatar className="size-18 after:border-0">
-              <AvatarFallback className="bg-warning/10 text-warning">
-                <FileExclamationPoint className="size-10" />
-              </AvatarFallback>
-            </Avatar>
-            <CardTitle>{t("invoices.states.sent")}</CardTitle>
-            <CardTitle className="font-semibold text-success">
-              {invoiceSummary?.pendingAmount ?? 0}
-            </CardTitle>
-          </div>
-        </CardContent>
-      </Card>
+      <StatListCard
+        title={t("invoices.graphs.totalByState")}
+        items={totalsByStateData}
+      />
     </div>
   );
 };
