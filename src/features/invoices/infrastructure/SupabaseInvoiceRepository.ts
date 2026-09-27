@@ -1,10 +1,17 @@
 import type {
+  GetInvoicesParams,
   Invoice,
   InvoiceItem,
   InvoiceStatus,
-  GetInvoicesParams,
 } from "@/features/invoices/domain/entities/Invoice";
-import type { GetInvoiceSummaryParams, InvoiceSummary } from "@/features/invoices/domain/entities/InvoiceSummary";
+import type {
+  GetInvoiceSummaryParams,
+  InvoiceSummary,
+} from "@/features/invoices/domain/entities/InvoiceSummary";
+import type {
+  GetMonthlyBillingParams,
+  MonthlyBilling,
+} from "@/features/invoices/domain/entities/MonthlyBilling";
 import type { InvoiceRepository } from "@/features/invoices/domain/repositories/InvoiceRepository";
 import type { Currency } from "@/shared/domain/currency";
 import type { PaginatedResult } from "@/shared/domain/pagination";
@@ -235,5 +242,25 @@ export class SupabaseInvoiceRepository implements InvoiceRepository {
       pendingCount: row.count_pending,
       overdueCount: row.count_overdue,
     };
+  }
+
+  async getMonthlyBilling(
+    params: GetMonthlyBillingParams,
+  ): Promise<MonthlyBilling[]> {
+    const { data, error } = await supabase.rpc("get_invoices_monthly_billing", {
+      p_today: params.today,
+    });
+
+    if (error) {
+      throw mapSupabaseError(error);
+    }
+
+    // La RPC siempre devuelve la serie completa (generate_series rellena los
+    // meses vacíos con 0), así que no hay caso "sin filas" que contemplar.
+    // Traducción base (snake_case) -> dominio (camelCase). Vive SOLO acá.
+    return (data ?? []).map((row) => ({
+      month: row.month_start,
+      amount: row.total,
+    }));
   }
 }

@@ -6,7 +6,9 @@ import StatListCard, {
   type StatListItem,
 } from "@/components/shared/charts/StatListCard";
 import { useGetInvoicesSummary } from "@/features/invoices/presentation/hooks/useGetInvoicesSummary";
-import { format, subMonths } from "date-fns";
+import { useGetMonthlyBilling } from "@/features/invoices/presentation/hooks/useGetMonthlyBilling";
+import { useFormatDate } from "@/hooks/useFormatDate";
+import { format } from "date-fns";
 import { FileChartLine, FileExclamationPoint, FileX } from "lucide-react";
 import type { DateRange } from "react-day-picker";
 import { useTranslation } from "react-i18next";
@@ -17,6 +19,7 @@ interface InvoiceChartsProps {
 
 const InvoiceCharts = ({ dateRange }: InvoiceChartsProps) => {
   const { t, i18n } = useTranslation();
+  const formatDate = useFormatDate();
 
   const { data: invoiceSummary } = useGetInvoicesSummary({
     dateFrom: dateRange?.from
@@ -24,6 +27,8 @@ const InvoiceCharts = ({ dateRange }: InvoiceChartsProps) => {
       : undefined,
     dateTo: dateRange?.to ? format(dateRange.to, "yyyy-MM-dd") : undefined,
   });
+
+  const { data: monthlyBilling } = useGetMonthlyBilling();
 
   const invoicesStateData = [
     {
@@ -43,20 +48,13 @@ const InvoiceCharts = ({ dateRange }: InvoiceChartsProps) => {
     },
   ];
 
-  // MOCK: todavia no hay endpoint de facturacion mensual. Cuando exista,
-  // reemplazar por el hook de la feature (features/invoices/presentation/hooks).
-  const MOCKED_MONTHLY_BILLING = [4200, 6850, 5400];
-
-  const billingByMonthData: HorizontalBarDatum[] = MOCKED_MONTHLY_BILLING.map(
-    (amount, index) => ({
-      label: format(subMonths(new Date(), 2 - index), "MMM yyyy"),
-      value: amount,
+  // La entidad guarda 'month' como fecha ISO ("2026-07-01"); el formato de
+  // display ("Ago 2026", capitalizado) lo resuelve useFormatDate según el idioma.
+  const billingByMonthData: HorizontalBarDatum[] = (monthlyBilling ?? []).map(
+    (item) => ({
+      label: formatDate(item.month, "monthYear"),
+      value: item.amount,
     }),
-  );
-
-  // DEMO: mes sin facturacion en medio de meses que si la tuvieron.
-  const partialBillingData: HorizontalBarDatum[] = billingByMonthData.map(
-    (month, index) => (index === 1 ? { ...month, value: 0 } : month),
   );
 
   const formatAmount = (value: number) =>
@@ -105,15 +103,6 @@ const InvoiceCharts = ({ dateRange }: InvoiceChartsProps) => {
         title={t("invoices.graphs.billingLastMonths")}
         seriesName={t("invoices.graphs.billingLastMonths")}
         data={billingByMonthData}
-        valueFormatter={formatAmount}
-        showAxisValues={false}
-      />
-
-      {/* DEMO: misma grafica con un mes en cero entre meses con facturacion. */}
-      <HorizontalBarChart
-        title={t("invoices.graphs.billingLastMonths")}
-        seriesName={t("invoices.graphs.billingLastMonths")}
-        data={partialBillingData}
         valueFormatter={formatAmount}
         showAxisValues={false}
       />

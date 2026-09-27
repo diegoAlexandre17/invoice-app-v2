@@ -3,8 +3,15 @@ import type {
   InvoiceStatus,
   GetInvoicesParams,
 } from "@/features/invoices/domain/entities/Invoice";
-import type { GetInvoiceSummaryParams, InvoiceSummary } from "@/features/invoices/domain/entities/InvoiceSummary";
+import type {
+  GetInvoiceSummaryParams,
+  InvoiceSummary,
+} from "@/features/invoices/domain/entities/InvoiceSummary";
 import type { PaginatedResult } from "@/shared/domain/pagination";
+import type {
+  MonthlyBilling,
+  GetMonthlyBillingParams,
+} from "@/features/invoices/domain/entities/MonthlyBilling";
 
 /**
  * Contrato del repositorio de facturas.
@@ -21,9 +28,9 @@ export interface InvoiceRepository {
    * El id/createdAt/paidAt/pdfUrl los define el sistema, no el emisor.
    */
   create(
-  invoiceData: Omit<Invoice, "id" | "createdAt" | "paidAt" | "pdfUrl">,
-  pdfBlob: Blob,
-): Promise<void>;
+    invoiceData: Omit<Invoice, "id" | "createdAt" | "paidAt" | "pdfUrl">,
+    pdfBlob: Blob,
+  ): Promise<void>;
 
   /**
    * Cambia el estado (marcar 'paid' o 'cancelled').
@@ -43,4 +50,10 @@ export interface InvoiceRepository {
 
   /* params obligatorio, ya que necesita el today para verificar las vencidas */
   getSummary(params: GetInvoiceSummaryParams): Promise<InvoiceSummary>;
+
+  /**
+   * Facturación agregada por mes (últimos 3 meses). Devuelve la serie
+   * completa con ceros: los meses sin facturación aparecen igual.
+   */
+  getMonthlyBilling(params: GetMonthlyBillingParams): Promise<MonthlyBilling[]>;
 }

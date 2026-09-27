@@ -227,6 +227,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_invoices_monthly_billing: {
+        Args: { p_today: string }
+        Returns: {
+          month_start: string
+          total: number
+        }[]
+      }
       get_invoices_summary: {
         Args: {
           p_from?: string
