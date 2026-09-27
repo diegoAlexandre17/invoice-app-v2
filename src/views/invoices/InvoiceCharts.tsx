@@ -1,3 +1,4 @@
+import CompanyMoney from "@/components/shared/CompanyMoney";
 import DonutChart from "@/components/shared/charts/DonutChart";
 import HorizontalBarChart, {
   type HorizontalBarDatum,
@@ -5,9 +6,11 @@ import HorizontalBarChart, {
 import StatListCard, {
   type StatListItem,
 } from "@/components/shared/charts/StatListCard";
+import { useGetCompanyData } from "@/features/company/presentation/useGetCompanyData";
 import { useGetInvoicesSummary } from "@/features/invoices/presentation/hooks/useGetInvoicesSummary";
 import { useGetMonthlyBilling } from "@/features/invoices/presentation/hooks/useGetMonthlyBilling";
 import { useFormatDate } from "@/hooks/useFormatDate";
+import { formatMoney } from "@/lib/utils";
 import { format } from "date-fns";
 import { FileChartLine, FileExclamationPoint, FileX } from "lucide-react";
 import type { DateRange } from "react-day-picker";
@@ -29,6 +32,7 @@ const InvoiceCharts = ({ dateRange }: InvoiceChartsProps) => {
   });
 
   const { data: monthlyBilling } = useGetMonthlyBilling();
+  const { data: company } = useGetCompanyData();
 
   const invoicesStateData = [
     {
@@ -57,33 +61,35 @@ const InvoiceCharts = ({ dateRange }: InvoiceChartsProps) => {
     }),
   );
 
+  // El valueFormatter del gráfico devuelve STRING (ApexCharts dibuja texto en
+  // SVG, no acepta JSX), así que acá usamos la función pura formatMoney, no el
+  // componente <MoneyNumber>. Sin moneda todavía, cae al monto crudo.
   const formatAmount = (value: number) =>
-    `$${value.toLocaleString(i18n.language)}`;
+    company ? formatMoney(value, company.currency, i18n.language) : `${value}`;
 
+  // value usa <CompanyMoney>: formatea en la moneda de la empresa y ya trae el
+  // verde por default. El color del estado lo comunica el avatar, no el monto.
   const totalsByStateData: StatListItem[] = [
     {
       id: "paid",
       icon: FileChartLine,
       label: t("invoices.graphs.totalPaid"),
-      value: invoiceSummary?.totalPaid ?? 0,
+      value: <CompanyMoney amount={invoiceSummary?.totalPaid ?? 0} />,
       avatarFallbackClassName: "bg-success/10 text-success",
-      valueClassName: "text-success",
     },
     {
       id: "pending",
       icon: FileExclamationPoint,
       label: t("invoices.states.sent"),
-      value: invoiceSummary?.pendingAmount ?? 0,
+      value: <CompanyMoney amount={invoiceSummary?.pendingAmount ?? 0} />,
       avatarFallbackClassName: "bg-warning/10 text-warning",
-      valueClassName: "text-success",
     },
     {
       id: "overdue",
       icon: FileX,
       label: t("invoices.states.overdue"),
-      value: invoiceSummary?.overdueAmount ?? 0,
+      value: <CompanyMoney amount={invoiceSummary?.overdueAmount ?? 0} />,
       avatarFallbackClassName: "bg-destructive/10 text-destructive",
-      valueClassName: "text-success",
     },
   ];
 
