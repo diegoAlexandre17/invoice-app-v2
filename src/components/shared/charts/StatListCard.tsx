@@ -6,42 +6,42 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 export interface StatListItem {
-  /** Stable key. Falls back to the label when omitted. */
+  /** Clave estable. Si no se pasa, se usa el label. */
   id?: string;
-  /** Icon rendered inside the avatar fallback. */
+  /** Ícono que se renderiza dentro del fallback del avatar. */
   icon: LucideIcon;
-  /** Text shown next to the avatar. */
+  /** Texto que se muestra al lado del avatar. */
   label: string;
-  /** Value shown on the right side of the row. */
+  /** Valor que se muestra a la derecha de la fila. */
   value: ReactNode;
-  /** Extra classes for this row container. Merged after `rowClassName`. */
+  /** Clases extra para esta fila puntual. Se mergean después de `rowClassName`. */
   className?: string;
-  /** Extra classes for the Avatar wrapper. */
+  /** Clases extra para el Avatar. */
   avatarClassName?: string;
-  /** Extra classes for the AvatarFallback (colors live here). */
+  /** Clases extra para el AvatarFallback (acá viven los colores). */
   avatarFallbackClassName?: string;
-  /** Extra classes for the icon. */
+  /** Clases extra para el ícono. */
   iconClassName?: string;
-  /** Extra classes for the label. */
+  /** Clases extra para el label. */
   labelClassName?: string;
-  /** Extra classes for the value. */
+  /** Clases extra para el valor. */
   valueClassName?: string;
 }
 
 interface StatListCardProps {
-  /** Rows to render. */
+  /** Filas a renderizar. */
   items: StatListItem[];
-  /** Card title. Omit to hide the header. */
+  /** Título de la card. Omitilo para ocultar el header. */
   title?: ReactNode;
-  /** Extra classes for the Card. */
+  /** Clases extra para la Card. */
   className?: string;
-  /** Extra classes for the CardHeader. */
+  /** Clases extra para el CardHeader. */
   headerClassName?: string;
-  /** Extra classes for the CardTitle. */
+  /** Clases extra para el CardTitle. */
   titleClassName?: string;
-  /** Extra classes for the CardContent. */
+  /** Clases extra para el CardContent. */
   contentClassName?: string;
-  /** Extra classes applied to every row. */
+  /** Clases extra que se aplican a TODAS las filas. */
   rowClassName?: string;
 }
 

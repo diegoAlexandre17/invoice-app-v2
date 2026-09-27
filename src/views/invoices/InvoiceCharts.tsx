@@ -1,9 +1,12 @@
 import DonutChart from "@/components/shared/charts/DonutChart";
+import HorizontalBarChart, {
+  type HorizontalBarDatum,
+} from "@/components/shared/charts/HorizontalBarChart";
 import StatListCard, {
   type StatListItem,
 } from "@/components/shared/charts/StatListCard";
 import { useGetInvoicesSummary } from "@/features/invoices/presentation/hooks/useGetInvoicesSummary";
-import { format } from "date-fns";
+import { format, subMonths } from "date-fns";
 import { FileChartLine, FileExclamationPoint, FileX } from "lucide-react";
 import type { DateRange } from "react-day-picker";
 import { useTranslation } from "react-i18next";
@@ -13,7 +16,7 @@ interface InvoiceChartsProps {
 }
 
 const InvoiceCharts = ({ dateRange }: InvoiceChartsProps) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const { data: invoiceSummary } = useGetInvoicesSummary({
     dateFrom: dateRange?.from
@@ -39,6 +42,25 @@ const InvoiceCharts = ({ dateRange }: InvoiceChartsProps) => {
       color: "#ef4444",
     },
   ];
+
+  // MOCK: todavia no hay endpoint de facturacion mensual. Cuando exista,
+  // reemplazar por el hook de la feature (features/invoices/presentation/hooks).
+  const MOCKED_MONTHLY_BILLING = [4200, 6850, 5400];
+
+  const billingByMonthData: HorizontalBarDatum[] = MOCKED_MONTHLY_BILLING.map(
+    (amount, index) => ({
+      label: format(subMonths(new Date(), 2 - index), "MMM yyyy"),
+      value: amount,
+    }),
+  );
+
+  // DEMO: mes sin facturacion en medio de meses que si la tuvieron.
+  const partialBillingData: HorizontalBarDatum[] = billingByMonthData.map(
+    (month, index) => (index === 1 ? { ...month, value: 0 } : month),
+  );
+
+  const formatAmount = (value: number) =>
+    `$${value.toLocaleString(i18n.language)}`;
 
   const totalsByStateData: StatListItem[] = [
     {
@@ -77,6 +99,23 @@ const InvoiceCharts = ({ dateRange }: InvoiceChartsProps) => {
       <StatListCard
         title={t("invoices.graphs.totalByState")}
         items={totalsByStateData}
+      />
+
+      <HorizontalBarChart
+        title={t("invoices.graphs.billingLastMonths")}
+        seriesName={t("invoices.graphs.billingLastMonths")}
+        data={billingByMonthData}
+        valueFormatter={formatAmount}
+        showAxisValues={false}
+      />
+
+      {/* DEMO: misma grafica con un mes en cero entre meses con facturacion. */}
+      <HorizontalBarChart
+        title={t("invoices.graphs.billingLastMonths")}
+        seriesName={t("invoices.graphs.billingLastMonths")}
+        data={partialBillingData}
+        valueFormatter={formatAmount}
+        showAxisValues={false}
       />
     </div>
   );

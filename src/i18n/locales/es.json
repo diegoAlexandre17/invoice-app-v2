@@ -113,7 +113,8 @@
     "graphs":{
       "invoicesByState":"Facturas por estado",
       "totalPaid": "Total pagado",
-      "totalByState": "Total por estado"
+      "totalByState": "Total por estado",
+      "billingLastMonths": "Facturación (últimos 3 meses)"
     },
     "states":{
       "sent":"Enviada",
